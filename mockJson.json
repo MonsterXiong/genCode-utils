@@ -1,0 +1,285 @@
+{
+  "projectInfo": {
+    "project_name": "测试软件平台",
+    "project_code": "csrjpt123",
+    "project_version": "1.0.0",
+    "project_description": "",
+    "project_port": 8080,
+    "project_outputDir": "./temp",
+    "project_frameworkType": "txsj",
+    "db_type": "mysql12",
+    "db_name": "sf_db",
+    "db_ip": "127.0.0.1",
+    "db_port": 3301,
+    "db_username": "root",
+    "db_password": "123",
+    "pom_groupId": "com.ltsj",
+    "pom_artifactId": "com.tixi.sf.boot",
+    "pom_packaging": "jar"
+  },
+  "menuInfo": [
+    {
+      "id": "001",
+      "code": "design",
+      "name": "设计",
+      "menuType": "module",
+      "icon": "",
+      "parentId": ""
+    },
+    {
+      "id": "001001",
+      "code": "design_abi",
+      "name": "能力清单",
+      "menuType": "page",
+      "icon": "",
+      "parentId": "001"
+    },
+    {
+      "id": "001002",
+      "code": "design_index",
+      "name": "指标清单",
+      "menuType": "page",
+      "icon": "",
+      "parentId": "001"
+    }
+  ],
+  "dataModel": [
+    {
+      "code": "db_abi",
+      "remark": "能力",
+      "cloumns": [
+        {
+          "code": "abi_id",
+          "dataType": "varchar",
+          "length": 32,
+          "isPrimary": true,
+          "isNull": false,
+          "defaultValue": "",
+          "remark": "能力ID"
+        },
+        {
+          "code": "abi_name",
+          "dataType": "varchar",
+          "length": 50,
+          "isPrimary": false,
+          "isNull": false,
+          "defaultValue": "",
+          "remark": "能力名称"
+        }
+      ]
+    },
+    {
+      "code": "db_index",
+      "remark": "指标",
+      "cloumns": [
+        {
+          "code": "index_id",
+          "dataType": "varchar",
+          "length": 32,
+          "isPrimary": true,
+          "isNull": false,
+          "defaultValue": "",
+          "remark": "指标ID"
+        },
+        {
+          "code": "index_name",
+          "dataType": "varchar",
+          "length": 50,
+          "isPrimary": false,
+          "isNull": false,
+          "defaultValue": "",
+          "remark": "指标名称"
+        },
+        {
+          "code": "bind_abi",
+          "dataType": "varchar",
+          "length": 32,
+          "isPrimary": false,
+          "isNull": false,
+          "defaultValue": "",
+          "remark": "所属能力"
+        }
+      ]
+    }
+  ],
+  "pages": [
+    {
+      "id": "xxxxxx",
+      "type": "crud",
+      "name": "指标表格",
+      "code": "abiDiv",
+      "bindMenu": "001002",
+      "functionModel": [
+        {
+          "name": "查询指标列表",
+          "code": "queryIndexList",
+          "label": "queryList",
+          "functionType": "global",
+          "request": [
+            {
+              "label": "queryList",
+              "url": "/base/design_abi/queryIndexList"
+            }
+          ]
+        },
+        {
+          "name": "新增指标",
+          "code": "insertIndex",
+          "label": "insert",
+          "functionType": "global",
+          "request": [
+            {
+              "label": "insert",
+              "url": "/base/design_abi/insertIndex"
+            }
+          ]
+        },
+        {
+          "name": "编辑指标",
+          "code": "updateIndex",
+          "label": "update",
+          "functionType": "obj",
+          "request": [
+            {
+              "label": "query",
+              "url": "/base/design_abi/queryAbi"
+            },
+            {
+              "label": "update",
+              "url": "/base/design_abi/updateIndex"
+            }
+          ]
+        },
+        {
+          "name": "计算数值",
+          "code": "calValue",
+          "label": "globalExt",
+          "functionType": "global",
+          "request": [
+            {
+              "label": "globalExt",
+              "url": "/base/design_abi/calValue"
+            }
+          ]
+        }
+      ],
+      "elementConfig": [
+        {
+          "code": "listElement",
+          "bindFunction": "queryList",
+          "data": [
+            {
+              "alias": "指标ID",
+              "aliasCode": "indexId",
+              "bindObj": "db_index",
+              "bindAttr": "index_id",
+              "displayType": "text",
+              "pk": true,
+              "param": {
+                "isHidden": true,
+                "isSearch": false
+              }
+            },
+            {
+              "alias": "指标名称",
+              "aliasCode": "indexName",
+              "bindObj": "db_index",
+              "bindAttr": "name",
+              "displayType": "text",
+              "pk": false,
+              "param": {
+                "isHidden": false,
+                "isSearch": true
+              }
+            },
+            {
+              "alias": "所属能力",
+              "aliasCode": "bindAbiName",
+              "bindObj": "db_index",
+              "bindAttr": "bind_abi",
+              "displayType": "text",
+              "pk": false,
+              "param": {
+                "isHidden": false,
+                "isSearch": true
+              }
+            }
+          ]
+        },
+        {
+          "code": "updateElement",
+          "bindFunction": "update",
+          "data": [
+            {
+              "alias": "指标ID",
+              "aliasCode": "indexId",
+              "bindObj": "db_index",
+              "bindAttr": "index_id",
+              "displayType": "text",
+              "pk": true,
+              "param": {
+                "isHidden": true,
+                "isSearch": true
+              }
+            },
+            {
+              "alias": "指标名称",
+              "aliasCode": "indexName",
+              "bindObj": "db_index",
+              "bindAttr": "name",
+              "displayType": "text",
+              "pk": false,
+              "param": {
+                "isHidden": false,
+                "isRequired": true
+              }
+            }
+          ]
+        },
+        {
+          "code": "insertElement",
+          "bindFunction": "insert",
+          "data": [
+            {
+              "alias": "指标ID",
+              "aliasCode": "indexId",
+              "bindObj": "db_index",
+              "bindAttr": "index_id",
+              "displayType": "text",
+              "pk": true,
+              "param": {
+                "isHidden": true,
+                "isSearch": true
+              }
+            },
+            {
+              "alias": "指标名称",
+              "aliasCode": "indexName",
+              "bindObj": "db_index",
+              "bindAttr": "name",
+              "displayType": "text",
+              "pk": false,
+              "param": {
+                "isHidden": false,
+                "isRequired": true
+              }
+            },
+            {
+              "alias": "所属能力",
+              "aliasCode": "bindAbiName",
+              "bindObj": "db_index",
+              "bindAttr": "bind_abi",
+              "displayType": "text",
+              "pk": false,
+              "param": {
+                "isRequired": true,
+                "isMulti": false,
+                "selectUrl": "/base/simple/querySimpleAbiList"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
