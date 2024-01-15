@@ -13,7 +13,6 @@ function getEntry(fileParam, sourceData) {
   }
 }
 
-
 module.exports = {
   getEntry
 }

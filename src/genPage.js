@@ -8,11 +8,9 @@ function genTemplate(template){
   code += `\n</template>\n`
   return code
 }
-
 function isEmpty(list){
   return Array.isArray(list) && list.length > 0
 }
-
 function getPage(scriptData){
   const {template,script} = scriptData
   const {importList } = script
@@ -28,7 +26,6 @@ function getPage(scriptData){
 function genImport(list=[]){
   return list.reduce((res,item)=>res+=`${getImport(item)}\n`,'')
 }
-
 function getDefaultContent(scriptData) {
   const {name,dataList,componentList,watchList,methodList,mountList,propList} = scriptData
   let code = ""
@@ -55,16 +52,13 @@ function getDefaultContent(scriptData) {
   }
   return code
 }
-
 function formatScriptAttr(attr,symbol,content){
   return `\n${getTab()}${attr}${symbol} {\n${content ? content : ''}\n${getTab()}},`
 }
 function getWatch(){}
-
 function getComponent(list=[]){
   return list.reduce((res,item,index,arr)=>res+=`${getTab(2)}${item},${index!==arr.length-1?'\n':''}`,'')
 }
-
 function getMount(mountList=[]){
   let res = ''
   mountList.forEach((item,index)=>{
@@ -77,8 +71,6 @@ function getMount(mountList=[]){
 function getData(list=[],indent){
   return list.reduce((res,item,index,arr)=>res+=`${getTab(indent)}${item.name}: ${getDataItem(item,indent)},${index!==arr.length-1?'\n':''}`,'')
 }
-
-
 function getDataItem(dataItem,indent){
   const {name,type,initValue} = dataItem
   if(type == 'object'){
@@ -119,7 +111,6 @@ function getMethodItem(method){
   }
   return action(method)
 }
-
 function callMethod(){
   return {
     'emit':(method)=>getEmitMethod(method),
@@ -137,7 +128,6 @@ function callMethod(){
     'pageInfoChange':(method)=>getPageInfoMethod(method),
   }
 }
-
 function getPageInfoMethod(method){
   const { name, param } = method
   return `${getTab(2)}${name}(${param}) {
@@ -152,7 +142,6 @@ function getSetHeightMethod(method){
       })
     },`
 }
-
 function getDialogSubmitMethod(method){
   const { name, param,pri,updateServiceName,updateInterfaceName,insertServiceName,insertInterfaceName } = method
   return `${getTab(2)}${name}(${param}) {
@@ -172,7 +161,6 @@ function getDialogSubmitMethod(method){
       });
     },`
 }
-
 function getDialogShowMethod(method){
   const { name, param } = method
   return `${getTab(2)}${name}(${param}) {
@@ -207,22 +195,18 @@ function getOnDeleteMethod(method){
       this.apiDelete([row])
     },`
 }
-
 function getOnEditMethod(method){
   const { name, param,dialogRef,dialogTitle } = method
   return `${getTab(2)}${name}(row) {
       this.$refs.${dialogRef}.show({ row, title: '编辑${dialogTitle}' })
     },`
 }
-
 function getInitOptionMethod({children}){
   return `${getTab(2)}async initOption() {\n${getInitOptionData(children)}${getTab(2)}},`
 }
-
 function getInitOptionData(initOptionList){
   return initOptionList.reduce((res,item)=>res+=`${getTab(3)}await this.${item}()\n`,'')
 }
-
 function getOptionMethod(option){
   const {serviceName,interfaceName,variableName,functionName} = option
   return `${getTab(2)}async ${functionName}() {
@@ -231,14 +215,12 @@ function getOptionMethod(option){
       this.${variableName} = data
     },`
 }
-
 function getEmitMethod(method){
   const { name, param } = method
   return `${getTab(2)}${name}() {
       this.$emit('${name}'${param?',param':''})
     },`
 }
-
 function getPlaceholderMethod(method){
   const { name, param } = method
   return `${getTab(2)}${name}(${param}) {

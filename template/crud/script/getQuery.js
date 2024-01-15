@@ -71,8 +71,6 @@ function getQuery(fileParam, sourceData) {
   }
 }
 
-
-
 module.exports = {
   getQuery
 }

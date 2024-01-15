@@ -133,8 +133,6 @@ function getPageReuslt(pageResult, pages) {
     pageResult.push(getGenPageData(components))
   })
 }
-
-// 得到的是一个页面内容并转换为适应genCode的格式
 function getGenPageData(transformData) {
   const { dirpath, filepath, params } = transformData
   const filePath = path.join(dirpath, filepath)
@@ -144,8 +142,6 @@ function getGenPageData(transformData) {
     content
   }
 }
-
-
 function execCodeGen() {
   // 获取软件数据
   const softwareData = getSoftwareData()
@@ -154,5 +150,4 @@ function execCodeGen() {
   // 生成
   genCode(code)
 }
-
 execCodeGen()
