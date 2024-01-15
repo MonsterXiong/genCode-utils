@@ -12,6 +12,10 @@ function initDataList(script){
     name: 'dialogVisible',
     type: 'boolean',
     initValue: 'false',
+  },{
+    name:'formDataRules',
+    type:'array',
+    initValue: '[]',
   }]
 }
 function initImportDataList(script){
@@ -116,6 +120,7 @@ async function getDialog(fileParam, sourceData) {
   initStruct(script,funcInfo)
   // // 处理要素
   handleFieldList(script,fieldList)
+  // 生成onSumbit的方法调用
   // //  处理功能
   // handleMethodList(script, funcList)
   // //  整合一下imporList
