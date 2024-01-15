@@ -279,6 +279,10 @@
                 "isRequired": true,
                 "isMulti": false,
                 "selectUrl": "/base/simple/querySimpleAbiList"
+              },
+              "request":{
+                "type":"entity",
+                "url":"/base/design_abi/queryList"
               }
             }
           ]

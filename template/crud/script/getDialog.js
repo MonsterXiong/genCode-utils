@@ -1,4 +1,4 @@
-const { getFileInfo, initScript, parseUrl, handleImportList } = require("../../../src/common")
+const { getFileInfo, initScript, parseUrl, handleImportList, handleSelectEntityType, handleMethodListHasOption } = require("../../../src/common")
 const path = require('path')
 const ejs = require('ejs')
 const changeCase = require('change-case')
@@ -56,24 +56,37 @@ function initStruct(script,funcInfo){
   }
 }
 function handleFieldList(script,fieldList){
-  const initValue = [{
-    name: 'name',
-    type: 'string',
-    initValue: '""'
-  }]
-  fieldList.forEach(field=>{
-    initValue.push({
-      name: field.field,
-      type:'string',
-      initValue: '""',
+  if(fieldList.length){
+    const initValue = [{
+      name: 'name',
+      type: 'string',
+      initValue: '""'
+    }]
+    fieldList.forEach(field=>{
+      initValue.push({
+        name: field.field,
+        type:'string',
+        initValue: '""',
+      })
+      const { displayType, request } = field
+      if(request){
+        if (displayType == 'select') {
+          const { type } = request
+          if (type == 'entity') {
+            handleSelectEntityType(script, field)
+          }
+        }
+      }
+
     })
-  })
-  const form = {
-    name: 'formData',
-    type: 'object',
-    initValue
+    const form = {
+      name: 'formData',
+      type: 'object',
+      initValue
+    }
+    script['dataList'].push(form)
   }
-  script['dataList'].push(form)
+
 }
 
 function getInterfaceData(requestInfo){
@@ -168,19 +181,15 @@ async function getDialog(fileParam, sourceData) {
   // 初始化script
   const script = initScript(fileInfo.filename)
   initStruct(script,funcInfo)
-  // // 处理要素
+  // 处理要素
   handleFieldList(script,fieldList)
   handleMethodList(script,funcInfo,sourceFieldList)
-  // handleMethodList(script,funcInfo)
-  // //  处理功能
-  // handleMethodList(script, funcList)
-  // //  整合一下imporList
+  //  整合一下imporList
   handleImportList(script)
-  // //  处理一下option
-  // handleMethodListHasOption(script)
+  //  处理一下option
+  handleMethodListHasOption(script)
   // ---------------------
   const templatePath = path.join(__dirname, '../view/dialog.ejs')
-
 
   const templateParam = { queryList }
 
