@@ -1,0 +1,15 @@
+import baseRoutesConstant from './baseRoutesConstant'
+
+const baseRoutes = [
+<%_ list.forEach(function(route){ -%>
+  {
+    ...baseRoutesConstant.<%= route.const %>,
+    component: () => import('<%=route.path %>'),
+    meta: {
+      title: '<%= route.name %>',
+    },
+  },
+<%_ }); -%>
+]
+
+export default baseRoutes

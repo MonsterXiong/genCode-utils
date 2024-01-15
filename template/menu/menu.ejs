@@ -1,0 +1,17 @@
+import { routesConstant } from '@/router/routeConstant'
+
+export const menuList = [
+  <%_ list.forEach(function(item){ -%>
+  {
+    id: '<%= item.id %>',
+    parent: '<%= item.parent %>',
+    code: '<%= item.code %>',
+    name: '<%= item.name %>',
+    icon: '<%= item.icon %>',
+    menuType: '<%= item.menuType %>',
+    <%_if(item.menuType=='page' ) { -%>
+    menuParams: routesConstant.<%= item.menuParams %>.path,
+    <%_ } -%>
+  },
+  <%_ }); -%>
+]
