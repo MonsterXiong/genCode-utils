@@ -113,7 +113,7 @@ async function getDialog(fileParam, sourceData) {
   const { request } = funcInfo
   // 初始化script
   const script = initScript(fileInfo.filename)
-  initStruct(script)
+  initStruct(script,funcInfo)
   // // 处理要素
   handleFieldList(script,fieldList)
   // //  处理功能
