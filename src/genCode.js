@@ -10,7 +10,7 @@ function getSoftwareData() {
   const jsonData = fse.readJSONSync(path.resolve(__dirname, '../mockJson.json'))
   return jsonData
 }
-function getGenCode(softwareData){
+async function getGenCode(softwareData){
   const { menuInfo, pages, dataModel } = softwareData
 
   const dataModelInfo = transformDataModelMap(dataModel)
@@ -23,7 +23,7 @@ function getGenCode(softwareData){
   const routesConstantResult = getRouteConstantAdapterData({ list: routesConstantList })
 
   // 获取页面内容 and 收集service数据
-  const { pageResult, serviceData } = getPageAdapterData(pageList, dataModelInfo)
+  const { pageResult, serviceData } = await getPageAdapterData(pageList, dataModelInfo)
 
   // 统一处理所有的serviceData
   const servieceResult = getServiceAdapterData(serviceData)
@@ -75,15 +75,16 @@ function getAdapterData(menuInfo, pages) {
   return menuList
 }
 // 最终返回的是写入文件相对路径和内容,有page和services两类
-function getPageAdapterData(menuPageList, dataModel) {
-  const pagesCode = menuPageList.map((menuPage) => {
+async function getPageAdapterData(menuPageList, dataModel) {
+  const pagesCode = []
+  for await(const menuPage of menuPageList){
     // 根据页面的菜单信息去找对应的pages信息和dataModel
     const { type } = menuPage.pageInfo
     const pageData = parseJsonToPage(menuPage, dataModel)
     if (type == 'crud') {
-      return getCrudAdapterData(pageData)
+      pagesCode.push(await getCrudAdapterData(pageData))
     }
-  })
+  }
   return getPageResultAnddCollectServiceData(pagesCode)
 }
 // 返回页面需要的数据
@@ -142,11 +143,11 @@ function getGenPageData(transformData) {
     content
   }
 }
-function execCodeGen() {
+async function execCodeGen() {
   // 获取软件数据
   const softwareData = getSoftwareData()
   // 获取code
-  const code = getGenCode(softwareData)
+  const code = await getGenCode(softwareData)
   // 生成
   genCode(code)
 }

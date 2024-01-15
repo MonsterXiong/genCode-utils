@@ -273,7 +273,7 @@
               "aliasCode": "bindAbiName",
               "bindObj": "db_index",
               "bindAttr": "bind_abi",
-              "displayType": "text",
+              "displayType": "select",
               "pk": false,
               "param": {
                 "isRequired": true,

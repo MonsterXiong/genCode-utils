@@ -6,7 +6,7 @@ const { getEntry } = require("./script/getEntry");
 const { getQuery } = require("./script/getQuery");
 const { getTable } = require("./script/getTable");
 const { getFormatRequestList } = require('../../src/common');
-function getCrudAdapterData(sourceData) {
+async function getCrudAdapterData(sourceData) {
   const { menuInfo, functionList, elementList,dataPriInfo } = sourceData
   const { code: menuCode } = menuInfo
   const dirpath = menuCode ? menuCode : nanoid()
@@ -15,12 +15,12 @@ function getCrudAdapterData(sourceData) {
   return {
     services:getFormatRequestList(sourceData),
     pages:[
-      getQuery(fileParam, sourceData),
-      getDialog({ ...fileParam, name: 'editDialog' }),
-      getDialog({ ...fileParam, name: 'createDialog' }),
-      getTable(fileParam, sourceData),
-      getEntry(fileParam, sourceData)
-    ]
+      await getQuery(fileParam, sourceData),
+      await getDialog({ ...fileParam, name: 'editDialog' },sourceData),
+      await getDialog({ ...fileParam, name: 'createDialog' },sourceData),
+      await getTable(fileParam, sourceData),
+      await getEntry(fileParam, sourceData)
+    ].filter(item=>!!item)
   }
 }
 

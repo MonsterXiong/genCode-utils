@@ -3,10 +3,11 @@ function getTab(number=1){
 }
 function genTemplate(template){
   // 从模板中获取
-  let code = `<template>`
-  code +=`${template}`
-  code += `\n</template>\n`
-  return code
+  // let code = `<template>`
+  // code +=`${template}`
+  // code += `\n</template>\n`
+  // return code
+  return template +'\n'
 }
 function isEmpty(list){
   return Array.isArray(list) && list.length > 0

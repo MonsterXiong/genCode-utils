@@ -5,9 +5,11 @@ const {
   handleMethodListHasOption,
   handleImportList,
   initScript,
-  getTemplate
 } = require("../../../src/common")
-
+const ejs = require('ejs')
+const { nanoid } = require("nanoid")
+const path = require('path')
+const changeCase = require('change-case')
 // 初始化查询和重置功能
 function initQueryAndReset(script) {
   script['methodList'].push(addEmitMethodNoParam('onQuery'))
@@ -42,8 +44,74 @@ function handleFieldList(script,fieldList){
   }
 }
 
+
+function handleTemplate(fieldList,funcList){
+  const queryList = fieldList.map(field=>{
+    const {name,field:prop,displayType,bindAttr} = field
+    const param =  {
+      label:name,
+      displayType,
+      prop
+    }
+    if(displayType == 'select'){
+      param.entityKey = changeCase.camelCase(bindAttr)
+      param.entityLabel = prop
+    }
+    return param
+  })
+
+  const toolbarBtnList = []
+  // if(fieldList.length>0){
+  //   toolbarBtnList.push({
+  //     type:'primary',
+  //     icon:"el-icon-search",
+  //     functionName:'onQuery',
+  //     name:'查询',
+  //   })
+  //   toolbarBtnList.push({
+  //     type:'',
+  //     icon:"el-icon-refresh",
+  //     functionName:'onReset',
+  //     name:'重置',
+  //   })
+  // }
+
+  funcList.filter(item=>item.label !=='queryList').forEach(func=>{
+    const {name,code,label} = func
+    if(label == 'insert'){
+      toolbarBtnList.push({
+        type:'success',
+        icon:"el-icon-circle-plus-outline",
+        functionName:code?code:'onAdd',
+        name:name?name:'新增',
+      })
+    }else if(label == 'deleteBatch'){
+      toolbarBtnList.push({
+        type:'danger',
+        icon:"el-icon-delete",
+        functionName:code?code:'onBatchDelete',
+        name:name?name:'批量删除',
+      })
+    }else if(label == 'globalExt'){
+      toolbarBtnList.push({
+        type:'',
+        icon:'',
+        functionName:code?code:nanoid(),
+        name:name?name:'扩展按钮',
+      })
+    }else{
+      console.log(`功能label:${label}不符合标准`);
+    }
+  })
+
+  return {
+    queryList,
+    toolbarBtnList
+  }
+}
 // 根据模板+params转换为指定的scriptData,然后调用genScript
-function getQuery(fileParam, sourceData) {
+async function getQuery(fileParam, sourceData) {
+  // 解析模板需要的数据，根据模板渲染即可
   const { template } = fileParam
   const type = 'query'
   const fileInfo = getFileInfo({ ...fileParam, type })
@@ -62,10 +130,15 @@ function getQuery(fileParam, sourceData) {
   //  处理一下option
   handleMethodListHasOption(script)
   // ---------------------
+  const templatePath = path.join(__dirname, '../view/query.ejs')
+
+  const templateParam = handleTemplate(fieldList,funcList)
+
+  const templateData = await ejs.renderFile(templatePath,templateParam)
   return {
     ...fileInfo,
     params: {
-      template: getTemplate(template,type),
+      template: templateData,
       script
     }
   }

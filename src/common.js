@@ -25,11 +25,11 @@ function addServiceToImportList(script,serviceName){
   script['importList'].push({ isDefault: false, from: '@/services', content: serviceName })
 }
 function handleSelectEntityType(script,field){
-  const { request,bindAttr } = field
+  const { request,bindAttr,field:bindField } = field
   const { url } = request
   const { serviceType,interfaceName } = parseUrl(url)
   const serviceName = `${changeCase.pascalCase(serviceType)}Service`
-  const variableName = `${changeCase.camelCase(bindAttr)}Option`
+  const variableName = `${changeCase.camelCase(bindField)}Option`
   const functionName = `get${changeCase.pascalCase(variableName)}`
   addServiceToImportList(script,serviceName)
   script['methodList'].unshift({ type: 'option', serviceName, interfaceName, variableName, functionName })
