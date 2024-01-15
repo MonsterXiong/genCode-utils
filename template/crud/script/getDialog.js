@@ -35,14 +35,12 @@ script['methodList']=[{
   param: ""
 },]
 }
-
 function isUpdate(funcInfo){
   return funcInfo.label =='update'
 }
 function isCreate(funcInfo){
   return funcInfo.label =='insert'
 }
-
 function initStruct(script,funcInfo){
   initDataList(script)
   initImportDataList(script)
@@ -88,7 +86,6 @@ function handleFieldList(script,fieldList){
   }
 
 }
-
 function getInterfaceData(requestInfo){
   if(!requestInfo){
     throw new Error('没有对应的请求信息')
@@ -100,7 +97,6 @@ function getInterfaceData(requestInfo){
     InterfaceName:`${changeCase.camelCase(interfaceName)}`
   }
 }
-
 function handleMethodList(script,funcInfo,fieldList){
   const prikeyInfo = fieldList.find(item=>item.pk)
   const pri = prikeyInfo.field
@@ -128,7 +124,6 @@ function handleMethodList(script,funcInfo,fieldList){
   })
 
 }
-
 function handleTemplate(fileParam,sourceData){
   const { name } = fileParam
   const { functionList, elementList } = sourceData

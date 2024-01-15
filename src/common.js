@@ -25,6 +25,9 @@ function getFileInfo({ name, type, dirpath, template }) {
 function addEmitMethodNoParam(emitName){
   return { type: 'emit', name: emitName, content: '', param: '' }
 }
+function addEmitMethodRow(emitName){
+  return { type: 'emit', name: emitName, content: '', param:'row' }
+}
 function addServiceToImportList(script,serviceName){
   script['importList'].push({ isDefault: false, from: '@/services', content: serviceName })
 }
@@ -132,6 +135,7 @@ module.exports = {
   getTab,
   getFileInfo,
   addEmitMethodNoParam,
+  addEmitMethodRow,
   addServiceToImportList,
   handleSelectEntityType,
   handleMethodListHasOption,

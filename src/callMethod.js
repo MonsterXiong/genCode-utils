@@ -94,8 +94,8 @@ function getOptionMethod(option){
 }
 function getEmitMethod(method){
   const { name, param } = method
-  return `${getTab(2)}${name}() {
-      this.$emit('${name}'${param?',param':''})
+  return `${getTab(2)}${name}(${param}) {
+      this.$emit('${name}',${param?param:''})
     },`
 }
 function getPlaceholderMethod(method){

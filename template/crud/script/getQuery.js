@@ -46,7 +46,6 @@ function handleFieldList(script,fieldList){
   }
 }
 
-
 function handleTemplate(fieldList,funcList){
   const queryList = fieldList.map(field=>{
     const {name,field:prop,displayType,bindAttr} = field
