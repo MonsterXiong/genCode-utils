@@ -85,6 +85,7 @@ function handleTemplate(fieldList,funcList){
         icon:"el-icon-circle-plus-outline",
         functionName:code?code:'onAdd',
         name:name?name:'新增',
+        param:""
       })
     }else if(label == 'deleteBatch'){
       toolbarBtnList.push({
@@ -92,6 +93,7 @@ function handleTemplate(fieldList,funcList){
         icon:"el-icon-delete",
         functionName:code?code:'onBatchDelete',
         name:name?name:'批量删除',
+        param:""
       })
     }else if(label == 'globalExt'){
       toolbarBtnList.push({
@@ -99,6 +101,7 @@ function handleTemplate(fieldList,funcList){
         icon:'',
         functionName:code?code:nanoid(),
         name:name?name:'扩展按钮',
+        param:""
       })
     }else{
       console.log(`功能label:${label}不符合标准`);

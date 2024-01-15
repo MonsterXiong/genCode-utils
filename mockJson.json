@@ -151,6 +151,18 @@
           ]
         },
         {
+          "name": "批量删除",
+          "code": "deleteBatch",
+          "label": "deleteBatch",
+          "functionType": "obj",
+          "request": [
+            {
+              "label": "deleteBatch",
+              "url": "/base/design_abi/deleteAbiBatch"
+            }
+          ]
+        },
+        {
           "name": "计算数值",
           "code": "calValue",
           "label": "globalExt",

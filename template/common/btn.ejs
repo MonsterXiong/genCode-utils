@@ -1,1 +1,1 @@
-<el-button <%if (type !=""){%>type="<%= type %>"<%}%> <%if(icon !=""){%>icon="<%= icon %>"<%}%> <%if(functionName!=""){%>@click="<%= functionName %>"<%}%>><%= name %></el-button>
+<el-button <%if (type !=""){%>type="<%= type %>"<%}%> <%if(icon !=""){%>icon="<%= icon %>"<%}%> <%if(functionName!=""){%>@click="<%= functionName %><%if(param !==""){%>(<%=param%>)<%}%>"<%}%>><%= name %></el-button>

@@ -1,0 +1,37 @@
+<template>
+  <div class="common-container" ref="tableRef">
+    <el-table :data="tableData" :height="tableHeight" size="mini" border style="width: 100%" v-bind="$attrs" v-on="$listeners">
+    <%_ if(isDeleteBatch){ -%>
+      <el-table-column type="selection" align="center" label="序号" width="80"> </el-table-column>
+    <%_ } -%>
+    <%_ fields.forEach(function(field){ -%>
+      <el-table-column prop="<%= field.key %>" align="center" label="<%= field.label %>"></el-table-column>
+      <%_ }); -%>
+      <el-table-column label="操作" width="130" fixed="right">
+        <template slot-scope="scope">
+          <%_ btns.forEach(function(btn){ -%>
+          <el-button @click="<%=btn.functionName%><%if(btn.param !==''){%>(<%=btn.param%>)"<%}%> type="text" size="small"><%=btn.name%></el-button>
+          <%_ }); -%>
+          <%_ if(isEdit){ -%>
+          <el-button @click="<%=editBtnInfo.functionName%>(scope.row)" type="text" size="small"><%=editBtnInfo.name%></el-button>
+          <%_ } -%>
+          <%_ if(isDelete){ -%>
+          <el-button @click="<%=deleteBtnInfo.functionName%>(scope.row)" class="delete-btn" type="text" size="small"><%=deleteBtnInfo.name%></el-button>
+          <%_ } -%>
+        </template>
+      </el-table-column>
+    </el-table>
+    <div class="pagination-wrapper" ref="paginationRef">
+      <el-pagination
+        @size-change="onSizeChange"
+        @current-change="onCurrentChange"
+        :current-page="pageInfo.page"
+        :page-sizes="[10, 20, 50, 100, 200]"
+        :page-size="pageInfo.rows"
+        layout="total, sizes, prev, pager, next, jumper"
+        :total="total"
+      >
+      </el-pagination>
+    </div>
+  </div>
+</template>
