@@ -1,4 +1,5 @@
 const { callMethod } = require("./callMethod")
+const { callWatch } = require("./callWatch")
 const { getTab } = require("./common")
 
 function genTemplate(template){
@@ -48,11 +49,11 @@ function getDefaultContent(scriptData) {
   if(isEmpty(dataList)){
     code += `\n${getTab()}data() {\n${getTab(2)}return {\n${getData(dataList,3)}${getTab(2)}\n${getTab(2)}}\n${getTab()}},`
   }
+  if(isEmpty(watchList)){
+    code += formatScriptAttr('watch',':',getWatch(watchList))
+  }
   if(isEmpty(mountList)){
     code += formatScriptAttr('async mounted','()',getMount(mountList))
-  }
-  if(isEmpty(watchList)){
-    code += formatScriptAttr('watch',':',getWatch())
   }
   if(isEmpty(methodList)){
     code += formatScriptAttr('methods',':',getMethod(methodList))
@@ -62,7 +63,19 @@ function getDefaultContent(scriptData) {
 function formatScriptAttr(attr,symbol,content){
   return `\n${getTab()}${attr}${symbol} {\n${content ? content : ''}\n${getTab()}},`
 }
-function getWatch(){}
+function getWatch(list=[]){
+  return list.reduce((res,item,index,arr)=>res+=`${getWatchItem(item)}${index!==arr.length-1?'\n':''}`,'')
+}
+function getWatchItem(watch){
+  const { type }= watch
+  const specialWatchMap = callWatch()
+  const action = specialWatchMap[type]
+  if(typeof action !== 'function'){
+    console.log('暂时不支持该类型',type);
+    return
+  }
+  return action(watch)
+}
 function getComponent(list=[]){
   return list.reduce((res,item,index,arr)=>res+=`${getTab(2)}${item},${index!==arr.length-1?'\n':''}`,'')
 }

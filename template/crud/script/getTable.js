@@ -1,5 +1,4 @@
 const { getFileInfo, initScript, addEmitMethodRow } = require("../../../src/common")
-const { templateDataMap } = require('../view/templateData')
 const path = require('path')
 const ejs = require('ejs')
 function initPropList(script){
@@ -64,7 +63,6 @@ function handleMethodList(script, funcList) {
     funcList.forEach(func => {
       const { label, code } = func
       if (label !== 'queryList') {
-        console.log(code);
         script['methodList'].push(addEmitMethodRow(code))
       }else{
         script['importList'].push({ isDefault: false, from: '@/utils/queryConditionBuilder', content: 'QueryConditionBuilder' })
@@ -85,7 +83,6 @@ function getDeleteOrEditBtnParam(btnInfo,type){
     showInfo = {
       name:btnName?btnName:type=='update'?'编辑':'删除',
       functionName:code?code:type=='update'?'onEdit':'onDelete'
-
     }
   }
   return {
@@ -139,7 +136,7 @@ async function getTable(fileParam, sourceData) {
   //  --------------------
   const templatePath = path.join(__dirname, '../view/table.ejs')
 
-  const templateParam = handleTemplate(fieldList,funcList,isDeleteBatch)
+  const templateParam = handleTemplate(fieldList,funcList,true)
 
   const templateData = await ejs.renderFile(templatePath,templateParam)
   return {

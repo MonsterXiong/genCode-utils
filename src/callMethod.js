@@ -105,6 +105,47 @@ function getPlaceholderMethod(method){
     },`
 }
 
+function getRefreshPagination(method){
+  return `${getTab(2)}refreshPagination() {
+      this.pageInfo = {
+        rows: 20,
+        page: 1,
+      }
+    },`
+}
+function getEntryOnReset(method){
+  return `${getTab(2)}onReset() {
+      Object.keys(this.queryForm).forEach((key) => {
+        this.queryForm[key] = ''
+      })
+      this.refreshPagination()
+    },`
+}
+function getOpenDialog(method){
+  const {name,dialogRef,param}= method
+  return `${getTab(2)}${name}(${param}) {
+      this.$refs.${dialogRef}.show(${param})
+    },`
+}
+function getOnSelectionChanget(method){
+  return `${getTab(2)}onSelectionChange(val) {
+      this.multipleSelection = val
+    },`
+}
+function getQueryTableData(method){
+  const { ServiceName,InterfaceName } = method
+  return `${getTab(2)}async queryTableData() {
+      let queryCondition = QueryConditionBuilder.getInstance(this.pageInfo.page, this.pageInfo.rows)
+      Object.keys(this.queryForm).forEach((key) => {
+        if (this.queryForm[key] || this.queryForm[key] == 0) {
+          queryCondition.buildLikeQuery(key, this.queryForm[key])
+        }
+      })
+      const { data, count } = await ${ServiceName}.${InterfaceName}(queryCondition)
+      this.tableData = data
+      this.total = count
+    },`
+}
 function callMethod(){
   return {
     'emit':(method)=>getEmitMethod(method),
@@ -122,6 +163,11 @@ function callMethod(){
     'dialogSubmit':(method)=>getDialogSubmitMethod(method),
     'setHeight':(method)=>getSetHeightMethod(method),
     'pageInfoChange':(method)=>getPageInfoMethod(method),
+    'refreshPagination':(method)=>getRefreshPagination(method),
+    'entryOnReset':(method)=>getEntryOnReset(method),
+    'selectionChange':(method)=>getOnSelectionChanget(method),
+    'openDialog':(method)=>getOpenDialog(method),
+    'queryTableData':(method)=>getQueryTableData(method),
   }
 }
 

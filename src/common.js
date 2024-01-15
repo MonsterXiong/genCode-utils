@@ -89,6 +89,7 @@ function initScript(name=""){
     dataList: [],
     mountList: [],
     methodList: [],
+    watchList: [],
     componentList: []
   }
 }
