@@ -3,9 +3,11 @@ const {
   addEmitMethodNoParam,
   handleSelectEntityType,
   handleMethodListHasOption,
-  handleImportList
+  handleImportList,
+  initScript,
+  getTemplate
 } = require("../../../src/common")
-const { templateDataMap } = require("../view/templateData")
+
 // 初始化查询和重置功能
 function initQueryAndReset(script) {
   script['methodList'].push(addEmitMethodNoParam('onQuery'))
@@ -24,34 +26,8 @@ function handleMethodList(script, funcList) {
   }
 }
 
-// 根据模板+params转换为指定的scriptData,然后调用genScript
-function getQuery(fileParam, sourceData) {
-  const { template } = fileParam
-  const type = 'query'
-  const fileInfo = getFileInfo({ ...fileParam, type })
-  // 清洗数据，然后生成import
-  //  --------------------
-  const { functionList, elementList } = sourceData
-  const funcList = functionList.filter(item => item.functionType == 'global')
-  const fieldList = (elementList.find(item => item.bindFunction == 'queryList')?.data || []).filter(item => item.param.isSearch)
-  // const fieldList = data.map(item => {
-  //   const name = dataModel[item.bindObj].find(dataColumn => dataColumn.code == item.bindAttr)
-  //   return {
-  //     ...item,
-  //     name: item.alias ? item.alias : name,
-  //     field: item.aliasCode ? item.aliasCode : item.bindAttr
-  //   }
-  // })
-  const script = {
-    name: fileInfo.filename,
-    importList: [],
-    propList: [],
-    dataList: [],
-    mountList: [],
-    methodList: [],
-    componentList: []
-  }
 
+function handleFieldList(script,fieldList){
   if (fieldList.length) {
     initQueryAndReset(script)
     fieldList.forEach(field => {
@@ -64,22 +40,38 @@ function getQuery(fileParam, sourceData) {
       }
     })
   }
+}
+
+// 根据模板+params转换为指定的scriptData,然后调用genScript
+function getQuery(fileParam, sourceData) {
+  const { template } = fileParam
+  const type = 'query'
+  const fileInfo = getFileInfo({ ...fileParam, type })
+  //  --------------------
+  const { functionList, elementList } = sourceData
+  const funcList = functionList.filter(item => item.functionType == 'global')
+  const fieldList = (elementList.find(item => item.bindFunction == 'queryList')?.data || []).filter(item => item.param.isSearch)
+  // 初始化script
+  const script = initScript(fileInfo.filename)
+  // 处理要素
+  handleFieldList(script,fieldList)
+  //  处理功能
   handleMethodList(script, funcList)
+  //  整合一下imporList
   handleImportList(script)
+  //  处理一下option
   handleMethodListHasOption(script)
   // ---------------------
   return {
     ...fileInfo,
     params: {
-      template: handleTemplate(template,type),
+      template: getTemplate(template,type),
       script
     }
   }
 }
 
-function handleTemplate(template,type){
-  return templateDataMap[template][type]
-}
+
 
 module.exports = {
   getQuery

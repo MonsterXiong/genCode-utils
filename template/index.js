@@ -1,5 +1,7 @@
-const { getCrudAdapterData } = require("./crud/script/getCrud");
+const { getCrudAdapterData } = require("./crud");
+const { getServiceAdapterData } = require("./service");
 
 module.exports = {
-  getCrudAdapterData
+  getCrudAdapterData,
+  getServiceAdapterData
 }

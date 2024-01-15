@@ -2,8 +2,9 @@ const changeCase = require('change-case')
 const path = require('path')
 const fse = require('fs-extra')
 const { genScript: transform } = require('./genScript')
-
-
+const { templateDataMap } = require('../template/crud/view/templateData')
+const fs = require('fs')
+const ejs = require('ejs')
 function getFileInfo({ name, type, dirpath, template }) {
   const componentName = changeCase.pascalCase(`${dirpath}_${name ? name : type}`)
   const filetype = type !== 'index' ? 'component' : 'entry'
@@ -87,6 +88,67 @@ function transformOutInfo(transformData) {
   }
 }
 
+function getEjsTemplate(templatePath) {
+  const templateFile = fs.readFileSync(templatePath, "utf8");
+  return ejs.compile(templateFile);
+}
+
+function getTemplate(template,type){
+  return templateDataMap[template][type]
+}
+
+
+
+function initScript(name=""){
+  return {
+    name,
+    importList: [],
+    propList: [],
+    dataList: [],
+    mountList: [],
+    methodList: [],
+    componentList: []
+  }
+}
+
+function getFormatRequestList(sourceData){
+  const {functionList,elementList} = sourceData
+  const functionMap = functionList.reduce((res,item)=>{
+    res[item.label] = item
+    return res
+  },{})
+  const serviceList = elementList.reduce((res,element) => {
+    let request = functionMap[element.bindFunction]?.request || []
+    const prikeyInfo = element.data.find(item=>item.pk) || {}
+    if(request.length){
+      request = request.map(item=>{
+        return {
+          ...item,
+          prikeyInfo:{...prikeyInfo,code:changeCase.camelCase(prikeyInfo.code)}
+        }
+      })
+    }
+    res = res.concat(request)
+    return res
+  },[]).reduce((res,item)=>{
+    const { interfaceType, serviceType, interfaceName } = parseUrl(item.url)
+    const param = {
+      ...item,
+      interfaceType,
+      serviceType, 
+      serviceName:changeCase.pascalCase(serviceType),
+      interfaceName
+    }
+    if(!res[serviceType]){
+      res[serviceType] = [param]
+    }else{
+      res[serviceType].push(param)
+    }
+    return res
+  },{})
+  return serviceList
+}
+
 module.exports = {
   transformOutInfo,
   genCode,
@@ -95,5 +157,10 @@ module.exports = {
   addServiceToImportList,
   handleSelectEntityType,
   handleMethodListHasOption,
-  handleImportList
+  handleImportList,
+  initScript,
+  getTemplate,
+  parseUrl,
+  getFormatRequestList,
+  getEjsTemplate
 }

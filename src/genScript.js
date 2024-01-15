@@ -1,3 +1,6 @@
+function getTab(number=1){
+  return new Array(number).fill('').reduce((res)=>res+=`\t`,'')
+}
 function genTemplate(template){
   // 从模板中获取
   let code = `<template>`
@@ -75,9 +78,7 @@ function getData(list=[],indent){
   return list.reduce((res,item,index,arr)=>res+=`${getTab(indent)}${item.name}: ${getDataItem(item,indent)},${index!==arr.length-1?'\n':''}`,'')
 }
 
-function getTab(number=1){
-  return new Array(number).fill('').reduce((res)=>res+=`\t`,'')
-}
+
 function getDataItem(dataItem,indent){
   const {name,type,initValue} = dataItem
   if(type == 'object'){

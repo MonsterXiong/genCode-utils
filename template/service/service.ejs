@@ -1,0 +1,31 @@
+<%_if (['delete','query'].includes(functionType)) { -%>
+    static async <%= functionName %>(<%= prikey %>) {
+        return service.postQuery('<%= functionUrl%>', {<%= prikey %>})
+    }
+<%_ }else if ( functionType=='queryList') { -%>
+    static async <%= functionName %>(queryCondition) {
+        return service.post('<%= functionUrl%>', queryCondition || {})
+    }
+<%_ }else if(['deleteBatch','insert','insertBatch','updateBatch','update','save','saveBatch'].includes(functionType)) { -%>
+    static async <%= functionName %>(param) {
+        return service.post('<%= functionUrl%>', param)
+    }
+<%_ }else if(functionType=='import') { -%>
+    static async <%= functionName %>(file) {
+        return service.postForm('<%= functionUrl%>', { file })
+    }
+<%_ }else if(functionType=='export') { -%>
+    static async <%= functionName %>(queryCondition) {
+        return service.post('<%= functionUrl%>', queryCondition,{
+            responseType: 'blob'
+        })
+    }
+<%_ }else if(functionType=='exportTemplate') { -%>
+    static async <%= functionName %>(queryCondition) {
+        return service.postFormData('<%= functionUrl%>', {})
+    }
+<%_ }else { -%>
+    static async <%= functionName %>(param) {
+        return service.post('<%= functionUrl%>',param)
+    }
+<%_ } -%>
