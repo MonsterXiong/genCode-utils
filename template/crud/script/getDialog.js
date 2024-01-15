@@ -1,9 +1,7 @@
 const { getFileInfo, initScript } = require("../../../src/common")
-const { templateDataMap } = require('../view/templateData')
 const path = require('path')
 const ejs = require('ejs')
 const changeCase = require('change-case')
-
 
 function initDataList(script){
   script['dataList']=[  {
@@ -16,11 +14,9 @@ function initDataList(script){
     initValue: 'false',
   }]
 }
-
 function initImportDataList(script){
   script['importList'] = [{isDefault: true,from: '@/utils/tools',content: 'tools'}]
 }
-
 function initMethodList(script){
 script['methodList']=[{
   type: 'onDialogClose',
@@ -34,8 +30,7 @@ script['methodList']=[{
   param: ""
 },]
 }
-
-function initDialog(script,funcInfo){
+function initStruct(script,funcInfo){
   initDataList(script)
   initImportDataList(script)
   initMethodList(script)
@@ -118,7 +113,7 @@ async function getDialog(fileParam, sourceData) {
   const { request } = funcInfo
   // 初始化script
   const script = initScript(fileInfo.filename)
-  initDialog(script)
+  initStruct(script)
   // // 处理要素
   handleFieldList(script,fieldList)
   // //  处理功能
@@ -138,7 +133,6 @@ async function getDialog(fileParam, sourceData) {
   return {
     ...fileInfo,
     params: {
-      // template: templateDataMap[template][type],
       template: templateData,
       script
     }
