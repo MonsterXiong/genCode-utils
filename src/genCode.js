@@ -1,10 +1,35 @@
 
-const { genCode, transformOutInfo } = require('./common')
+const { genCode } = require('./common')
+const { getPage } =require('./genPage.js')
 const { getCrudAdapterData, getServiceAdapterData, getMenuAdapterData, getRouteAdapterData, getRouteConstantAdapterData } = require('../template')
 const fse = require('fs-extra')
 const path = require('path')
 const changeCase = require('change-case')
+function getSoftwareData() {
+  // 第一步:读取JSON数据
+  const jsonData = fse.readJSONSync(path.resolve(__dirname, '../mockJson.json'))
+  return jsonData
+}
+function getGenCode(softwareData){
+  const { menuInfo, pages, dataModel } = softwareData
 
+  const dataModelInfo = transformDataModelMap(dataModel)
+
+  // 获取路由常量、菜单、路由、页面数据
+  const { menuList, routeList, routesConstantList, pageList } = getAdapterData(menuInfo, pages)
+
+  const menuResult = getMenuAdapterData({ list: menuList })
+  const routeResult = getRouteAdapterData({ list: routeList })
+  const routesConstantResult = getRouteConstantAdapterData({ list: routesConstantList })
+
+  // 获取页面内容 and 收集service数据
+  const { pageResult, serviceData } = getPageAdapterData(pageList, dataModelInfo)
+
+  // 统一处理所有的serviceData
+  const servieceResult = getServiceAdapterData(serviceData)
+
+  return [...menuResult, ...routeResult, ...routesConstantResult, ...pageResult, ...servieceResult]
+}
 // 转换dataModel
 function transformDataModelMap(dataModel) {
   return dataModel.reduce((res, item) => {
@@ -12,18 +37,7 @@ function transformDataModelMap(dataModel) {
     return res
   }, {})
 }
-
-function getSoftwareData() {
-  // 第一步:读取JSON数据
-  const jsonData = fse.readJSONSync(path.resolve(__dirname, '../mockJson.json'))
-
-  return {
-    ...jsonData,
-    dataModel: transformDataModelMap(jsonData.dataModel),
-  }
-}
-
-function getSoftwareStructData(menuInfo, pages) {
+function getAdapterData(menuInfo, pages) {
   const init_fileList = {
     menuList: [],
     routeList: [],
@@ -60,8 +74,19 @@ function getSoftwareStructData(menuInfo, pages) {
 
   return menuList
 }
-
-// 将dataModel的数据清洗,同时返回页面需要的数据
+// 最终返回的是写入文件相对路径和内容,有page和services两类
+function getPageAdapterData(menuPageList, dataModel) {
+  const pagesCode = menuPageList.map((menuPage) => {
+    // 根据页面的菜单信息去找对应的pages信息和dataModel
+    const { type } = menuPage.pageInfo
+    const pageData = parseJsonToPage(menuPage, dataModel)
+    if (type == 'crud') {
+      return getCrudAdapterData(pageData)
+    }
+  })
+  return getPageResultAnddCollectServiceData(pagesCode)
+}
+// 返回页面需要的数据
 function parseJsonToPage(menuPage, dataModel) {
   const { functionModel: functionList, elementConfig: elementList } = menuPage.pageInfo
   elementList.forEach(element => {
@@ -84,23 +109,14 @@ function parseJsonToPage(menuPage, dataModel) {
 
   return { menuInfo: menuPage, functionList, elementList, dataModelPriInfo }
 }
-
-// 最终返回的是写入文件相对路径和内容,有page和services两类
-function getGenPageCode(menuPageList, dataModel) {
-  return menuPageList.map((menuPage) => {
-    // 根据页面的菜单信息去找对应的pages信息和dataModel
-    const { type } = menuPage.pageInfo
-    const pageData = parseJsonToPage(menuPage, dataModel)
-    if (type == 'crud') {
-      return getCrudAdapterData(pageData)
-    }
-  })
-}
-
-
-function collectPageData(pageResult, pages) {
-  pages.forEach(components => {
-    pageResult.push(components)
+function getPageResultAnddCollectServiceData(pagesCode) {
+  return pagesCode.reduce((res, { services, pages }) => {
+    collectServiceData(res['serviceData'], services)
+    getPageReuslt(res['pageResult'], pages)
+    return res
+  }, {
+    pageResult: [],
+    serviceData: {}
   })
 }
 function collectServiceData(serviceData, services) {
@@ -112,39 +128,31 @@ function collectServiceData(serviceData, services) {
     }
   })
 }
-function collectData(pagesCode) {
-  return pagesCode.reduce((res, { services, pages }) => {
-    collectServiceData(res['serviceData'], services)
-    collectPageData(res['pageData'], pages)
-    return res
-  }, {
-    pageData: [],
-    serviceData: {}
+function getPageReuslt(pageResult, pages) {
+  pages.forEach(components => {
+    pageResult.push(getGenPageData(components))
   })
 }
 
-function main() {
-  // 获取软件数据
-  const softwareData = getSoftwareData()
-  const { menuInfo, pages, dataModel } = softwareData
-
-  // 获取路由常量、菜单、路由、页面数据
-  const { menuList, routeList, routesConstantList, pageList } = getSoftwareStructData(menuInfo, pages)
-
-  const menuResult = getMenuAdapterData({ list: menuList })
-  const routeResult = getRouteAdapterData({ list: routeList })
-  const routesConstantResult = getRouteConstantAdapterData({ list: routesConstantList })
-
-  // 一个页面多个组件
-  const pagesCode = getGenPageCode(pageList, dataModel)
-  // 收集service和page的内容
-  const { pageData, serviceData } = collectData(pagesCode)
-  // 统一处理所有的serviceData
-  const servieceResult = getServiceAdapterData(serviceData)
-
-  const pageResult = pageData.map(item => transformOutInfo(item))
-
-  genCode([...menuResult, ...routeResult, ...routesConstantResult, ...pageResult, ...servieceResult])
+// 得到的是一个页面内容并转换为适应genCode的格式
+function getGenPageData(transformData) {
+  const { dirpath, filepath, params } = transformData
+  const filePath = path.join(dirpath, filepath)
+  const content = getPage(params)
+  return {
+    filePath,
+    content
+  }
 }
 
-main()
+
+function execCodeGen() {
+  // 获取软件数据
+  const softwareData = getSoftwareData()
+  // 获取code
+  const code = getGenCode(softwareData)
+  // 生成
+  genCode(code)
+}
+
+execCodeGen()

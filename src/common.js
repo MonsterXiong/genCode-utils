@@ -1,7 +1,7 @@
 const changeCase = require('change-case')
 const path = require('path')
 const fse = require('fs-extra')
-const { genScript: transform } = require('./genScript')
+
 const { templateDataMap } = require('../template/crud/view/templateData')
 const fs = require('fs')
 const ejs = require('ejs')
@@ -77,16 +77,7 @@ async function genCode(result) {
   }
 }
 
-// 得到的是一个页面内容并转换为适应genCode的格式
-function transformOutInfo(transformData) {
-  const { dirpath, filepath, params } = transformData
-  const filePath = path.join(dirpath, filepath)
-  const content = transform(params)
-  return {
-    filePath,
-    content
-  }
-}
+
 
 function getEjsTemplate(templatePath) {
   const templateFile = fs.readFileSync(templatePath, "utf8");
@@ -150,7 +141,6 @@ function getFormatRequestList(sourceData){
 }
 
 module.exports = {
-  transformOutInfo,
   genCode,
   getFileInfo,
   addEmitMethodNoParam,
