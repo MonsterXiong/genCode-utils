@@ -23,6 +23,8 @@ function handleMethodList(script, funcList) {
       const { label, code } = func
       if (label !== 'queryList') {
         script['methodList'].push(addEmitMethodNoParam(code))
+      }else{
+        script['importList'].push({ isDefault: false, from: '@/utils/queryConditionBuilder', content: 'QueryConditionBuilder' })
       }
     });
   }

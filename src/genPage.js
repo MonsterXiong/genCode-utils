@@ -1,6 +1,6 @@
-function getTab(number=1){
-  return new Array(number).fill('').reduce((res)=>res+=`\t`,'')
-}
+const { callMethod } = require("./callMethod")
+const { getTab } = require("./common")
+
 function genTemplate(template){
   // 从模板中获取
   // let code = `<template>`
@@ -12,16 +12,22 @@ function genTemplate(template){
 function isEmpty(list){
   return Array.isArray(list) && list.length > 0
 }
-function getPage(scriptData){
-  const {template,script} = scriptData
-  const {importList } = script
-  let code = genTemplate(template) || ''
-  code += `<script>\n`
+
+function getScript(script){
+  const { importList } = script
+  let code = `<script>\n`
   if(isEmpty(importList)){
-    code += genImport(script.importList)
+    code += genImport(importList)
   }
   code +=`export default {${getDefaultContent(script)}\n}`
   code += `\n</script>`
+  return code
+}
+
+function getPage(scriptData){
+  const {template,script} = scriptData
+  let code = genTemplate(template) || ''
+  code += getScript(script)
   return code
 }
 function genImport(list=[]){
@@ -112,123 +118,8 @@ function getMethodItem(method){
   }
   return action(method)
 }
-function callMethod(){
-  return {
-    'emit':(method)=>getEmitMethod(method),
-    'option':(method)=>getOptionMethod(method),
-    'initOption':(method)=>getInitOptionMethod(method),
-    'placeholder':(method)=>getPlaceholderMethod(method),
-    'onEdit':(method)=>getOnEditMethod(method),
-    'onDelete':(method)=>getOnDeleteMethod(method),
-    // 表单
-    'onDialogClose':(method)=>getOnDialogCloseMethod(method),
-    'onReset':(method)=>getOnResetMethod(method),
-    'dialogShow':(method)=>getDialogShowMethod(method),
-    'dialogSubmit':(method)=>getDialogSubmitMethod(method),
-    'setHeight':(method)=>getSetHeightMethod(method),
-    'pageInfoChange':(method)=>getPageInfoMethod(method),
-  }
-}
-function getPageInfoMethod(method){
-  const { name, param } = method
-  return `${getTab(2)}${name}(${param}) {
-      this.pageInfo.${param} = ${param}
-    },`
-}
-function getSetHeightMethod(method){
-  const { name, param } = method
-  return `${getTab(2)}${name}() {
-      this.$nextTick(() => {
-        this.tableHeight = this.$refs.tableRef.offsetHeight - this.$refs.paginationRef.offsetHeight + 'px'
-      })
-    },`
-}
-function getDialogSubmitMethod(method){
-  const { name, param,pri,updateServiceName,updateInterfaceName,insertServiceName,insertInterfaceName } = method
-  return `${getTab(2)}${name}(${param}) {
-      this.$refs.formRef.validate(async valid => {
-        if (valid) {
-          if (this.row && this.row.${pri}) {
-            await ${updateServiceName}.${updateInterfaceName}(this.formData);
-          } else {
-            await ${insertServiceName}.${insertInterfaceName}(this.formData);
-          }
-          tools.message("保存成功");
-          this.onDialogClose();
-          this.$emit("refresh");
-        } else {
-          return false;
-        }
-      });
-    },`
-}
-function getDialogShowMethod(method){
-  const { name, param } = method
-  return `${getTab(2)}${name}(${param}) {
-      this.title = title;
-      this.dialogVisible = true;
-      this.row = row;
-      if (row) {
-        this.formData = { ...row };
-      } else {
-        this.formData = {};
-      }
-    },`
-}
-function getOnDialogCloseMethod(method){
-  const { name, param } = method
-  return `${getTab(2)}${name}() {
-      this.onReset();
-      this.dialogVisible = false;
-    },`
-}
-function getOnResetMethod(method){
-  const { name, param } = method
-  return `${getTab(2)}${name}() {
-      Object.keys(this.formData).forEach(key=>{
-        this.formData[key] = ""
-      })
-    },`
-}
-function getOnDeleteMethod(method){
-  const { name, param } = method
-  return `${getTab(2)}${name}(row) {
-      this.apiDelete([row])
-    },`
-}
-function getOnEditMethod(method){
-  const { name, param,dialogRef,dialogTitle } = method
-  return `${getTab(2)}${name}(row) {
-      this.$refs.${dialogRef}.show({ row, title: '编辑${dialogTitle}' })
-    },`
-}
-function getInitOptionMethod({children}){
-  return `${getTab(2)}async initOption() {\n${getInitOptionData(children)}${getTab(2)}},`
-}
-function getInitOptionData(initOptionList){
-  return initOptionList.reduce((res,item)=>res+=`${getTab(3)}await this.${item}()\n`,'')
-}
-function getOptionMethod(option){
-  const {serviceName,interfaceName,variableName,functionName} = option
-  return `${getTab(2)}async ${functionName}() {
-      let queryCondition = QueryConditionBuilder.getInstanceNoPage()
-      const { data } = await ${serviceName}.${interfaceName}(queryCondition)
-      this.${variableName} = data
-    },`
-}
-function getEmitMethod(method){
-  const { name, param } = method
-  return `${getTab(2)}${name}() {
-      this.$emit('${name}'${param?',param':''})
-    },`
-}
-function getPlaceholderMethod(method){
-  const { name, param } = method
-  return `${getTab(2)}${name}(${param}) {
-      // TODO:implement ${name}
-    },`
-}
+
 
 module.exports = {
-  getPage
+  getPage,
 }

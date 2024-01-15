@@ -19,7 +19,7 @@ function transfromInterfaceData(serviceFunc) {
         functionType: label,
         functionUrl: url,
         functionName: interfaceName,
-        prikey: prikeyInfo?.code
+        prikey: prikeyInfo?.field
     }
     return tempData
 }

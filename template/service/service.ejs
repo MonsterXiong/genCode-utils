@@ -1,6 +1,6 @@
 <%_if (['delete','query'].includes(functionType)) { -%>
     static async <%= functionName %>(<%= prikey %>) {
-        return service.postQuery('<%= functionUrl%>', {<%= prikey %>})
+        return service.postQuery('<%= functionUrl%>', { <%= prikey %> })
     }
 <%_ }else if ( functionType=='queryList') { -%>
     static async <%= functionName %>(queryCondition) {

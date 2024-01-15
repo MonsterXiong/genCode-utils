@@ -3,7 +3,11 @@ const fse = require('fs-extra')
 const fs = require('fs')
 const ejs = require('ejs')
 const { templateDataMap } = require('../template/crud/view/templateData')
+const { uniqueArray } = require('./utils/array')
 
+function getTab(number=1){
+  return new Array(number).fill('').reduce((res)=>res+=`\t`,'')
+}
 function getFileInfo({ name, type, dirpath, template }) {
   const componentName = changeCase.pascalCase(`${dirpath}_${name ? name : type}`)
   const filetype = type !== 'index' ? 'component' : 'entry'
@@ -51,12 +55,11 @@ function handleMethodListHasOption(script){
   }
 }
 function handleImportList(script){
-  const serviceList=script['importList'].filter(item=>item.from == '@/services')
+  const serviceList=uniqueArray(script['importList'],'content').filter(item=>item.from == '@/services')
   const otherList=script['importList'].filter(item=>item.from != '@/services')
   const importService = serviceList.map(item=>item.content).join(', ')
   script['importList'] = otherList
   if(serviceList.length){
-    script['importList'].push({ isDefault: false, from: '@/utils/queryConditionBuilder', content: 'QueryConditionBuilder' })
     script['importList'].push({ isDefault:false, from:'@/services',content:importService})
   }
 }
@@ -110,7 +113,7 @@ function getFormatRequestList(sourceData){
     const param = {
       ...item,
       interfaceType,
-      serviceType, 
+      serviceType,
       serviceName:changeCase.pascalCase(serviceType),
       interfaceName
     }
@@ -126,6 +129,7 @@ function getFormatRequestList(sourceData){
 
 module.exports = {
   genCode,
+  getTab,
   getFileInfo,
   addEmitMethodNoParam,
   addServiceToImportList,
