@@ -102,7 +102,7 @@
       ]
     }
   ],
-  "pages": [
+  "components": [
     {
       "id": "xxxxxx",
       "type": "crud",
@@ -181,41 +181,44 @@
           "bindFunction": "queryList",
           "data": [
             {
+              "remark":"指标ID",
               "alias": "指标ID",
               "aliasCode": "indexId",
               "bindObj": "db_index",
               "bindAttr": "index_id",
-              "displayType": "text",
               "pk": true,
               "param": {
+                "displayType": "text",
                 "isHidden": true,
                 "isSearch": false
               }
             },
             {
+              "remark":"指标名称",
               "alias": "指标名称",
               "aliasCode": "indexName",
               "bindObj": "db_index",
               "bindAttr": "name",
-              "displayType": "text",
-              "pk": false,
               "param": {
+                "pk": false,
+                "displayType": "text",
                 "isHidden": false,
                 "isSearch": true
               }
             },
             {
+              "remark":"所属能力",
               "alias": "所属能力",
               "aliasCode": "bindAbiName",
               "bindObj": "db_index",
               "bindAttr": "bind_abi",
-              "displayType": "select",
-              "pk": false,
               "request":{
                 "type":"entity",
                 "url":"/base/design_abi/queryList"
               },
               "param": {
+                "pk": false,
+                "displayType": "select",
                 "isHidden": false,
                 "isSearch": true
               }
@@ -227,25 +230,27 @@
           "bindFunction": "update",
           "data": [
             {
+              "remark":"指标ID",
               "alias": "指标ID",
               "aliasCode": "indexId",
               "bindObj": "db_index",
               "bindAttr": "index_id",
-              "displayType": "text",
-              "pk": true,
               "param": {
+                "pk": true,
+                "displayType": "text",
                 "isHidden": true,
                 "isSearch": true
               }
             },
             {
+              "remark":"指标名称",
               "alias": "指标名称",
               "aliasCode": "indexName",
               "bindObj": "db_index",
               "bindAttr": "name",
-              "displayType": "text",
-              "pk": false,
               "param": {
+                "pk": false,
+                "displayType": "text",
                 "isHidden": false,
                 "isRequired": true
               }
@@ -257,37 +262,40 @@
           "bindFunction": "insert",
           "data": [
             {
+              "remark":"指标ID",
               "alias": "指标ID",
               "aliasCode": "indexId",
               "bindObj": "db_index",
               "bindAttr": "index_id",
-              "displayType": "text",
-              "pk": true,
               "param": {
+                "displayType": "text",
+                "pk": true,
                 "isHidden": true,
                 "isSearch": true
               }
             },
             {
+              "remark":"指标名称",
               "alias": "指标名称",
               "aliasCode": "indexName",
               "bindObj": "db_index",
               "bindAttr": "name",
-              "displayType": "text",
-              "pk": false,
               "param": {
+                "displayType": "text",
+                "pk": false,
                 "isHidden": false,
                 "isRequired": true
               }
             },
             {
+              "remark":"所属能力",
               "alias": "所属能力",
               "aliasCode": "bindAbiName",
               "bindObj": "db_index",
               "bindAttr": "bind_abi",
-              "displayType": "select",
-              "pk": false,
               "param": {
+                "pk": false,
+                "displayType": "select",
                 "isRequired": true,
                 "isMulti": false,
                 "selectUrl": "/base/simple/querySimpleAbiList"

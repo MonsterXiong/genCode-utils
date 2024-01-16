@@ -7,7 +7,7 @@ const { getQuery } = require("./script/getQuery");
 const { getTable } = require("./script/getTable");
 const { getFormatRequestList } = require('../../src/common');
 async function getCrudAdapterData(sourceData) {
-  const { menuInfo, functionList, elementList,dataPriInfo } = sourceData
+  const { menuInfo, functionList, elementList } = sourceData
   const { code: menuCode } = menuInfo
   const dirpath = menuCode ? menuCode : nanoid()
   const template = menuInfo.pageInfo.type

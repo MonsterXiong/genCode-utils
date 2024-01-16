@@ -11,9 +11,7 @@ function getSoftwareData() {
   return jsonData
 }
 async function getGenCode(softwareData){
-  const { menuInfo, pages, dataModel } = softwareData
-
-  const dataModelInfo = transformDataModelMap(dataModel)
+  const { menuInfo, components:pages } = softwareData
 
   // 获取路由常量、菜单、路由、页面数据
   const { menuList, routeList, routesConstantList, pageList } = getAdapterData(menuInfo, pages)
@@ -23,20 +21,14 @@ async function getGenCode(softwareData){
   const routesConstantResult = getRouteConstantAdapterData({ list: routesConstantList })
 
   // 获取页面内容 and 收集service数据
-  const { pageResult, serviceData } = await getPageAdapterData(pageList, dataModelInfo)
+  const { pageResult, serviceData } = await getPageAdapterData(pageList)
 
   // 统一处理所有的serviceData
   const servieceResult = getServiceAdapterData(serviceData)
 
   return [...menuResult, ...routeResult, ...routesConstantResult, ...pageResult, ...servieceResult]
 }
-// 转换dataModel
-function transformDataModelMap(dataModel) {
-  return dataModel.reduce((res, item) => {
-    res[item.code] = item.cloumns
-    return res
-  }, {})
-}
+
 function getAdapterData(menuInfo, pages) {
   const init_fileList = {
     menuList: [],
@@ -75,12 +67,12 @@ function getAdapterData(menuInfo, pages) {
   return menuList
 }
 // 最终返回的是写入文件相对路径和内容,有page和services两类
-async function getPageAdapterData(menuPageList, dataModel) {
+async function getPageAdapterData(menuPageList) {
   const pagesCode = []
   for await(const menuPage of menuPageList){
-    // 根据页面的菜单信息去找对应的pages信息和dataModel
+    // 根据页面的菜单信息去找对应的pages信息
     const { type } = menuPage.pageInfo
-    const pageData = parseJsonToPage(menuPage, dataModel)
+    const pageData = parseJsonToPage(menuPage)
     if (type == 'crud') {
       pagesCode.push(await getCrudAdapterData(pageData))
     }
@@ -88,27 +80,16 @@ async function getPageAdapterData(menuPageList, dataModel) {
   return getPageResultAnddCollectServiceData(pagesCode)
 }
 // 返回页面需要的数据
-function parseJsonToPage(menuPage, dataModel) {
+function parseJsonToPage(menuPage) {
   const { functionModel: functionList, elementConfig: elementList } = menuPage.pageInfo
   elementList.forEach(element => {
     element.data.forEach(dataItem => {
-      const name = dataModel[dataItem.bindObj].find(dataColumn => dataColumn.code == dataItem.bindAttr)
-      dataItem['_name'] = name
-      dataItem['name'] = dataItem.alias ? dataItem.alias : name,
+        dataItem['name'] = dataItem.alias ? dataItem.alias : dataItem.remark,
         dataItem['field'] = dataItem.aliasCode ? dataItem.aliasCode : dataItem.bindAttr
     })
   })
 
-  const dataModelPriInfo = Object.keys(dataModel).reduce((res, table) => {
-    const primaryColumn = dataModel[table].find(item => item.isPrimary)
-    if (!primaryColumn) {
-      throw new Error(`${table}---数据模型中没有主键`)
-    }
-    res[table] = primaryColumn
-    return res
-  }, {})
-
-  return { menuInfo: menuPage, functionList, elementList, dataModelPriInfo }
+  return { menuInfo: menuPage, functionList, elementList }
 }
 function getPageResultAnddCollectServiceData(pagesCode) {
   return pagesCode.reduce((res, { services, pages }) => {

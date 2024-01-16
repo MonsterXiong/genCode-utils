@@ -35,7 +35,8 @@ function handleFieldList(script,fieldList){
   if (fieldList.length) {
     initQueryAndReset(script)
     fieldList.forEach(field => {
-      const { displayType, request } = field
+      const { param, request } = field
+      const {displayType} =param 
       if (displayType == 'select') {
         const { type } = request
         if (type == 'entity') {
@@ -48,7 +49,8 @@ function handleFieldList(script,fieldList){
 
 function handleTemplate(fieldList,funcList){
   const queryList = fieldList.map(field=>{
-    const {name,field:prop,displayType,bindAttr} = field
+    const {name,field:prop,param:fieldParam,bindAttr} = field
+    const {displayType} =fieldParam 
     const param =  {
       label:name,
       displayType,

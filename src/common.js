@@ -101,7 +101,7 @@ function getFormatRequestList(sourceData){
   },{})
   const serviceList = elementList.reduce((res,element) => {
     let request = functionMap[element.bindFunction]?.request || []
-    const prikeyInfo = element.data.find(item=>item.pk) || {}
+    const prikeyInfo = element.data.find(item=>item.param.pk) || {}
     if(request.length){
       request = request.map(item=>{
         return {

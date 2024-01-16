@@ -66,7 +66,8 @@ function handleFieldList(script,fieldList){
         type:'string',
         initValue: '""',
       })
-      const { displayType, request } = field
+      const { param, request } = field
+      const {displayType} = param
       if(request){
         if (displayType == 'select') {
           const { type } = request
@@ -98,7 +99,7 @@ function getInterfaceData(requestInfo){
   }
 }
 function handleMethodList(script,funcInfo,fieldList){
-  const prikeyInfo = fieldList.find(item=>item.pk)
+  const prikeyInfo = fieldList.find(item=>item.param.pk)
   const pri = prikeyInfo.field
   let requestInfo = null
   const { request } = funcInfo
@@ -143,7 +144,8 @@ function handleTemplate(fileParam,sourceData){
   }
 
   const queryList = fieldList.map(field=>{
-    const {name,field:prop,displayType,bindAttr} = field
+    const {name,field:prop,param:fieldParam,bindAttr} = field
+    const {displayType} =fieldParam 
     const param =  {
       label:name,
       displayType,
