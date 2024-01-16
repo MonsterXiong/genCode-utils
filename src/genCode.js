@@ -84,13 +84,7 @@ async function getPageAdapterData(menuPageList) {
 // 返回页面需要的数据
 function parseJsonToPage(menuPage) {
   const { functionModel: functionList, elementConfig: elementList } = menuPage.pageInfo
-  // elementList.forEach(element => {
-  //   element.data.forEach(dataItem => {
-  //       dataItem['name'] = dataItem.alias ? dataItem.alias : dataItem.remark,
-  //       dataItem['field'] = dataItem.aliasCode ? dataItem.aliasCode : dataItem.bindAttr
-  //   })
-  // })
-
+  
   return { menuInfo: menuPage, functionList, elementList }
 }
 function getPageResultAnddCollectServiceData(pagesCode) {
