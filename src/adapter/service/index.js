@@ -1,7 +1,7 @@
 const path = require('path')
-const { getEjsTemplate } = require("../../src/common")
-const { uniqueArray } = require("../../src/utils/array")
-const { camelCase, pascalCase } = require('../../src/utils/commonUtil')
+const { getEjsTemplate } = require("../../common")
+const { uniqueArray } = require("../../utils/array")
+const { camelCase, pascalCase } = require('../../utils/commonUtil')
 
 // 根据label进行去重
 function formatService(serviceData) {
@@ -45,7 +45,8 @@ function getServiceResult(serviceList, serviceTemp) {
 }
 function getServiceAdapterData(serviceData) {
     const serviceList = formatService(serviceData)
-    const serviceTemp = getEjsTemplate(path.resolve(__dirname, './service.ejs'));
+    // const serviceTemp = getEjsTemplate(path.resolve(__dirname, './service.ejs'));
+    const serviceTemp = getEjsTemplate('E://temp//genCode-utils//public//template//v3//service//service.ejs');
     const serviceResult = getServiceResult(serviceList, serviceTemp)
     return serviceResult
 }

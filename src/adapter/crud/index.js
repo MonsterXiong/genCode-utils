@@ -1,10 +1,10 @@
 const { nanoid } = require('nanoid')
-const { getDialog } = require("./script/getDialog");
-const { getEntry } = require("./script/getEntry");
-const { getQuery } = require("./script/getQuery");
-const { getTable } = require("./script/getTable");
-const { getFormatRequestList } = require('../../src/common');
-const { camelCase } = require('../../src/utils/commonUtil');
+const { getDialog } = require("./getDialog");
+const { getEntry } = require("./getEntry");
+const { getQuery } = require("./getQuery");
+const { getTable } = require("./getTable");
+const { getFormatRequestList } = require('../../common');
+const { camelCase } = require('../../utils/commonUtil');
 async function getCrudAdapterData(sourceData) {
   const { menuInfo, functionList, elementList } = sourceData
   const { code: menuCode } = menuInfo

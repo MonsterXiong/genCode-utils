@@ -1,11 +1,11 @@
 
 const { genCode } = require('./common')
 const { getPage } =require('./genPage.js')
-const { getCrudAdapterData, getServiceAdapterData, getMenuAdapterData, getRouteAdapterData, getRouteConstantAdapterData } = require('../template')
+const { getCrudAdapterData, getServiceAdapterData, getMenuAdapterData, getRouteAdapterData, getRouteConstantAdapterData } = require('./adapter')
 const { constantCase, camelCase, pascalCase } = require('./utils/commonUtil.js')
 const fse = require('fs-extra')
 const path = require('path')
-const { COMPONENT_TYPE_ENUM } = require('./enum/componentType.js')
+const { PAGE_TYPE_ENUM } = require('./enum/pageType.js')
 
 function getSoftwareData() {
   // 第一步:读取JSON数据
@@ -66,7 +66,6 @@ function getAdapterData(menuInfo, pages) {
     }
     return res
   }, init_fileList)
-
   return menuList
 }
 // 最终返回的是写入文件相对路径和内容,有page和services两类
@@ -76,7 +75,7 @@ async function getPageAdapterData(menuPageList) {
     // 根据页面的菜单信息去找对应的pages信息
     const { type } = menuPage.pageInfo
     const pageData = parseJsonToPage(menuPage)
-    if (type == COMPONENT_TYPE_ENUM.CRUD) {
+    if (type == PAGE_TYPE_ENUM.CRUD) {
       pagesCode.push(await getCrudAdapterData(pageData))
     }
   }

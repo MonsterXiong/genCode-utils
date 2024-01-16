@@ -1,6 +1,6 @@
 <template>
   <el-form :model="queryForm" size="small" :inline="true" class="query-form-container">
-    <%_ if (queryList.length > 0) { -%><%- include("../../common/form.ejs",{list:queryList}) -%>
+    <%_ if (queryList.length > 0) { -%><%- include("../common/form.ejs",{list:queryList}) -%>
       <%_ if ( toolbarBtnList.length > 0) { -%>
     <el-form-item label="操作">
       <div class="btn-container">
@@ -12,7 +12,7 @@
         <el-button type="danger" icon="el-icon-delete" @click="onBatchDelete">批量删除</el-button>
         <%_ } -%>
         <%_ toolbarBtnList.forEach(function(btn){ -%>
-        <%- include("../../common/btn.ejs",{...btn}) %>
+        <%- include("../common/btn.ejs",{...btn}) %>
         <%_ }); -%>
       </div>
     </el-form-item>

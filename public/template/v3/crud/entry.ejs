@@ -1,0 +1,38 @@
+<template>
+  <BasePage>
+    <%_if(isQuery){-%>
+    <template #query>
+      <<%=queryComponentName%>
+      <%_if (queryBtnList.length){-%>
+        <%_ queryBtnList.forEach(function(btn){ -%>
+        @<%=btn%> ="<%=btn%>"
+        <%_ }); -%>
+      <%_}-%>
+        @onQuery="queryTableData"
+        @onReset="onReset"
+        :queryForm.sync="queryForm"
+      ></<%=queryComponentName%>>
+    </template>
+    <%_}-%>
+
+    <<%=tableComponentName%>
+      :pageInfo.sync="pageInfo"
+      :tableData="tableData"
+      :total="total"
+      <%_if(isDeleteBatch){-%>
+      @selection-change="onSelectionChange"
+      <%_}-%>
+      <%_if (tableBtnList.length){-%>
+      <%_ tableBtnList.forEach(function(btn){ -%>
+      @<%=btn%>="<%=btn%>"
+      <%_ }); -%>
+      <%_}-%>
+    ></<%=tableComponentName%>>
+    <%if(isEditDialog){%>
+    <<%=editDialogComponentName%> ref="editDialogRef" @refresh="queryTableData"></<%=editDialogComponentName%>>
+    <%_}-%>
+    <%_if(isCreateDialog){-%>
+    <<%=createDialogComponentName%> ref="createDialogRef" @refresh="queryTableData"></<%=createDialogComponentName%>>
+    <%_}-%>
+  </BasePage>
+</template>
