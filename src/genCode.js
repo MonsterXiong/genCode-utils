@@ -127,8 +127,14 @@ async function execCodeGen() {
   const softwareData = getSoftwareData()
   // 获取code
   const code = await getGenCode(softwareData)
+  const result = code.map(item=>{
+    return {
+      filePath:path.join(FRAMEWORK_CONFIG.CODE_OUTPUT_ROOT_PATH,item.filePath),
+      content:item.content
+    }
+  })
   // 生成
-  genCode(code)
+  genCode(result)
   console.timeEnd('开始生成');
 }
 execCodeGen()

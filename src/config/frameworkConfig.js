@@ -1,4 +1,6 @@
 
+const isDev = true
+
 const FRAMEWORK_CONFIG = {
     // 路由页面的前缀地址
     ROUTE_COMPONENT_PREFIX:'@/pages',
@@ -7,16 +9,15 @@ const FRAMEWORK_CONFIG = {
     SERVICE_OUTPUT_DIR_PATH:'./base',
 
     // 'src/layout/sideBar/menuData.js'
-    MENU_DATA_OUTPUT_PATH:'./baseMenuData.js',
+    MENU_DATA_OUTPUT_PATH:isDev?'./baseMenuData.js':'src/layout/sideBar/menuData.js',
 
     // 'src/router/base/baseRoutes.js'
-    ROUTE_OUTPUT_PATH:'./baseRoutes.js',
+    ROUTE_OUTPUT_PATH:isDev?'./baseRoutes.js':'src/router/base/baseRoutes.js',
 
     // 'src/router/base/baseRoutesConstant.js'
-    ROUTE_CONSTANT_OUTPUT_PATH:'./baseRoutesConstant.js',
+    ROUTE_CONSTANT_OUTPUT_PATH:isDev?'./baseRoutesConstant.js':'src/router/base/baseRoutesConstant.js',
 
-
- 
+    CODE_OUTPUT_ROOT_PATH:isDev?'./':'C://Users//Monster//Desktop//txsj-template//txsj-fe-template'
 }
 
 
