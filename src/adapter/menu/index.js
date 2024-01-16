@@ -1,11 +1,10 @@
-const path = require('path');
 const { getEjsTemplate } = require('../../common');
+const { FRAMEWORK_CONFIG } = require('../../config/frameworkConfig');
+const { TEMPLATE_PATH, ELEMENT_ENUM } = require('../../config/templateMap');
 function getMenuAdapterData(menuData) {
-    // const temp = getEjsTemplate(path.resolve(__dirname, './menu.ejs'));
-    const temp = getEjsTemplate('E://temp//genCode-utils//public//template//v3//menu//menu.ejs');
+    const temp = getEjsTemplate(TEMPLATE_PATH[ELEMENT_ENUM.MENU]);
     const result =[{
-        // 'src/layout/sideBar/menuData.js',
-        filePath:'./baseMenuData.js',
+        filePath:FRAMEWORK_CONFIG.MENU_DATA_OUTPUT_PATH,
         content:temp(menuData)
     }]
     return result

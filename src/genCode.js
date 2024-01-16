@@ -56,7 +56,7 @@ function getAdapterData(menuInfo, pages) {
       res['routeList'].push({
         ...item,
         const: CONST_CODE,
-        path: `${FRAMEWORK_CONFIG.routerComponentPrefix}/${VUE_FILE_NAME}`,
+        path: `${FRAMEWORK_CONFIG.ROUTE_COMPONENT_PREFIX}/${VUE_FILE_NAME}`,
       })
       res['pageList'].push({ ...item, pageInfo });
     }

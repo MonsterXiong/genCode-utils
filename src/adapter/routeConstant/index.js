@@ -1,11 +1,10 @@
 const { getEjsTemplate } = require("../../common");
-const path = require('path')
+const { FRAMEWORK_CONFIG } = require("../../config/frameworkConfig");
+const { TEMPLATE_PATH, ELEMENT_ENUM } = require("../../config/templateMap");
 function getRouteConstantAdapterData(routesConstantData) {
-    // const temp = getEjsTemplate(path.resolve(__dirname, './routeConstant.ejs'));
-    const temp = getEjsTemplate('E://temp//genCode-utils//public//template//v3//routeConstant//routeConstant.ejs');
+    const temp = getEjsTemplate(TEMPLATE_PATH[ELEMENT_ENUM.ROUTE_CONSTANT]);
     const result =[{
-        // 'src/router/base/baseRoutesConstant.js'
-        filePath:'./baseRoutesConstant.js',
+        filePath:FRAMEWORK_CONFIG.ROUTE_CONSTANT_OUTPUT_PATH,
         content:temp(routesConstantData)
     }]
     return result

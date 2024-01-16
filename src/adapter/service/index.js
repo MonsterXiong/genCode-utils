@@ -2,6 +2,8 @@ const path = require('path')
 const { getEjsTemplate } = require("../../common")
 const { uniqueArray } = require("../../utils/array")
 const { camelCase, pascalCase } = require('../../utils/commonUtil')
+const { TEMPLATE_PATH, ELEMENT_ENUM } = require('../../config/templateMap')
+const { FRAMEWORK_CONFIG } = require('../../config/frameworkConfig')
 
 // 根据label进行去重
 function formatService(serviceData) {
@@ -37,7 +39,7 @@ function getServiceResult(serviceList, serviceTemp) {
         const className = pascalCase(service)
         let content = serviceList[service].reduce((pre, cur) => pre += serviceTemp(transfromInterfaceData(cur)), "")
         res.push({
-            filePath: `./base/${filename}`,
+            filePath: `${FRAMEWORK_CONFIG.SERVICE_OUTPUT_DIR_PATH}/${filename}`,
             content: getServiceContent(className, content)
         })
         return res
@@ -45,8 +47,7 @@ function getServiceResult(serviceList, serviceTemp) {
 }
 function getServiceAdapterData(serviceData) {
     const serviceList = formatService(serviceData)
-    // const serviceTemp = getEjsTemplate(path.resolve(__dirname, './service.ejs'));
-    const serviceTemp = getEjsTemplate('E://temp//genCode-utils//public//template//v3//service//service.ejs');
+    const serviceTemp = getEjsTemplate(TEMPLATE_PATH[ELEMENT_ENUM.SERVICE]);
     const serviceResult = getServiceResult(serviceList, serviceTemp)
     return serviceResult
 }

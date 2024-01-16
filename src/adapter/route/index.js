@@ -1,11 +1,10 @@
 const { getEjsTemplate } = require("../../common");
-const path = require('path')
+const { TEMPLATE_PATH, ELEMENT_ENUM } = require("../../config/templateMap");
+const { FRAMEWORK_CONFIG } = require("../../config/frameworkConfig");
 function getRouteAdapterData(routeData) {
-    // const temp = getEjsTemplate(path.resolve(__dirname, './route.ejs'));
-    const temp = getEjsTemplate('E://temp//genCode-utils//public//template//v3//route//route.ejs');
+    const temp = getEjsTemplate(TEMPLATE_PATH[ELEMENT_ENUM.ROUTE]);
     const result =[{
-        // 'src/router/base/baseRoutes.js'
-        filePath:'./baseRoutes.js',
+        filePath:FRAMEWORK_CONFIG.ROUTE_OUTPUT_PATH,
         content:temp(routeData)
     }]
     return result
