@@ -1,4 +1,3 @@
-const { templateDataMap } = require("../template/crud/view/templateData")
 const crudAdapterData = [{
   filename: 'TestQuery',
   filetype: 'component',
@@ -7,7 +6,7 @@ const crudAdapterData = [{
   type: 'query',
   template: 'crud',
   params: {
-    template: templateDataMap['crud']['query'],
+    template: "",
     script: {
       name: 'TestQuery',
       importList: [],
@@ -51,7 +50,8 @@ const crudAdapterData = [{
   type: 'dialog',
   template: 'crud',
   params: {
-    template: templateDataMap['crud']['dialog'],
+    // template: templateDataMap['crud']['dialog'],
+    template: "",
     script: {
       name: 'TestEditDialog',
       importList: [{
@@ -136,7 +136,7 @@ const crudAdapterData = [{
   type: 'dialog',
   template: 'crud',
   params: {
-    template: templateDataMap['crud']['dialog'],
+    template: "",
     script: {
       name: 'TestCreateDialog',
       importList: [{
@@ -221,7 +221,7 @@ const crudAdapterData = [{
   type: 'table',
   template: 'crud',
   params: {
-    template: templateDataMap['crud']['table'],
+    template: "",
     script: {
       name: 'TestTable',
       importList: [{
@@ -295,7 +295,7 @@ const crudAdapterData = [{
   template: 'crud',
   // scriptData
   params: {
-    template: templateDataMap['crud']['index'],
+    template: "",
     script: {
       name: 'TestManage',
       importList: [],
