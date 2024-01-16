@@ -1,4 +1,4 @@
-const { getFileInfo, initScript, handleImportList, addEmitMethodNoParam, getEjsFileTemplateData, parseUrl, getInterfaceData, addExtFuncStruct } = require("../../common")
+const { getFileInfo, initScript, handleImportList,  getEjsFileTemplateData,  getInterfaceData, addExtFuncStruct } = require("../../common")
 const { VUE_DATA_SCRIPT_ENUM,  COMPONENT_CRUD_ENUM } = require("../../enum")
 const { TEMPLATE_PATH } = require("../../config/templateMap")
 function initDataList(script) {
