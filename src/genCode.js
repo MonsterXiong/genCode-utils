@@ -32,12 +32,6 @@ async function getGenCode(softwareData){
 }
 
 function getAdapterData(menuInfo, pages) {
-  const init_fileList = {
-    menuList: [],
-    routeList: [],
-    routesConstantList: [],
-    pageList: []
-  }
   const menuList = menuInfo.reduce((res, item) => {
 
     const { code } = item
@@ -65,7 +59,12 @@ function getAdapterData(menuInfo, pages) {
       res['pageList'].push({ ...item, pageInfo });
     }
     return res
-  }, init_fileList)
+  }, {
+    menuList: [],
+    routeList: [],
+    routesConstantList: [],
+    pageList: []
+  })
   return menuList
 }
 // 最终返回的是写入文件相对路径和内容,有page和services两类
