@@ -1,7 +1,6 @@
-const { getFileInfo, initScript, parseUrl, handleImportList, handleMethodListHasOption, handleFormFieldList, getInfoByLabel, getEjsFileTemplateData } = require("../../common")
-const path = require('path')
-const { LABEL_ENUM, DISPLAY_TYPE_ENUM, VUE_DATA_SCRIPT_ENUM, COMPONENT_CRUD_ENUM, PAGE_TYPE_ENUM } = require("../../enum")
-const { pascalCase, camelCase } = require("../../utils/commonUtil")
+const { getFileInfo, initScript,  handleImportList, handleMethodListHasOption, handleFormFieldList,  getEjsFileTemplateData, getInterfaceData } = require("../../common")
+const { DISPLAY_TYPE_ENUM, VUE_DATA_SCRIPT_ENUM, COMPONENT_CRUD_ENUM } = require("../../enum")
+const {  camelCase } = require("../../utils/commonUtil")
 const { TEMPLATE_PATH } = require("../../config/templateMap")
 
 function initDataList(script){
@@ -36,23 +35,12 @@ script[VUE_DATA_SCRIPT_ENUM.METHOD_LIST]=[{
   param: ""
 },]
 }
-function isUpdate(funcInfo){
-  return funcInfo.label ==LABEL_ENUM.UPDATE
-}
-function isCreate(funcInfo){
-  return funcInfo.label ==LABEL_ENUM.INSERT
-}
-function initStruct(script,funcInfo){
+
+function initStruct(script){
   initDataList(script)
   initImportDataList(script)
   initMethodList(script)
-  const {name,label} = funcInfo
-  if(isUpdate(funcInfo)){
-    script[VUE_DATA_SCRIPT_ENUM.DATA_LIST].push({name: 'row',type: 'null',initValue: 'null',})
-  }
-  else if(isCreate(funcInfo)){
-    script[VUE_DATA_SCRIPT_ENUM.DATA_LIST].push({name: 'title',type: 'string',initValue: name?name:label==LABEL_ENUM.INSERT?'新增':'编辑'})
-  }
+
 }
 function handleFieldList(script,fieldList){
   if(fieldList.length){
@@ -78,64 +66,9 @@ function handleFieldList(script,fieldList){
   }
 
 }
-function getInterfaceData(requestInfo){
-  if(!requestInfo){
-    throw new Error('没有对应的请求信息')
-  }
-  const { request } = requestInfo
-  const { serviceType,interfaceName }= parseUrl(request)
-  return {
-    ServiceName:`${pascalCase(serviceType)}Service`,
-    InterfaceName:`${camelCase(interfaceName)}`
-  }
-}
-function handleMethodList(script,funcList,fieldList){
-  const prikeyInfo = fieldList.find(item=>item.param.pk)
-  const pri = prikeyInfo?.code
-  let requestInfo = null
-  if(getInfoByLabel(funcList,LABEL_ENUM.UPDATE)){
-    requestInfo = getInfoByLabel(funcList,LABEL_ENUM.UPDATE)
-    const queryInfo =getInfoByLabel(funcList,LABEL_ENUM.QUERY)
-    if(!queryInfo){
-      const {ServiceName,InterfaceName} = getInterfaceData(queryInfo)
-      script[VUE_DATA_SCRIPT_ENUM.METHOD_LIST].unshift({type:'editGetData',pri,ServiceName,InterfaceName})
-      script[VUE_DATA_SCRIPT_ENUM.IMPORT_LIST].push({isDefault:false,content:`${ServiceName}`,from:'@/services'})
-    }
-    script[VUE_DATA_SCRIPT_ENUM.METHOD_LIST].unshift({type:'editDialogShow',pri})
-  }
-  if(getInfoByLabel(funcList,LABEL_ENUM.INSERT)){
-    requestInfo = getInfoByLabel(funcList,LABEL_ENUM.INSERT)
-    script[VUE_DATA_SCRIPT_ENUM.METHOD_LIST].unshift({type:'createDialogShow'})
-  }
-  const {ServiceName,InterfaceName}= getInterfaceData(requestInfo)
-  script[VUE_DATA_SCRIPT_ENUM.IMPORT_LIST].push({isDefault:false,content:`${ServiceName}`,from:'@/services'})
-  // 添加onSubmitForm方法
-  script[VUE_DATA_SCRIPT_ENUM.METHOD_LIST].push({
-    type:'dialogSubmit',
-    ServiceName,
-    InterfaceName
-  })
 
-}
-function handleTemplate(fileParam,sourceData){
-  const { name } = fileParam
-  const { functionList, elementList } = sourceData
-  let funcInfo = null
-  let fieldList = []
-  let sourceFieldList = []
-  if(name == 'editDialog'){
-    funcInfo = getInfoByLabel(functionList,LABEL_ENUM.UPDATE)
-    sourceFieldList =  (elementList.find(item => item.bindFunction == LABEL_ENUM.UPDATE)?.data || [])
-    fieldList = sourceFieldList.filter(item=>!item.param.isHidden)
-  }else if(name == 'createDialog'){
-    funcInfo = getInfoByLabel(functionList,LABEL_ENUM.INSERT)
-    sourceFieldList= (elementList.find(item => item.bindFunction == LABEL_ENUM.INSERT)?.data || [])
-    fieldList= sourceFieldList .filter(item=>!item.param.isHidden)
-  }else{
-    console.log(`不支持的dialog-${name}`);
-  }
-
-  const queryList = fieldList.map(field=>{
+function handleTemplate(fieldList){
+  return fieldList.map(field=>{
     const {name,code,param:fieldParam,bindAttr} = field
     const {displayType} =fieldParam 
     const param =  {
@@ -148,35 +81,68 @@ function handleTemplate(fileParam,sourceData){
       param.entityLabel = code
     }
     return param
-  })
-  return {
-    funcInfo,
-    queryList,
-    fieldList,
-    sourceFieldList
+  }) 
+}
+
+function updateScript(script,fieldList,queryInfo){
+  const prikeyInfo = fieldList.find(item=>item.param.pk)
+  const pri = prikeyInfo?.code
+  if(queryInfo){
+    const {ServiceName,InterfaceName} = getInterfaceData(queryInfo)
+    script[VUE_DATA_SCRIPT_ENUM.METHOD_LIST].unshift({type:'editGetData',pri,ServiceName,InterfaceName})
+    script[VUE_DATA_SCRIPT_ENUM.IMPORT_LIST].push({isDefault:false,content:`${ServiceName}`,from:'@/services'})
   }
+  script[VUE_DATA_SCRIPT_ENUM.METHOD_LIST].unshift({type:'editDialogShow',pri})
+  script[VUE_DATA_SCRIPT_ENUM.DATA_LIST].push({name: 'row',type: 'null',initValue: 'null',})
+}
+
+function addScript(script,funcInfo){
+  script[VUE_DATA_SCRIPT_ENUM.DATA_LIST].push({name: 'title',type: 'string',initValue: funcInfo.name})
+  script[VUE_DATA_SCRIPT_ENUM.METHOD_LIST].unshift({type:'createDialogShow'})
 }
 async function getDialog(fileParam, sourceData) {
-  const { template } = fileParam
+  const { template,name } = fileParam
   const type = COMPONENT_CRUD_ENUM.DIALOG
   const fileInfo = getFileInfo({ ...fileParam, type })
   //  --------------------
-  const {queryList,funcInfo,fieldList,sourceFieldList} = handleTemplate(fileParam, sourceData)
-  if(!funcInfo){
-    // 不生成页面
-    return ''
-  }
+  const {addInfo,updateInfo,queryInfo} = sourceData
+
+  let fieldList = []
+  let sourceFieldList = []
+  const isUpdate = name == 'updateDialog'
+  let funcInfo = isUpdate ? updateInfo : addInfo
+  console.log('funcInfo',funcInfo);
+  sourceFieldList = funcInfo?.elementList || []
+  fieldList = sourceFieldList.filter(item=>!item.param.isHidden)
+
   // 初始化script
   const script = initScript(fileInfo.filename)
-  initStruct(script,funcInfo)
+  initStruct(script)
   // 处理要素
   handleFieldList(script,fieldList)
-  handleMethodList(script,sourceData.functionList,sourceFieldList)
+ 
+  if(isUpdate){
+    updateScript(script,sourceFieldList,queryInfo)
+  }
+  else{
+    addScript(script,funcInfo)
+  }
+
+  const {ServiceName,InterfaceName}= getInterfaceData(funcInfo)
+  script[VUE_DATA_SCRIPT_ENUM.IMPORT_LIST].push({isDefault:false,content:`${ServiceName}`,from:'@/services'})
+  // 添加onSubmitForm方法
+  script[VUE_DATA_SCRIPT_ENUM.METHOD_LIST].push({
+    type:'dialogSubmit',
+    ServiceName,
+    InterfaceName
+  })
   //  整合一下imporList
   handleImportList(script)
   //  处理一下option
   handleMethodListHasOption(script)
   // ---------------------
+  const queryList=handleTemplate(fieldList)
+
   const templatePath = TEMPLATE_PATH[template][type]
 
   const templateParam = { queryList }

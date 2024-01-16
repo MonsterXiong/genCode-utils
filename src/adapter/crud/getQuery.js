@@ -5,12 +5,9 @@ const {
   handleImportList,
   initScript,
   handleFormFieldList,
-  getInfoByBinFunction,
   getEjsFileTemplateData,
-  getInfoByLabel,
 } = require("../../common")
 const { nanoid } = require("nanoid")
-const path = require('path')
 const { LABEL_ENUM, DISPLAY_TYPE_ENUM, VUE_DATA_SCRIPT_ENUM,  COMPONENT_CRUD_ENUM } = require("../../enum")
 const { camelCase } = require("../../utils/commonUtil")
 const { TEMPLATE_PATH } = require("../../config/templateMap")
@@ -58,20 +55,6 @@ function handleTemplate(fieldList,funcList){
   })
 
   const toolbarBtnList = []
-  // if(fieldList.length>0){
-  //   toolbarBtnList.push({
-  //     type:'primary',
-  //     icon:"el-icon-search",
-  //     functionName:'onQuery',
-  //     name:'查询',
-  //   })
-  //   toolbarBtnList.push({
-  //     type:'',
-  //     icon:"el-icon-refresh",
-  //     functionName:'onReset',
-  //     name:'重置',
-  //   })
-  // }
 
   funcList.filter(item=>item.label !==LABEL_ENUM.QUERY_LIST).forEach(func=>{
     const {name,code,label} = func
@@ -103,11 +86,6 @@ function handleTemplate(fieldList,funcList){
   }
 }
 
-function handleDeleteBatch(script,isDeleteBatch){
-  if(isDeleteBatch){
-    script[VUE_DATA_SCRIPT_ENUM.METHOD_LIST].push(addEmitMethodNoParam('onBatchDelete'))
-  }
-}
 // 根据模板+params转换为指定的scriptData,然后调用genScript
 async function getQuery(fileParam, sourceData) {
   // 解析模板需要的数据，根据模板渲染即可
@@ -115,28 +93,21 @@ async function getQuery(fileParam, sourceData) {
   const type = COMPONENT_CRUD_ENUM.QUERY
   const fileInfo = getFileInfo({ ...fileParam, type })
   //  --------------------
-  const { functionList, elementList } = sourceData
-  const isDeleteBatch = !!getInfoByLabel(functionList,LABEL_ENUM.DELETE_BATCH)
-  const funcList = functionList.filter(item => item.label == LABEL_ENUM.EXT_GLOBAL)
-  const fieldList = (getInfoByBinFunction(elementList,LABEL_ENUM.QUERY_LIST)?.data || []).filter(item => item.param.isSearch)
+  const {queryBtnList,queryFieldList:fieldList,toolbarBtnList:extBtnList} = sourceData
   // 初始化script
   const script = initScript(fileInfo.filename)
   // 处理要素
   handleFieldList(script,fieldList)
   //  处理功能
-  handleMethodList(script, funcList)
-  // 处理批量删除
-  handleDeleteBatch(script,isDeleteBatch)
+  handleMethodList(script, [...queryBtnList,...extBtnList])
   //  整合一下imporList
   handleImportList(script)
   //  处理一下option
   handleMethodListHasOption(script)
   // ---------------------
   const templatePath = TEMPLATE_PATH[template][type]
-
-  const templateParam = handleTemplate(fieldList,funcList)
-
-  const templateData = await getEjsFileTemplateData(templatePath,{...templateParam,isDeleteBatch})
+  const templateParam = handleTemplate(fieldList,extBtnList)
+  const templateData = await getEjsFileTemplateData(templatePath,{...sourceData,...templateParam})
 
   return {
     ...fileInfo,

@@ -1,38 +1,43 @@
 <template>
   <BasePage>
-    <%_if(isQuery){-%>
+    <%_if(hasToolbar){-%>
     <template #query>
-      <<%=queryComponentName%>
+      <<%=pageName%>Query
       <%_if (queryBtnList.length){-%>
         <%_ queryBtnList.forEach(function(btn){ -%>
-        @<%=btn%> ="<%=btn%>"
+        @<%=btn.code%> ="<%=btn.code%>"
+        <%_ }); -%>
+      <%_}-%>
+      <%_if (toolbarBtnList.length){-%>
+        <%_ toolbarBtnList.forEach(function(btn){ -%>
+        @<%=btn.code%> ="<%=btn.code%>"
         <%_ }); -%>
       <%_}-%>
         @onQuery="queryTableData"
         @onReset="onReset"
         :queryForm.sync="queryForm"
-      ></<%=queryComponentName%>>
+      ></<%=pageName%>Query>
     </template>
     <%_}-%>
 
-    <<%=tableComponentName%>
+    <<%=pageName%>Table
       :pageInfo.sync="pageInfo"
       :tableData="tableData"
       :total="total"
-      <%_if(isDeleteBatch){-%>
+      <%_if(hasDeleteBatch){-%>
       @selection-change="onSelectionChange"
       <%_}-%>
       <%_if (tableBtnList.length){-%>
       <%_ tableBtnList.forEach(function(btn){ -%>
-      @<%=btn%>="<%=btn%>"
+      @<%=btn.code%>="<%=btn.code%>"
       <%_ }); -%>
       <%_}-%>
-    ></<%=tableComponentName%>>
-    <%if(isEditDialog){%>
-    <<%=editDialogComponentName%> ref="editDialogRef" @refresh="queryTableData"></<%=editDialogComponentName%>>
+    ></<%=pageName%>Table>
+    <%if(hasUpdate){%>
+    <<%=pageName%>UpdateDialog ref="updateDialogRef" @refresh="queryTableData"></<%=pageName%>UpdateDialog>
     <%_}-%>
-    <%_if(isCreateDialog){-%>
-    <<%=createDialogComponentName%> ref="createDialogRef" @refresh="queryTableData"></<%=createDialogComponentName%>>
+    <%_if(hasAdd){-%>
+    <<%=pageName%>AddDialog ref="addDialogRef" @refresh="queryTableData"></<%=pageName%>AddDialog>
     <%_}-%>
   </BasePage>
 </template>

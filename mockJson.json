@@ -204,7 +204,7 @@
           "data": [
             {
               "name":"指标ID",
-              "code": "指标ID",
+              "code": "indexId",
               "bindObj": "db_index",
               "bindAttr": "index_id",
               "param": {

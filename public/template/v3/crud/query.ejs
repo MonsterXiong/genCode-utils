@@ -1,22 +1,23 @@
 <template>
   <el-form :model="queryForm" size="small" :inline="true" class="query-form-container">
-    <%_ if (queryList.length > 0) { -%><%- include("../common/form.ejs",{list:queryList}) -%>
-      <%_ if ( toolbarBtnList.length > 0) { -%>
-    <el-form-item label="操作">
+    <%_ if (hasQuery) { -%><%- include("../common/form.ejs",{list:queryList}) -%>
+    <el-form-item label="">
       <div class="btn-container">
-        <%_if (queryList.length>0) { -%>
+        <%_if (hasQuery) { -%>
         <el-button type="primary" icon="el-icon-search" @click="onQuery">查询</el-button>
         <el-button icon="el-icon-refresh" @click="onReset">重置</el-button>
         <%_ } -%>
-        <%_if (isDeleteBatch) { -%>
-        <el-button type="danger" icon="el-icon-delete" @click="onBatchDelete">批量删除</el-button>
+        <%_if (hasAdd) { -%>
+        <el-button type="success" icon="el-icon-plus" @click="<%=addInfo.code%>"><%=addInfo.name%></el-button>
+        <%_ } -%>
+        <%_if (hasDeleteBatch) { -%>
+        <el-button type="danger" icon="el-icon-delete" @click="<%=deleteBatchInfo.code%>"><%=deleteBatchInfo.name%></el-button>
         <%_ } -%>
         <%_ toolbarBtnList.forEach(function(btn){ -%>
         <%- include("../common/btn.ejs",{...btn}) %>
         <%_ }); -%>
       </div>
     </el-form-item>
-      <%_ } -%>
     <%_ } -%>
   </el-form>
 </template>

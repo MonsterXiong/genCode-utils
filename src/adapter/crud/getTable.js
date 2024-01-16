@@ -1,5 +1,4 @@
-const { getFileInfo, initScript, addEmitMethodRow, getInfoByLabel, getInfoByBinFunction, getEjsFileTemplateData } = require("../../common")
-const path = require('path')
+const { getFileInfo, initScript, addEmitMethodRow, getEjsFileTemplateData } = require("../../common")
 const { LABEL_ENUM, VUE_DATA_SCRIPT_ENUM, PAGE_TYPE_ENUM, COMPONENT_CRUD_ENUM } = require("../../enum")
 const { TEMPLATE_PATH } = require("../../config/templateMap")
 
@@ -93,11 +92,7 @@ function getDeleteOrEditBtnParam(btnInfo,type){
   }
 }
 
-function handleTemplate(fieldList,funcList,isDeleteBatch=false){
-  const editInfo =getInfoByLabel(funcList,LABEL_ENUM.UPDATE)
-  const deleteInfo = getInfoByLabel(funcList,LABEL_ENUM.DELETE)
-  const {isShow:isEdit,showInfo:editBtnInfo} = getDeleteOrEditBtnParam(editInfo,LABEL_ENUM.UPDATE)
-  const {isShow:isDelete,showInfo:deleteBtnInfo} = getDeleteOrEditBtnParam(deleteInfo,LABEL_ENUM.DELETE)
+function handleTemplate(fieldList,funcList){
 
   const btns = funcList.filter(item=>item.label == LABEL_ENUM.EXT_OBJ).map(item=>{
     return{
@@ -113,16 +108,10 @@ function handleTemplate(fieldList,funcList,isDeleteBatch=false){
       label:field.name
     }
   })
-  const isShowOperate = isEdit || isDelete|| btns.length>0
   return {
-    isDeleteBatch,
-    isEdit,
-    isDelete,
-    editBtnInfo,
-    deleteBtnInfo,
     btns,
-    fields,
-    isShowOperate
+    fields
+
   }
 }
 async function getTable(fileParam, sourceData) {
@@ -130,10 +119,10 @@ async function getTable(fileParam, sourceData) {
   const type = COMPONENT_CRUD_ENUM.TABLE
   const fileInfo = getFileInfo({ ...fileParam, type })
   //  --------------------
-  const { functionList, elementList } = sourceData
-  const isDeleteBatch =!!getInfoByLabel(functionList,LABEL_ENUM.DELETE_BATCH)
-  const funcList = functionList.filter(item => [LABEL_ENUM.EXT_OBJ,LABEL_ENUM.UPDATE,LABEL_ENUM.DELETE].includes(item.label))
-  const fieldList = (getInfoByBinFunction(elementList,LABEL_ENUM.QUERY_LIST)?.data || [])
+  const { hasDelete,hasUpdate,tableBtnList,operateBtnList,tableFieldList} = sourceData
+
+  const funcList = [...tableBtnList,...operateBtnList]
+
   // 初始化script
   const script = initScript(fileInfo.filename)
   initStruct(script)
@@ -141,9 +130,11 @@ async function getTable(fileParam, sourceData) {
   //  --------------------
   const templatePath = TEMPLATE_PATH[template][type]
 
-  const templateParam = handleTemplate(fieldList,funcList,isDeleteBatch)
+  const {btns,fields} = handleTemplate(tableFieldList,funcList)
 
-  const templateData = await getEjsFileTemplateData(templatePath,templateParam)
+  const isShowOperate = hasUpdate || hasDelete|| btns.length>0
+
+  const templateData = await getEjsFileTemplateData(templatePath,{...sourceData,btns,fields,isShowOperate})
   return {
     ...fileInfo,
     params: {

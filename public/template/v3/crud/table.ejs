@@ -1,7 +1,7 @@
 <template>
   <div class="common-container" ref="tableRef">
     <el-table :data="tableData" :height="tableHeight" size="mini" border style="width: 100%" v-bind="$attrs" v-on="$listeners">
-    <%_ if(isDeleteBatch){ -%>
+    <%_ if(hasDeleteBatch){ -%>
       <el-table-column type="selection" align="center" label="序号" width="80"> </el-table-column>
     <%_ } -%>
     <%_ fields.forEach(function(field){ -%>
@@ -13,11 +13,11 @@
           <%_ btns.forEach(function(btn){ -%>
           <el-button @click="<%=btn.functionName%><%if(btn.param !==''){%>(<%=btn.param%>)"<%}%> type="text" size="small"><%=btn.name%></el-button>
           <%_ }); -%>
-          <%_ if(isEdit){ -%>
-          <el-button @click="<%=editBtnInfo.functionName%>(scope.row)" type="text" size="small"><%=editBtnInfo.name%></el-button>
+          <%_ if(hasUpdate){ -%>
+          <el-button @click="<%=updateInfo.code%>(scope.row)" type="text" size="small"><%=updateInfo.name%></el-button>
           <%_ } -%>
-          <%_ if(isDelete){ -%>
-          <el-button @click="<%=deleteBtnInfo.functionName%>(scope.row)" class="delete-btn" type="text" size="small"><%=deleteBtnInfo.name%></el-button>
+          <%_ if(hasDelete){ -%>
+          <el-button @click="<%=deleteInfo.code%>(scope.row)" class="delete-btn" type="text" size="small"><%=deleteInfo.name%></el-button>
           <%_ } -%>
         </template>
       </el-table-column>

@@ -57,6 +57,17 @@ function handleMethodListHasOption(script){
     script[VUE_DATA_SCRIPT_ENUM.MOUNT_LIST].push({ isAwait: true, type: 'callMethod', content: 'initOption' })
   }
 }
+function getInterfaceData(requestInfo){
+  if(!requestInfo){
+    throw new Error('没有对应的请求信息')
+  }
+  const { request } = requestInfo
+  const { serviceType,interfaceName }= parseUrl(request)
+  return {
+    ServiceName:`${pascalCase(serviceType)}Service`,
+    InterfaceName:`${camelCase(interfaceName)}`
+  }
+}
 function handleImportList(script){
   const serviceList=uniqueArray(script[VUE_DATA_SCRIPT_ENUM.IMPORT_LIST],'content').filter(item=>item.from == '@/services')
   const otherList=script[VUE_DATA_SCRIPT_ENUM.IMPORT_LIST].filter(item=>item.from != '@/services')
@@ -174,4 +185,5 @@ module.exports = {
   getInfoByAttr,
   getInfoByLabel,
   getInfoByBinFunction,
+  getInterfaceData
 }

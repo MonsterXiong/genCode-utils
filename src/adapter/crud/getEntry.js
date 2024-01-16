@@ -1,5 +1,4 @@
-const { getFileInfo, initScript, handleImportList, addEmitMethodNoParam, getEjsFileTemplateData } = require("../../common")
-const path = require('path')
+const { getFileInfo, initScript, handleImportList, addEmitMethodNoParam, getEjsFileTemplateData, parseUrl, getInterfaceData } = require("../../common")
 const { VUE_DATA_SCRIPT_ENUM,  COMPONENT_CRUD_ENUM } = require("../../enum")
 const { TEMPLATE_PATH } = require("../../config/templateMap")
 function initDataList(script) {
@@ -50,48 +49,52 @@ function addComponent(script, componenName) {
 }
 
 function handleScript(script, templateParam, sourceData) {
-  const { isQuery, queryComponentName,
-    tableComponentName,
-    isEditDialog,
-    editDialogComponentName,
-    createDialogComponentName,
-    isCreateDialog,
-    isDeleteBatch,
-    isDelete
+  const { 
+    hasQuery, 
+    pageName,
+    hasUpdate,
+    hasAdd,
+    hasDeleteBatch,
+    hasDelete,
+    tableInfo,
+    deleteInfo,
+    deleteBatchInfo,
+    updateInfo,
+    addInfo
   } = templateParam
 
-  addComponent(script, tableComponentName)
+  addComponent(script, `${pageName}Table`)
 
-  if (isQuery) {
+  if (hasQuery) {
     script[VUE_DATA_SCRIPT_ENUM.DATA_LIST].push({ name: 'queryForm', type: 'object', initValue: '{}', })
-    addComponent(script, queryComponentName)
+    addComponent(script, `${pageName}Query`)
     script[VUE_DATA_SCRIPT_ENUM.METHOD_LIST].push({ type: 'entryOnReset' })
   }
-  if (isEditDialog) {
-    addComponent(script, editDialogComponentName)
-    // 需要调整
-    script[VUE_DATA_SCRIPT_ENUM.METHOD_LIST].push({ type: 'openDialog', name: 'onEdit', dialogRef: 'editDialogRef', param: 'row' })
+  if (hasUpdate) {
+    addComponent(script, `${pageName}UpdateDialog`)
+    script[VUE_DATA_SCRIPT_ENUM.METHOD_LIST].push({ type: 'openDialog', name: updateInfo.code, dialogRef: 'updateDialogRef', param: 'row' })
   }
-  if (isCreateDialog) {
-    addComponent(script, createDialogComponentName)
-    // 需要调整
-    script[VUE_DATA_SCRIPT_ENUM.METHOD_LIST].push({ type: 'openDialog', name: 'onAdd', dialogRef: 'createDialogRef', param: '' })
+  if (hasAdd) {
+    addComponent(script, `${pageName}AddDialog`)
+    script[VUE_DATA_SCRIPT_ENUM.METHOD_LIST].push({ type: 'openDialog', name: addInfo.code, dialogRef: 'addDialogRef', param: '' })
   }
-  if (isDeleteBatch) {
+  if (hasDeleteBatch) {
     script[VUE_DATA_SCRIPT_ENUM.DATA_LIST].push({ name: 'multipleSelection', type: 'array', initValue: '[]', })
     script[VUE_DATA_SCRIPT_ENUM.METHOD_LIST].push({ type: 'selectionChange' })
     // 还有批量删除的方法,会掉接口
-    script[VUE_DATA_SCRIPT_ENUM.METHOD_LIST].push(addEmitMethodNoParam('onDeleteBatch'))
+    script[VUE_DATA_SCRIPT_ENUM.METHOD_LIST].push(addEmitMethodNoParam(deleteBatchInfo.code))
   }
-  if (isDelete) {
+  if (hasDelete) {
     // 添加一个删除方法，会掉接口
-    script[VUE_DATA_SCRIPT_ENUM.METHOD_LIST].push(addEmitMethodNoParam('onDelete'))
+    script[VUE_DATA_SCRIPT_ENUM.METHOD_LIST].push(addEmitMethodNoParam(deleteInfo.code))
   }
-  // 初始化查询方法
-  script[VUE_DATA_SCRIPT_ENUM.METHOD_LIST].push({ type: 'queryTableData', ServiceName: 'DesignAbiService', InterfaceName: 'queryList' })
-  script[VUE_DATA_SCRIPT_ENUM.IMPORT_LIST].push({ isDefault: false, content: 'DesignAbiService', from: '@/services' })
 
-  // QueryConditionBuilder
+
+  const { ServiceName, InterfaceName }=getInterfaceData(tableInfo)
+  // 初始化查询方法
+  script[VUE_DATA_SCRIPT_ENUM.METHOD_LIST].push({ type: 'queryTableData', ServiceName, InterfaceName })
+  script[VUE_DATA_SCRIPT_ENUM.IMPORT_LIST].push({ isDefault: false, content: ServiceName, from: '@/services' })
+
   script[VUE_DATA_SCRIPT_ENUM.IMPORT_LIST].push({ isDefault: false, from: '@/utils/queryConditionBuilder', content: 'QueryConditionBuilder' })
   // 初始化watch
   script[VUE_DATA_SCRIPT_ENUM.WATCH_LIST].push({ type: 'entryPageInfo' })
@@ -104,32 +107,14 @@ async function getEntry(fileParam, sourceData) {
   const type = COMPONENT_CRUD_ENUM.ENTRY
   const fileInfo = getFileInfo({ ...fileParam, type })
   //  --------------------
-  const { functionList, elementList } = sourceData
   const script = initScript(fileInfo.filename)
   initStruct(script)
   //  --------------------
   const templatePath = TEMPLATE_PATH[template][type]
-  const templateParam = {
-    isDeleteBatch: true,
-    isDelete: true,
-
-    isQuery: true,
-    queryBtnList: ['onAdd', 'onBatchDelete'],
-    queryComponentName: 'DesignIndexQuery',
-
-    isEditDialog: true,
-    editDialogComponentName: "DesignIndexEditDialog",
-
-    isCreateDialog: true,
-    createDialogComponentName: "DesignIndexCreateDialog",
-
-    tableComponentName: "DesignIndexTable",
-    tableBtnList: ['onEdit', 'onDelete']
-  }
   //  temp
-  handleScript(script, templateParam, sourceData)
+  handleScript(script,sourceData)
 
-  const templateData = await getEjsFileTemplateData(templatePath, templateParam)
+  const templateData = await getEjsFileTemplateData(templatePath, sourceData)
 
   return {
     ...fileInfo,
