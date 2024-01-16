@@ -12,7 +12,7 @@ const { ENTRY_SUFFIX_ENUM } = require('./enum/entrySuffix.js')
 
 function getSoftwareData() {
   // 第一步:读取JSON数据
-  const jsonData = fse.readJSONSync(path.resolve(__dirname, '../mockJson.json'))
+  const jsonData = fse.readJSONSync(path.resolve(__dirname, './mockJson.json'))
   return jsonData
 }
 async function getGenCode(softwareData) {

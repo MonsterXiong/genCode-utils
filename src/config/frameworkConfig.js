@@ -1,6 +1,7 @@
 const { isDev } = require("./isDev")
 
 const FRAMEWORK_CONFIG = {
+
     // 路由页面的前缀地址
     ROUTE_COMPONENT_PREFIX:'@/pages',
 
