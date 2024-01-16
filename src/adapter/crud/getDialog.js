@@ -1,7 +1,8 @@
 const { getFileInfo, initScript, parseUrl, handleImportList, handleMethodListHasOption, handleFormFieldList, getInfoByLabel, getEjsFileTemplateData } = require("../../common")
 const path = require('path')
-const { LABEL_ENUM, DISPLAY_TYPE_ENUM, VUE_DATA_SCRIPT_ENUM } = require("../../enum")
+const { LABEL_ENUM, DISPLAY_TYPE_ENUM, VUE_DATA_SCRIPT_ENUM, COMPONENT_CRUD_ENUM, PAGE_TYPE_ENUM } = require("../../enum")
 const { pascalCase, camelCase } = require("../../utils/commonUtil")
+const { TEMPLATE_PATH } = require("../../config/templateMap")
 
 function initDataList(script){
   script[VUE_DATA_SCRIPT_ENUM.DATA_LIST]=[  {
@@ -156,8 +157,8 @@ function handleTemplate(fileParam,sourceData){
   }
 }
 async function getDialog(fileParam, sourceData) {
-  const { name } = fileParam
-  const type = 'dialog'
+  const { template } = fileParam
+  const type = COMPONENT_CRUD_ENUM.DIALOG
   const fileInfo = getFileInfo({ ...fileParam, type })
   //  --------------------
   const {queryList,funcInfo,fieldList,sourceFieldList} = handleTemplate(fileParam, sourceData)
@@ -176,8 +177,7 @@ async function getDialog(fileParam, sourceData) {
   //  处理一下option
   handleMethodListHasOption(script)
   // ---------------------
-  // const templatePath = path.join(__dirname, '../view/dialog.ejs')
-  const templatePath = 'E://temp//genCode-utils//public//template//v3//crud//dialog.ejs'
+  const templatePath = TEMPLATE_PATH[template][type]
 
   const templateParam = { queryList }
   

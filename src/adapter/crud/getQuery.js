@@ -11,8 +11,9 @@ const {
 } = require("../../common")
 const { nanoid } = require("nanoid")
 const path = require('path')
-const { LABEL_ENUM, DISPLAY_TYPE_ENUM, VUE_DATA_SCRIPT_ENUM } = require("../../enum")
+const { LABEL_ENUM, DISPLAY_TYPE_ENUM, VUE_DATA_SCRIPT_ENUM,  COMPONENT_CRUD_ENUM } = require("../../enum")
 const { camelCase } = require("../../utils/commonUtil")
+const { TEMPLATE_PATH } = require("../../config/templateMap")
 // 初始化查询和重置功能
 function initQueryAndReset(script) {
   script[VUE_DATA_SCRIPT_ENUM.METHOD_LIST].push(addEmitMethodNoParam('onQuery'))
@@ -111,7 +112,7 @@ function handleDeleteBatch(script,isDeleteBatch){
 async function getQuery(fileParam, sourceData) {
   // 解析模板需要的数据，根据模板渲染即可
   const { template } = fileParam
-  const type = 'query'
+  const type = COMPONENT_CRUD_ENUM.QUERY
   const fileInfo = getFileInfo({ ...fileParam, type })
   //  --------------------
   const { functionList, elementList } = sourceData
@@ -131,8 +132,7 @@ async function getQuery(fileParam, sourceData) {
   //  处理一下option
   handleMethodListHasOption(script)
   // ---------------------
-  // const templatePath = path.join(__dirname, '../view/query.ejs')
-  const templatePath = 'E://temp//genCode-utils//public//template//v3//crud//query.ejs'
+  const templatePath = TEMPLATE_PATH[template][type]
 
   const templateParam = handleTemplate(fieldList,funcList)
 

@@ -1,6 +1,7 @@
 const { getFileInfo, initScript, handleImportList, addEmitMethodNoParam, getEjsFileTemplateData } = require("../../common")
 const path = require('path')
-const { VUE_DATA_SCRIPT_ENUM } = require("../../enum")
+const { VUE_DATA_SCRIPT_ENUM,  COMPONENT_CRUD_ENUM } = require("../../enum")
+const { TEMPLATE_PATH } = require("../../config/templateMap")
 function initDataList(script) {
   script[VUE_DATA_SCRIPT_ENUM.DATA_LIST] = [{
     name: 'tableData',
@@ -100,17 +101,14 @@ function handleScript(script, templateParam, sourceData) {
 
 async function getEntry(fileParam, sourceData) {
   const { template } = fileParam
-  const type = 'index'
+  const type = COMPONENT_CRUD_ENUM.ENTRY
   const fileInfo = getFileInfo({ ...fileParam, type })
   //  --------------------
   const { functionList, elementList } = sourceData
   const script = initScript(fileInfo.filename)
   initStruct(script)
   //  --------------------
-  // const templatePath = path.join(__dirname, '../view/entry.ejs')
-  const templatePath = 'E://temp//genCode-utils//public//template//v3//crud//entry.ejs'
-
-  //  const templateParam = handleTemplate(fieldList,funcList,true)
+  const templatePath = TEMPLATE_PATH[template][type]
   const templateParam = {
     isDeleteBatch: true,
     isDelete: true,

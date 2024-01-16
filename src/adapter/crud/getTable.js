@@ -1,6 +1,7 @@
 const { getFileInfo, initScript, addEmitMethodRow, getInfoByLabel, getInfoByBinFunction, getEjsFileTemplateData } = require("../../common")
 const path = require('path')
-const { LABEL_ENUM, VUE_DATA_SCRIPT_ENUM } = require("../../enum")
+const { LABEL_ENUM, VUE_DATA_SCRIPT_ENUM, PAGE_TYPE_ENUM, COMPONENT_CRUD_ENUM } = require("../../enum")
+const { TEMPLATE_PATH } = require("../../config/templateMap")
 
 function initPropList(script){
   script[VUE_DATA_SCRIPT_ENUM.PROP_LIST]=[{
@@ -125,7 +126,8 @@ function handleTemplate(fieldList,funcList,isDeleteBatch=false){
   }
 }
 async function getTable(fileParam, sourceData) {
-  const type = 'table'
+  const {template} = fileParam
+  const type = COMPONENT_CRUD_ENUM.TABLE
   const fileInfo = getFileInfo({ ...fileParam, type })
   //  --------------------
   const { functionList, elementList } = sourceData
@@ -137,9 +139,7 @@ async function getTable(fileParam, sourceData) {
   initStruct(script)
   handleMethodList(script,funcList)
   //  --------------------
-  // const templatePath = path.join(__dirname, '../view/table.ejs')
-
-  const templatePath = 'E://temp//genCode-utils//public//template//v3//crud//table.ejs'
+  const templatePath = TEMPLATE_PATH[template][type]
 
   const templateParam = handleTemplate(fieldList,funcList,isDeleteBatch)
 
