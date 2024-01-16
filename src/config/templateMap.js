@@ -1,5 +1,7 @@
 const { COMPONENT_CRUD_ENUM } = require("../enum/componentType");
 const { PAGE_TYPE_ENUM } = require("../enum/pageType");
+const { isDev } = require("./isDev");
+const path = require('path')
 
 const ELEMENT_ENUM = {
     SERVICE:'service',
@@ -8,18 +10,21 @@ const ELEMENT_ENUM = {
     ROUTE_CONSTANT:'routeConstant'
 }
 
+function getPath(filepath){
+    return path.join(process.cwd(),filepath)
+}
 
 const TEMPLATE_PATH={
     [PAGE_TYPE_ENUM.CRUD]:{
-        [COMPONENT_CRUD_ENUM.QUERY]:'E://temp//genCode-utils//public//template//v3//crud//query.ejs',
-        [COMPONENT_CRUD_ENUM.TABLE]:'E://temp//genCode-utils//public//template//v3//crud//table.ejs',
-        [COMPONENT_CRUD_ENUM.DIALOG]:'E://temp//genCode-utils//public//template//v3//crud//dialog.ejs',
-        [COMPONENT_CRUD_ENUM.ENTRY]:"E://temp//genCode-utils//public//template//v3//crud//entry.ejs",
+        [COMPONENT_CRUD_ENUM.QUERY]:isDev?getPath('public/template/v3/crud/query.ejs'):'E://temp//genCode-utils//public//template//v3//crud//query.ejs',
+        [COMPONENT_CRUD_ENUM.TABLE]:isDev?getPath('public/template/v3/crud/table.ejs'):'E://temp//genCode-utils//public//template//v3//crud//table.ejs',
+        [COMPONENT_CRUD_ENUM.DIALOG]:isDev?getPath('public/template/v3/crud/dialog.ejs'):'E://temp//genCode-utils//public//template//v3//crud//dialog.ejs',
+        [COMPONENT_CRUD_ENUM.ENTRY]:isDev?getPath('public/template/v3/crud/entry.ejs'):"E://temp//genCode-utils//public//template//v3//crud//entry.ejs",
     },
-    [ELEMENT_ENUM.MENU]:"E://temp//genCode-utils//public//template//v3//menu//menu.ejs",
-    [ELEMENT_ENUM.ROUTE]:"E://temp//genCode-utils//public//template//v3//route//route.ejs",
-    [ELEMENT_ENUM.ROUTE_CONSTANT]:"E://temp//genCode-utils//public//template//v3//routeConstant//routeConstant.ejs",
-    [ELEMENT_ENUM.SERVICE]:"E://temp//genCode-utils//public//template//v3//service//service.ejs",
+    [ELEMENT_ENUM.MENU]:isDev?getPath('public/template/v3/menu/menu.ejs'):"E://temp//genCode-utils//public//template//v3//menu//menu.ejs",
+    [ELEMENT_ENUM.ROUTE]:isDev?getPath('public/template/v3/route/route.ejs'):"E://temp//genCode-utils//public//template//v3//route//route.ejs",
+    [ELEMENT_ENUM.ROUTE_CONSTANT]:isDev?getPath('public/template/v3/routeConstant/routeConstant.ejs'):"E://temp//genCode-utils//public//template//v3//routeConstant//routeConstant.ejs",
+    [ELEMENT_ENUM.SERVICE]:isDev?getPath('public/template/v3/service/service.ejs'):"E://temp//genCode-utils//public//template//v3//service//service.ejs",
 
 }
 

@@ -1,5 +1,4 @@
-
-const isDev = false
+const { isDev } = require("./isDev")
 
 const FRAMEWORK_CONFIG = {
     // 路由页面的前缀地址

@@ -1,6 +1,6 @@
 const { callMethod } = require("./callMethod")
 const { callWatch } = require("./callWatch")
-const { getTab } = require("./common")
+const { getTab } = require("../../common")
 
 function genTemplate(template){
   // 从模板中获取

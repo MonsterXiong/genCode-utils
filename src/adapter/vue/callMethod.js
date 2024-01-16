@@ -1,4 +1,4 @@
-const { getTab } = require("./common")
+const { getTab } = require("../../common")
 
 
 function getPageInfoMethod(method){

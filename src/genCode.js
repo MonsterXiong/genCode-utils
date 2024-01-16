@@ -1,6 +1,6 @@
 
 const { genCode } = require('./common')
-const { getPage } = require('./genPage.js')
+const { getPage } = require('./adapter/vue/genPage.js')
 const { getCrudAdapterData, getServiceAdapterData, getMenuAdapterData, getRouteAdapterData, getRouteConstantAdapterData } = require('./adapter')
 const { constantCase, camelCase, pascalCase } = require('./utils/commonUtil.js')
 const fse = require('fs-extra')
