@@ -4,6 +4,7 @@ const fs = require('fs')
 const ejs = require('ejs')
 const { templateDataMap } = require('../template/crud/view/templateData')
 const { uniqueArray } = require('./utils/array')
+const { DISPLAY_TYPE_ENUM } = require('./enum')
 
 function getTab(number=1){
   return new Array(number).fill('').reduce((res)=>res+=`\t`,'')
@@ -82,7 +83,7 @@ function handleFormFieldList(script,field){
   const { param, request } = field
   const {displayType} =param 
   if(request){
-    if (displayType == 'select') {
+    if (displayType == DISPLAY_TYPE_ENUM.SELECT) {
       const { type } = request
       if (type == 'entity') {
         handleSelectEntityType(script, field)
