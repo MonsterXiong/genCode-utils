@@ -125,20 +125,31 @@ function getGenPageData(transformData) {
     content
   }
 }
-async function execCodeGen() {
+
+
+
+function transformPath(data){
+  return data.map(item => {
+    return {
+      ...item,
+      filePath: path.join(FRAMEWORK_CONFIG.CODE_OUTPUT_ROOT_PATH, item.filePath),
+    }
+  })
+}
+
+
+
+async function execCodeGenTest() {
   console.time('开始生成');
   // 获取软件数据
   const softwareData = getSoftwareData()
   // 获取code
   const code = await getGenCode(softwareData)
-  const result = code.map(item => {
-    return {
-      filePath: path.join(FRAMEWORK_CONFIG.CODE_OUTPUT_ROOT_PATH, item.filePath),
-      content: item.content
-    }
-  })
+
+  // 清洗输出路径
+  const result = transformPath(code)
   // 生成
   genCode(result)
   console.timeEnd('开始生成');
 }
-execCodeGen()
+execCodeGenTest()
