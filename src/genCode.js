@@ -1,7 +1,7 @@
 
 const { genCode } = require('./common')
 const { getPage } = require('./adapter/vue/genPage.js')
-const { getCrudAdapterData, getServiceAdapterData, getMenuAdapterData, getRouteAdapterData, getRouteConstantAdapterData } = require('./adapter')
+const { getCrudAdapterData, getServiceAdapterData, getMenuAdapterData, getRouteAdapterData, getRouteConstantAdapterData, getProjectAdapterData } = require('./adapter')
 const { constantCase, camelCase, pascalCase } = require('./utils/commonUtil.js')
 const fse = require('fs-extra')
 const path = require('path')
@@ -16,8 +16,8 @@ function getSoftwareData() {
   return jsonData
 }
 async function getGenCode(softwareData) {
-  const { menuInfo, componentInfo: pages } = softwareData
-
+  const { projectInfo,menuInfo, componentInfo: pages } = softwareData
+  const projectResult = getProjectAdapterData(projectInfo)
   // 获取路由常量、菜单、路由、页面数据
   const { menuList, routeList, routesConstantList, pageList } = getAdapterData(menuInfo, pages)
   const menuResult = getMenuAdapterData({ list: menuList })
@@ -30,7 +30,7 @@ async function getGenCode(softwareData) {
   // 统一处理所有的serviceData
   const servieceResult = getServiceAdapterData(serviceData)
 
-  return [...menuResult, ...routeResult, ...routesConstantResult, ...pageResult, ...servieceResult]
+  return [...projectResult,...menuResult, ...routeResult, ...routesConstantResult, ...pageResult, ...servieceResult]
 }
 
 function getAdapterData(menuInfo, pages) {

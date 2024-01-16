@@ -7,7 +7,16 @@ const ELEMENT_ENUM = {
     SERVICE:'service',
     MENU:'menuData',
     ROUTE:'route',
-    ROUTE_CONSTANT:'routeConstant'
+    ROUTE_CONSTANT:'routeConstant',
+}
+
+const PROJECT_CONSTANT = 'project_constant'
+
+const PROJETC_CONFIG_ENUM = {
+    ENV:'env',
+    ENV_DEV:'envDev',
+    ENV_PROD:'envProd',
+    PACKAGE_JSON:'packageJson',
 }
 
 function getPath(filepath){
@@ -25,6 +34,12 @@ const TEMPLATE_PATH={
     [ELEMENT_ENUM.ROUTE]:isDev?getPath('public/template/v3/route/route.ejs'):"E://temp//genCode-utils//public//template//v3//route//route.ejs",
     [ELEMENT_ENUM.ROUTE_CONSTANT]:isDev?getPath('public/template/v3/routeConstant/routeConstant.ejs'):"E://temp//genCode-utils//public//template//v3//routeConstant//routeConstant.ejs",
     [ELEMENT_ENUM.SERVICE]:isDev?getPath('public/template/v3/service/service.ejs'):"E://temp//genCode-utils//public//template//v3//service//service.ejs",
+    [PROJECT_CONSTANT]:{
+        [PROJETC_CONFIG_ENUM.ENV]:isDev?getPath('public/template/v3/project/env.ejs'):'E://temp//genCode-utils//public//template//v3//project//env.ejs',
+        [PROJETC_CONFIG_ENUM.ENV_DEV]:isDev?getPath('public/template/v3/project/env.dev.ejs'):'E://temp//genCode-utils//public//template//v3//project//env.dev.ejs',
+        [PROJETC_CONFIG_ENUM.ENV_PROD]:isDev?getPath('public/template/v3/project/env.prod.ejs'):'E://temp//genCode-utils//public//template//v3//project//env.prod.ejs',
+        [PROJETC_CONFIG_ENUM.PACKAGE_JSON]:isDev?getPath('public/template/v3/project/packageJson.ejs'):'E://temp//genCode-utils//public//template//v3//project//packageJson.ejs',
+    }
 
 }
 
@@ -32,4 +47,6 @@ const TEMPLATE_PATH={
 module.exports ={
     TEMPLATE_PATH,
     ELEMENT_ENUM,
+    PROJECT_CONSTANT,
+    PROJETC_CONFIG_ENUM
 }
