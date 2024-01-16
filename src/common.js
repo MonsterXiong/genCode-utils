@@ -4,15 +4,16 @@ const ejs = require('ejs')
 const { uniqueArray } = require('./utils/array')
 const { DISPLAY_TYPE_ENUM, VUE_DATA_SCRIPT_ENUM } = require('./enum')
 const { pascalCase, camelCase } = require('./utils/commonUtil')
+const { COMPONENT_ENUM } = require('./enum/componentType')
 
 function getTab(number=1){
   return new Array(number).fill('').reduce((res)=>res+=`\t`,'')
 }
 function getFileInfo({ name, type, dirpath, template }) {
   const componentName = pascalCase(`${dirpath}_${name ? name : type}`)
-  const filetype = type !== 'index' ? 'component' : 'entry'
-  const filename = filetype == 'component' ? componentName : `${pascalCase(dirpath)}Manage`
-  const filepath = (filetype == 'component' ? `components/${filename}` : filename) + '.vue'
+  const filetype = type !== COMPONENT_ENUM.ENTRY ? COMPONENT_ENUM.COMPONENT : COMPONENT_ENUM.ENTRY
+  const filename = filetype == COMPONENT_ENUM.COMPONENT ? componentName : `${pascalCase(dirpath)}Manage`
+  const filepath = (filetype == COMPONENT_ENUM.COMPONENT ? `components/${filename}` : filename) + '.vue'
   return {
     filename,
     filetype,

@@ -6,6 +6,8 @@ const { constantCase, camelCase, pascalCase } = require('./utils/commonUtil.js')
 const fse = require('fs-extra')
 const path = require('path')
 const { PAGE_TYPE_ENUM } = require('./enum/pageType.js')
+const { MENU_TYPE_ENUM } = require('./enum/menuType.js')
+const { FRAMEWORK_CONFIG } = require('./config/frameworkConfig.js')
 
 function getSoftwareData() {
   // 第一步:读取JSON数据
@@ -45,7 +47,7 @@ function getAdapterData(menuInfo, pages) {
     })
     // 设置了功能菜单 且必须设置配置了pages才可以生成页面内容
     const pageInfo = pages.find(page => page.bindMenu == item.id)
-    if (item.menuType == "page" && pageInfo) {
+    if (item.menuType == MENU_TYPE_ENUM.PAGE && pageInfo) {
       res['routesConstantList'].push({
         const: CONST_CODE,
         path: CAMEL_CASE_CODE,
@@ -54,7 +56,7 @@ function getAdapterData(menuInfo, pages) {
       res['routeList'].push({
         ...item,
         const: CONST_CODE,
-        path: `@/pages/${VUE_FILE_NAME}`,
+        path: `${FRAMEWORK_CONFIG.routerComponentPrefix}/${VUE_FILE_NAME}`,
       })
       res['pageList'].push({ ...item, pageInfo });
     }
