@@ -8,6 +8,9 @@
         <el-button type="primary" icon="el-icon-search" @click="onQuery">查询</el-button>
         <el-button icon="el-icon-refresh" @click="onReset">重置</el-button>
         <%_ } -%>
+        <%_if (isDeleteBatch) { -%>
+        <el-button type="danger" icon="el-icon-delete" @click="onBatchDelete">批量删除</el-button>
+        <%_ } -%>
         <%_ toolbarBtnList.forEach(function(btn){ -%>
         <%- include("../../common/btn.ejs",{...btn}) %>
         <%_ }); -%>

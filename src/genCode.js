@@ -2,16 +2,18 @@
 const { genCode } = require('./common')
 const { getPage } =require('./genPage.js')
 const { getCrudAdapterData, getServiceAdapterData, getMenuAdapterData, getRouteAdapterData, getRouteConstantAdapterData } = require('../template')
+const { constantCase, camelCase, pascalCase } = require('./utils/commonUtil.js')
 const fse = require('fs-extra')
 const path = require('path')
-const changeCase = require('change-case')
+const { COMPONENT_TYPE_ENUM } = require('./enum/componentType.js')
+
 function getSoftwareData() {
   // 第一步:读取JSON数据
   const jsonData = fse.readJSONSync(path.resolve(__dirname, '../mockJson.json'))
   return jsonData
 }
 async function getGenCode(softwareData){
-  const { menuInfo, components:pages } = softwareData
+  const { menuInfo, componentInfo:pages } = softwareData
 
   // 获取路由常量、菜单、路由、页面数据
   const { menuList, routeList, routesConstantList, pageList } = getAdapterData(menuInfo, pages)
@@ -37,10 +39,11 @@ function getAdapterData(menuInfo, pages) {
     pageList: []
   }
   const menuList = menuInfo.reduce((res, item) => {
+
     const { code } = item
-    const CONST_CODE = changeCase.constantCase(code)
-    const CAMEL_CASE_CODE = changeCase.camelCase(code)
-    const PASCAL_CASE_CODE = changeCase.pascalCase(code)
+    const CONST_CODE = constantCase(code)
+    const CAMEL_CASE_CODE = camelCase(code)
+    const PASCAL_CASE_CODE = pascalCase(code)
     const VUE_FILE_NAME = `${CAMEL_CASE_CODE}/${PASCAL_CASE_CODE}.vue`
     res['menuList'].push({
       ...item,
@@ -73,7 +76,7 @@ async function getPageAdapterData(menuPageList) {
     // 根据页面的菜单信息去找对应的pages信息
     const { type } = menuPage.pageInfo
     const pageData = parseJsonToPage(menuPage)
-    if (type == 'crud') {
+    if (type == COMPONENT_TYPE_ENUM.CRUD) {
       pagesCode.push(await getCrudAdapterData(pageData))
     }
   }
@@ -82,12 +85,12 @@ async function getPageAdapterData(menuPageList) {
 // 返回页面需要的数据
 function parseJsonToPage(menuPage) {
   const { functionModel: functionList, elementConfig: elementList } = menuPage.pageInfo
-  elementList.forEach(element => {
-    element.data.forEach(dataItem => {
-        dataItem['name'] = dataItem.alias ? dataItem.alias : dataItem.remark,
-        dataItem['field'] = dataItem.aliasCode ? dataItem.aliasCode : dataItem.bindAttr
-    })
-  })
+  // elementList.forEach(element => {
+  //   element.data.forEach(dataItem => {
+  //       dataItem['name'] = dataItem.alias ? dataItem.alias : dataItem.remark,
+  //       dataItem['field'] = dataItem.aliasCode ? dataItem.aliasCode : dataItem.bindAttr
+  //   })
+  // })
 
   return { menuInfo: menuPage, functionList, elementList }
 }
@@ -125,11 +128,13 @@ function getGenPageData(transformData) {
   }
 }
 async function execCodeGen() {
+  console.time('开始生成');
   // 获取软件数据
   const softwareData = getSoftwareData()
   // 获取code
   const code = await getGenCode(softwareData)
   // 生成
   genCode(code)
+  console.timeEnd('开始生成');
 }
 execCodeGen()

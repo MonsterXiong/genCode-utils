@@ -1,8 +1,8 @@
 const { getFileInfo, initScript, addEmitMethodRow, getInfoByLabel, getInfoByBinFunction, getEjsFileTemplateData } = require("../../../src/common")
 const path = require('path')
-const { LABEL_ENUM, FUNCTION_TYPE_ENUM } = require("../../../src/enum")
+const { LABEL_ENUM, VUE_DATA_SCRIPT_ENUM } = require("../../../src/enum")
 function initPropList(script){
-  script['propList']=[{
+  script[VUE_DATA_SCRIPT_ENUM.PROP_LIST]=[{
     name: 'tableData',
     type: 'object',
     initValue: '{}',
@@ -18,7 +18,7 @@ function initPropList(script){
 }
 
 function initMethodList(script){
-  script['methodList'] = [{
+  script[VUE_DATA_SCRIPT_ENUM.METHOD_LIST] = [{
     type: 'setHeight',
     name: 'setHeight',
     content: "",
@@ -37,14 +37,14 @@ function initMethodList(script){
 }
 
 function initDataList(script){
-  script['dataList']=[{
+  script[VUE_DATA_SCRIPT_ENUM.DATA_LIST]=[{
     name: 'tableHeight',
     type: 'string',
     initValue: `'500px'`,
   }]
 }
 function initMountList(script){
-  script['mountList']= [{
+  script[VUE_DATA_SCRIPT_ENUM.MOUNT_LIST]= [{
     isAwait: false,
     type: 'callMethod',
     content: 'setHeight'
@@ -63,9 +63,9 @@ function handleMethodList(script, funcList) {
     funcList.forEach(func => {
       const { label, code } = func
       if (label !== LABEL_ENUM.QUERY_LIST) {
-        script['methodList'].push(addEmitMethodRow(code))
+        script[VUE_DATA_SCRIPT_ENUM.METHOD_LIST].push(addEmitMethodRow(code))
       }else{
-        script['importList'].push({ isDefault: false, from: '@/utils/queryConditionBuilder', content: 'QueryConditionBuilder' })
+        script[VUE_DATA_SCRIPT_ENUM.IMPORT_LIST].push({ isDefault: false, from: '@/utils/queryConditionBuilder', content: 'QueryConditionBuilder' })
       }
     });
   }
@@ -97,20 +97,21 @@ function handleTemplate(fieldList,funcList,isDeleteBatch=false){
   const {isShow:isEdit,showInfo:editBtnInfo} = getDeleteOrEditBtnParam(editInfo,LABEL_ENUM.UPDATE)
   const {isShow:isDelete,showInfo:deleteBtnInfo} = getDeleteOrEditBtnParam(deleteInfo,LABEL_ENUM.DELETE)
 
-  const btns = funcList.filter(item=>![LABEL_ENUM.DELETE,LABEL_ENUM.UPDATE].includes(item.label)).map(item=>{
+  const btns = funcList.filter(item=>item.label == LABEL_ENUM.EXT_OBJ).map(item=>{
     return{
       param:'scope.row',
-      name:item?.name || 'name',
-      functionName:item?.code || 'code'
+      name:item.name ,
+      functionName:item.code
     }
   })
 
   const fields = fieldList.filter(item=>!item.param.isHidden).map(field=>{
     return{
-      key:field.field,
+      key:field.code,
       label:field.name
     }
   })
+  const isShowOperate = isEdit || isDelete|| btns.length>0
   return {
     isDeleteBatch,
     isEdit,
@@ -119,6 +120,7 @@ function handleTemplate(fieldList,funcList,isDeleteBatch=false){
     deleteBtnInfo,
     btns,
     fields,
+    isShowOperate
   }
 }
 async function getTable(fileParam, sourceData) {
@@ -127,7 +129,7 @@ async function getTable(fileParam, sourceData) {
   //  --------------------
   const { functionList, elementList } = sourceData
   const isDeleteBatch =!!getInfoByLabel(functionList,LABEL_ENUM.DELETE_BATCH)
-  const funcList = functionList.filter(item => item.functionType == FUNCTION_TYPE_ENUM.OBJ)
+  const funcList = functionList.filter(item => [LABEL_ENUM.EXT_OBJ,LABEL_ENUM.UPDATE,LABEL_ENUM.DELETE].includes(item.label))
   const fieldList = (getInfoByBinFunction(elementList,LABEL_ENUM.QUERY_LIST)?.data || [])
   // 初始化script
   const script = initScript(fileInfo.filename)
@@ -136,7 +138,7 @@ async function getTable(fileParam, sourceData) {
   //  --------------------
   const templatePath = path.join(__dirname, '../view/table.ejs')
 
-  const templateParam = handleTemplate(fieldList,funcList,true)
+  const templateParam = handleTemplate(fieldList,funcList,isDeleteBatch)
 
   const templateData = await getEjsFileTemplateData(templatePath,templateParam)
   return {

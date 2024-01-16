@@ -102,7 +102,7 @@
       ]
     }
   ],
-  "components": [
+  "componentInfo": [
     {
       "id": "xxxxxx",
       "type": "crud",
@@ -118,7 +118,7 @@
           "request": [
             {
               "label": "queryList",
-              "url": "/base/design_abi/queryIndexList"
+              "url": "/base/design_index/queryIndexList"
             }
           ]
         },
@@ -130,7 +130,7 @@
           "request": [
             {
               "label": "insert",
-              "url": "/base/design_abi/insertIndex"
+              "url": "/base/design_index/insertIndex"
             }
           ]
         },
@@ -142,11 +142,11 @@
           "request": [
             {
               "label": "query",
-              "url": "/base/design_abi/queryAbi"
+              "url": "/base/design_index/queryAbi"
             },
             {
               "label": "update",
-              "url": "/base/design_abi/updateIndex"
+              "url": "/base/design_index/updateIndex"
             }
           ]
         },
@@ -158,7 +158,7 @@
           "request": [
             {
               "label": "deleteBatch",
-              "url": "/base/design_abi/deleteAbiBatch"
+              "url": "/base/design_index/deleteAbiBatch"
             }
           ]
         },
@@ -170,35 +170,35 @@
           "request": [
             {
               "label": "extGlobal",
-              "url": "/base/design_abi/calValue"
+              "url": "/base/design_index/calValue"
             }
           ]
         }
       ],
       "elementConfig": [
         {
-          "code": "listElement",
+          "label":"listElement",
+          "name":"指标列表元素",
+          "code": "indexListElement",
           "bindFunction": "queryList",
           "data": [
             {
-              "remark":"指标ID",
-              "alias": "指标ID",
-              "aliasCode": "indexId",
+              "name":"指标ID",
+              "code": "indexId",
               "bindObj": "db_index",
               "bindAttr": "index_id",
-              "pk": true,
               "param": {
+                "pk": true,
                 "displayType": "text",
                 "isHidden": true,
                 "isSearch": false
               }
             },
             {
-              "remark":"指标名称",
-              "alias": "指标名称",
-              "aliasCode": "indexName",
               "bindObj": "db_index",
               "bindAttr": "name",
+              "name":"指标名称",
+              "code": "indexName",
               "param": {
                 "pk": false,
                 "displayType": "text",
@@ -207,14 +207,13 @@
               }
             },
             {
-              "remark":"所属能力",
-              "alias": "所属能力",
-              "aliasCode": "bindAbiName",
+              "name":"所属能力",
+              "code": "bindAbiName",
               "bindObj": "db_index",
               "bindAttr": "bind_abi",
               "request":{
                 "type":"entity",
-                "url":"/base/design_abi/queryList"
+                "url":"/base/design_index/queryList"
               },
               "param": {
                 "pk": false,
@@ -226,13 +225,14 @@
           ]
         },
         {
-          "code": "updateElement",
+          "label":"updateElement",
+          "name":"指标更新元素",
+          "code": "indexUpdateElement",
           "bindFunction": "update",
           "data": [
             {
-              "remark":"指标ID",
-              "alias": "指标ID",
-              "aliasCode": "indexId",
+              "name":"指标ID",
+              "code": "指标ID",
               "bindObj": "db_index",
               "bindAttr": "index_id",
               "param": {
@@ -243,9 +243,8 @@
               }
             },
             {
-              "remark":"指标名称",
-              "alias": "指标名称",
-              "aliasCode": "indexName",
+              "name":"指标名称",
+              "code": "indexName",
               "bindObj": "db_index",
               "bindAttr": "name",
               "param": {
@@ -258,13 +257,14 @@
           ]
         },
         {
-          "code": "insertElement",
+          "label":"insertElement",
+          "name":"指标更新元素",
+          "code": "indexInsertElement",
           "bindFunction": "insert",
           "data": [
             {
-              "remark":"指标ID",
-              "alias": "指标ID",
-              "aliasCode": "indexId",
+              "name":"指标ID",
+              "code": "indexId",
               "bindObj": "db_index",
               "bindAttr": "index_id",
               "param": {
@@ -275,9 +275,8 @@
               }
             },
             {
-              "remark":"指标名称",
-              "alias": "指标名称",
-              "aliasCode": "indexName",
+              "name":"指标名称",
+              "code": "indexName",
               "bindObj": "db_index",
               "bindAttr": "name",
               "param": {
@@ -288,23 +287,105 @@
               }
             },
             {
-              "remark":"所属能力",
-              "alias": "所属能力",
-              "aliasCode": "bindAbiName",
+              "name":"所属能力",
+              "code": "bindAbiName",
               "bindObj": "db_index",
               "bindAttr": "bind_abi",
               "param": {
                 "pk": false,
                 "displayType": "select",
                 "isRequired": true,
-                "isMulti": false,
-                "selectUrl": "/base/simple/querySimpleAbiList"
+                "isMulti": false
               },
               "request":{
                 "type":"entity",
                 "url":"/base/design_abi/queryList"
               }
             }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "xxxxxx",
+      "type": "crud",
+      "name": "能力表格",
+      "code": "abiDiv",
+      "bindMenu": "001001",
+      "functionModel": [
+        {
+          "name": "查询能力列表",
+          "code": "queryAbiList",
+          "label": "queryList",
+          "functionType": "global",
+          "request": [
+            {
+              "label": "queryList",
+              "url": "/base/design_abi/queryAbiList"
+            }
+          ]
+        },
+        {
+          "name": "新增能力",
+          "code": "insertAbi",
+          "label": "insert",
+          "functionType": "global",
+          "request": [
+            {
+              "label": "insert",
+              "url": "/base/design_abi/insertAbi"
+            }
+          ]
+        },
+        {
+          "name": "编辑能力",
+          "code": "updateAbi",
+          "label": "update",
+          "functionType": "obj",
+          "request": [
+            {
+              "label": "query",
+              "url": "/base/design_abi/queryAbi"
+            },
+            {
+              "label": "update",
+              "url": "/base/design_abi/updateAbi"
+            }
+          ]
+        }
+      ],
+      "elementConfig": [
+        {
+          "label":"listElement",
+          "name":"能力列表元素",
+          "code": "indexListElement",
+          "bindFunction": "queryList",
+          "data": [
+            {
+              "name":"能力ID",
+              "code": "abiId",
+              "bindObj": "db_abi",
+              "bindAttr": "abi_id",
+              "param": {
+                "pk": true,
+                "displayType": "text",
+                "isHidden": true,
+                "isSearch": false
+              }
+            },
+            {
+              "bindObj": "db_abi",
+              "bindAttr": "name",
+              "name":"能力名称",
+              "code": "abiName",
+              "param": {
+                "pk": false,
+                "displayType": "text",
+                "isHidden": false,
+                "isSearch": true
+              }
+            }
+     
           ]
         }
       ]

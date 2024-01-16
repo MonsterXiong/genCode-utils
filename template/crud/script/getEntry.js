@@ -1,7 +1,8 @@
 const { getFileInfo, initScript, handleImportList, addEmitMethodNoParam, getEjsFileTemplateData } = require("../../../src/common")
 const path = require('path')
+const { VUE_DATA_SCRIPT_ENUM } = require("../../../src/enum")
 function initDataList(script) {
-  script['dataList'] = [{
+  script[VUE_DATA_SCRIPT_ENUM.DATA_LIST] = [{
     name: 'tableData',
     type: 'array',
     initValue: '[]',
@@ -24,17 +25,16 @@ function initDataList(script) {
   }]
 }
 function initComponentList(script) {
-  script['componentList'] = []
+  script[VUE_DATA_SCRIPT_ENUM.COMPONENT_LIST] = []
 }
 
 function initMountList(script) {
-  script['mountList'] = [{ isAwait: true, type: 'callMethod', content: 'queryTableData' }]
+  script[VUE_DATA_SCRIPT_ENUM.MOUNT_LIST] = [{ isAwait: true, type: 'callMethod', content: 'queryTableData' }]
 }
 
 function initMethodList(script) {
-  script['methodList'] = [{ type: 'refreshPagination' }]
+  script[VUE_DATA_SCRIPT_ENUM.METHOD_LIST] = [{ type: 'refreshPagination' }]
 }
-
 
 function initStruct(script) {
   initDataList(script)
@@ -44,8 +44,8 @@ function initStruct(script) {
 }
 
 function addComponent(script, componenName) {
-  script['componentList'].push(componenName)
-  script['importList'].push({ isDefault: true, content: componenName, from: `./components/${componenName}.vue` })
+  script[VUE_DATA_SCRIPT_ENUM.COMPONENT_LIST].push(componenName)
+  script[VUE_DATA_SCRIPT_ENUM.IMPORT_LIST].push({ isDefault: true, content: componenName, from: `./components/${componenName}.vue` })
 }
 
 function handleScript(script, templateParam, sourceData) {
@@ -62,38 +62,38 @@ function handleScript(script, templateParam, sourceData) {
   addComponent(script, tableComponentName)
 
   if (isQuery) {
-    script['dataList'].push({ name: 'queryForm', type: 'object', initValue: '{}', })
+    script[VUE_DATA_SCRIPT_ENUM.DATA_LIST].push({ name: 'queryForm', type: 'object', initValue: '{}', })
     addComponent(script, queryComponentName)
-    script['methodList'].push({ type: 'entryOnReset' })
+    script[VUE_DATA_SCRIPT_ENUM.METHOD_LIST].push({ type: 'entryOnReset' })
   }
   if (isEditDialog) {
     addComponent(script, editDialogComponentName)
     // 需要调整
-    script['methodList'].push({ type: 'openDialog', name: 'onEdit', dialogRef: 'editDialogRef', param: 'row' })
+    script[VUE_DATA_SCRIPT_ENUM.METHOD_LIST].push({ type: 'openDialog', name: 'onEdit', dialogRef: 'editDialogRef', param: 'row' })
   }
   if (isCreateDialog) {
     addComponent(script, createDialogComponentName)
     // 需要调整
-    script['methodList'].push({ type: 'openDialog', name: 'onAdd', dialogRef: 'createDialogRef', param: '' })
+    script[VUE_DATA_SCRIPT_ENUM.METHOD_LIST].push({ type: 'openDialog', name: 'onAdd', dialogRef: 'createDialogRef', param: '' })
   }
   if (isDeleteBatch) {
-    script['dataList'].push({ name: 'multipleSelection', type: 'array', initValue: '[]', })
-    script['methodList'].push({ type: 'selectionChange' })
+    script[VUE_DATA_SCRIPT_ENUM.DATA_LIST].push({ name: 'multipleSelection', type: 'array', initValue: '[]', })
+    script[VUE_DATA_SCRIPT_ENUM.METHOD_LIST].push({ type: 'selectionChange' })
     // 还有批量删除的方法,会掉接口
-    script['methodList'].push(addEmitMethodNoParam('onDeleteBatch'))
+    script[VUE_DATA_SCRIPT_ENUM.METHOD_LIST].push(addEmitMethodNoParam('onDeleteBatch'))
   }
   if (isDelete) {
     // 添加一个删除方法，会掉接口
-    script['methodList'].push(addEmitMethodNoParam('onDelete'))
+    script[VUE_DATA_SCRIPT_ENUM.METHOD_LIST].push(addEmitMethodNoParam('onDelete'))
   }
   // 初始化查询方法
-  script['methodList'].push({ type: 'queryTableData', ServiceName: 'DesignAbiService', InterfaceName: 'queryList' })
-  script['importList'].push({ isDefault: false, content: 'DesignAbiService', from: '@/services' })
+  script[VUE_DATA_SCRIPT_ENUM.METHOD_LIST].push({ type: 'queryTableData', ServiceName: 'DesignAbiService', InterfaceName: 'queryList' })
+  script[VUE_DATA_SCRIPT_ENUM.IMPORT_LIST].push({ isDefault: false, content: 'DesignAbiService', from: '@/services' })
 
   // QueryConditionBuilder
-  script['importList'].push({ isDefault: false, from: '@/utils/queryConditionBuilder', content: 'QueryConditionBuilder' })
+  script[VUE_DATA_SCRIPT_ENUM.IMPORT_LIST].push({ isDefault: false, from: '@/utils/queryConditionBuilder', content: 'QueryConditionBuilder' })
   // 初始化watch
-  script['watchList'].push({ type: 'entryPageInfo' })
+  script[VUE_DATA_SCRIPT_ENUM.WATCH_LIST].push({ type: 'entryPageInfo' })
   handleImportList(script)
 
 }

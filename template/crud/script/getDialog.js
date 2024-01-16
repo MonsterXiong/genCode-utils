@@ -1,10 +1,10 @@
 const { getFileInfo, initScript, parseUrl, handleImportList, handleMethodListHasOption, handleFormFieldList, getInfoByLabel, getEjsFileTemplateData } = require("../../../src/common")
 const path = require('path')
-const changeCase = require('change-case')
-const { LABEL_ENUM, DISPLAY_TYPE_ENUM } = require("../../../src/enum")
+const { LABEL_ENUM, DISPLAY_TYPE_ENUM, VUE_DATA_SCRIPT_ENUM } = require("../../../src/enum")
+const { pascalCase, camelCase } = require("../../../src/utils/commonUtil")
 
 function initDataList(script){
-  script['dataList']=[  {
+  script[VUE_DATA_SCRIPT_ENUM.DATA_LIST]=[  {
     name: 'dialogWidth',
     type: 'string',
     initValue: 'CommonDialogWidth.smallForm',
@@ -19,11 +19,11 @@ function initDataList(script){
   }]
 }
 function initImportDataList(script){
-  script['importList'] = [{isDefault: true,from: '@/utils/tools',content: 'tools'}]
-  script['importList'] = [{isDefault: true,from: '@/common/constants',content: 'CommonDialogWidth'}]
+  script[VUE_DATA_SCRIPT_ENUM.IMPORT_LIST] = [{isDefault: true,from: '@/utils/tools',content: 'tools'}]
+  script[VUE_DATA_SCRIPT_ENUM.IMPORT_LIST] = [{isDefault: true,from: '@/common/constants',content: 'CommonDialogWidth'}]
 }
 function initMethodList(script){
-script['methodList']=[{
+script[VUE_DATA_SCRIPT_ENUM.METHOD_LIST]=[{
   type: 'onDialogClose',
   name: 'onDialogClose',
   content: "",
@@ -47,10 +47,10 @@ function initStruct(script,funcInfo){
   initMethodList(script)
   const {code,name,label,request} = funcInfo
   if(isUpdate(funcInfo)){
-    script['dataList'].push({name: 'row',type: 'null',initValue: 'null',})
+    script[VUE_DATA_SCRIPT_ENUM.DATA_LIST].push({name: 'row',type: 'null',initValue: 'null',})
   }
   else if(isCreate(funcInfo)){
-    script['dataList'].push({name: 'title',type: 'string',initValue: name?name:label==LABEL_ENUM.INSERT?'新增':'编辑'})
+    script[VUE_DATA_SCRIPT_ENUM.DATA_LIST].push({name: 'title',type: 'string',initValue: name?name:label==LABEL_ENUM.INSERT?'新增':'编辑'})
   }
 }
 function handleFieldList(script,fieldList){
@@ -62,7 +62,7 @@ function handleFieldList(script,fieldList){
     }]
     fieldList.forEach(field=>{
       initValue.push({
-        name: field.field,
+        name: field.code,
         type:'string',
         initValue: '""',
       })
@@ -73,7 +73,7 @@ function handleFieldList(script,fieldList){
       type: 'object',
       initValue
     }
-    script['dataList'].push(form)
+    script[VUE_DATA_SCRIPT_ENUM.DATA_LIST].push(form)
   }
 
 }
@@ -84,32 +84,31 @@ function getInterfaceData(requestInfo){
   const { url } = requestInfo
   const { serviceType,interfaceName }= parseUrl(url)
   return {
-    ServiceName:`${changeCase.pascalCase(serviceType)}Service`,
-    InterfaceName:`${changeCase.camelCase(interfaceName)}`
+    ServiceName:`${pascalCase(serviceType)}Service`,
+    InterfaceName:`${camelCase(interfaceName)}`
   }
 }
-
 function handleMethodList(script,funcInfo,fieldList){
   const prikeyInfo = fieldList.find(item=>item.param.pk)
-  const pri = prikeyInfo.field
+  const pri = prikeyInfo?.code
   let requestInfo = null
   const { request } = funcInfo
   if(isUpdate(funcInfo)){
     requestInfo = getInfoByLabel(request,LABEL_ENUM.UPDATE)
     const queryInfo =getInfoByLabel(request,LABEL_ENUM.QUERY)
     const {ServiceName,InterfaceName} = getInterfaceData(queryInfo)
-    script['methodList'].unshift({type:'editGetData',pri,ServiceName,InterfaceName})
-    script['methodList'].unshift({type:'editDialogShow',pri})
-    script['importList'].push({isDefault:false,content:`${ServiceName}`,from:'@/services'})
+    script[VUE_DATA_SCRIPT_ENUM.METHOD_LIST].unshift({type:'editGetData',pri,ServiceName,InterfaceName})
+    script[VUE_DATA_SCRIPT_ENUM.METHOD_LIST].unshift({type:'editDialogShow',pri})
+    script[VUE_DATA_SCRIPT_ENUM.IMPORT_LIST].push({isDefault:false,content:`${ServiceName}`,from:'@/services'})
   }
   if(isCreate(funcInfo)){
     requestInfo = getInfoByLabel(request,LABEL_ENUM.INSERT)
-    script['methodList'].unshift({type:'createDialogShow'})
+    script[VUE_DATA_SCRIPT_ENUM.METHOD_LIST].unshift({type:'createDialogShow'})
   }
   const {ServiceName,InterfaceName}= getInterfaceData(requestInfo)
-  script['importList'].push({isDefault:false,content:`${ServiceName}`,from:'@/services'})
+  script[VUE_DATA_SCRIPT_ENUM.IMPORT_LIST].push({isDefault:false,content:`${ServiceName}`,from:'@/services'})
   // 添加onSubmitForm方法
-  script['methodList'].push({
+  script[VUE_DATA_SCRIPT_ENUM.METHOD_LIST].push({
     type:'dialogSubmit',
     ServiceName,
     InterfaceName
@@ -135,16 +134,16 @@ function handleTemplate(fileParam,sourceData){
   }
 
   const queryList = fieldList.map(field=>{
-    const {name,field:prop,param:fieldParam,bindAttr} = field
+    const {name,code,param:fieldParam,bindAttr} = field
     const {displayType} =fieldParam 
     const param =  {
       label:name,
       displayType,
-      prop
+      prop:code
     }
     if(displayType == DISPLAY_TYPE_ENUM.SELECT){
-      param.entityKey = changeCase.camelCase(bindAttr)
-      param.entityLabel = prop
+      param.entityKey = camelCase(bindAttr)
+      param.entityLabel = code
     }
     return param
   })

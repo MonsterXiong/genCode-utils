@@ -1,18 +1,18 @@
-const changeCase = require('change-case')
 const fse = require('fs-extra')
 const fs = require('fs')
 const ejs = require('ejs')
 const { templateDataMap } = require('../template/crud/view/templateData')
 const { uniqueArray } = require('./utils/array')
-const { DISPLAY_TYPE_ENUM } = require('./enum')
+const { DISPLAY_TYPE_ENUM, VUE_DATA_SCRIPT_ENUM } = require('./enum')
+const { pascalCase, camelCase } = require('./utils/commonUtil')
 
 function getTab(number=1){
   return new Array(number).fill('').reduce((res)=>res+=`\t`,'')
 }
 function getFileInfo({ name, type, dirpath, template }) {
-  const componentName = changeCase.pascalCase(`${dirpath}_${name ? name : type}`)
+  const componentName = pascalCase(`${dirpath}_${name ? name : type}`)
   const filetype = type !== 'index' ? 'component' : 'entry'
-  const filename = filetype == 'component' ? componentName : `${changeCase.pascalCase(dirpath)}Manage`
+  const filename = filetype == 'component' ? componentName : `${pascalCase(dirpath)}Manage`
   const filepath = (filetype == 'component' ? `components/${filename}` : filename) + '.vue'
   return {
     filename,
@@ -30,18 +30,18 @@ function addEmitMethodRow(emitName){
   return { type: 'emit', name: emitName, content: '', param:'row' }
 }
 function addServiceToImportList(script,serviceName){
-  script['importList'].push({ isDefault: false, from: '@/services', content: serviceName })
+  script[VUE_DATA_SCRIPT_ENUM.IMPORT_LIST].push({ isDefault: false, from: '@/services', content: serviceName })
 }
 function handleSelectEntityType(script,field){
-  const { request,bindAttr,field:bindField } = field
+  const { request,bindAttr,code } = field
   const { url } = request
   const { serviceType,interfaceName } = parseUrl(url)
-  const serviceName = `${changeCase.pascalCase(serviceType)}Service`
-  const variableName = `${changeCase.camelCase(bindField)}Option`
-  const functionName = `get${changeCase.pascalCase(variableName)}`
+  const serviceName = `${pascalCase(serviceType)}Service`
+  const variableName = `${camelCase(code)}Option`
+  const functionName = `get${pascalCase(variableName)}`
   addServiceToImportList(script,serviceName)
-  script['methodList'].unshift({ type: 'option', serviceName, interfaceName, variableName, functionName })
-  script['dataList'].push({ name: variableName, type: 'array', initValue: '[]' })
+  script[VUE_DATA_SCRIPT_ENUM.METHOD_LIST].unshift({ type: 'option', serviceName, interfaceName, variableName, functionName })
+  script[VUE_DATA_SCRIPT_ENUM.DATA_LIST].push({ name: variableName, type: 'array', initValue: '[]' })
 }
 function parseUrl (url){
   const [,interfaceType,serviceType,interfaceName]=url.split('/')
@@ -52,19 +52,19 @@ function parseUrl (url){
   }
 }
 function handleMethodListHasOption(script){
-  const initOptionList = script['methodList'].filter(item => item.type == 'option')
+  const initOptionList = script[VUE_DATA_SCRIPT_ENUM.METHOD_LIST].filter(item => item.type == 'option')
   if (initOptionList.length) {
-    script['methodList'].unshift({ type: 'initOption', children: initOptionList.map(option => option.functionName) })
-    script['mountList'].push({ isAwait: true, type: 'callMethod', content: 'initOption' })
+    script[VUE_DATA_SCRIPT_ENUM.METHOD_LIST].unshift({ type: 'initOption', children: initOptionList.map(option => option.functionName) })
+    script[VUE_DATA_SCRIPT_ENUM.MOUNT_LIST].push({ isAwait: true, type: 'callMethod', content: 'initOption' })
   }
 }
 function handleImportList(script){
-  const serviceList=uniqueArray(script['importList'],'content').filter(item=>item.from == '@/services')
-  const otherList=script['importList'].filter(item=>item.from != '@/services')
+  const serviceList=uniqueArray(script[VUE_DATA_SCRIPT_ENUM.IMPORT_LIST],'content').filter(item=>item.from == '@/services')
+  const otherList=script[VUE_DATA_SCRIPT_ENUM.IMPORT_LIST].filter(item=>item.from != '@/services')
   const importService = serviceList.map(item=>item.content).join(', ')
-  script['importList'] = otherList
+  script[VUE_DATA_SCRIPT_ENUM.IMPORT_LIST] = otherList
   if(serviceList.length){
-    script['importList'].push({ isDefault:false, from:'@/services',content:importService})
+    script[VUE_DATA_SCRIPT_ENUM.IMPORT_LIST].push({ isDefault:false, from:'@/services',content:importService})
   }
 }
 
@@ -125,6 +125,12 @@ function getFormatRequestList(sourceData){
     res[item.label] = item
     return res
   },{})
+  // 临时处理不存在要素中的功能
+  const functionServiceList = functionList.reduce((res,item)=>{
+    let request = item?.request || []
+    res = res.concat(request)
+    return res
+  },[])
   const serviceList = elementList.reduce((res,element) => {
     let request = functionMap[element.bindFunction]?.request || []
     const prikeyInfo = element.data.find(item=>item.param.pk) || {}
@@ -132,19 +138,19 @@ function getFormatRequestList(sourceData){
       request = request.map(item=>{
         return {
           ...item,
-          prikeyInfo:{...prikeyInfo,code:changeCase.camelCase(prikeyInfo.code)}
+          prikeyInfo:{...prikeyInfo,code:camelCase(prikeyInfo.code)}
         }
       })
     }
     res = res.concat(request)
     return res
-  },[]).reduce((res,item)=>{
+  },functionServiceList).reduce((res,item)=>{
     const { interfaceType, serviceType, interfaceName } = parseUrl(item.url)
     const param = {
       ...item,
       interfaceType,
       serviceType,
-      serviceName:changeCase.pascalCase(serviceType),
+      serviceName:pascalCase(serviceType),
       interfaceName
     }
     if(!res[serviceType]){
@@ -160,6 +166,8 @@ function getFormatRequestList(sourceData){
 async function getEjsFileTemplateData(templatePath,templateParam){
   return await ejs.renderFile(templatePath,templateParam)
 }
+
+
 
 module.exports = {
   genCode,

@@ -1,7 +1,7 @@
 const path = require('path')
-const changeCase = require('change-case')
 const { getEjsTemplate } = require("../../src/common")
 const { uniqueArray } = require("../../src/utils/array")
+const { camelCase, pascalCase } = require('../../src/utils/commonUtil')
 
 // 根据label进行去重
 function formatService(serviceData) {
@@ -19,7 +19,7 @@ function transfromInterfaceData(serviceFunc) {
         functionType: label,
         functionUrl: url,
         functionName: interfaceName,
-        prikey: prikeyInfo?.field
+        prikey: prikeyInfo?.code
     }
     return tempData
 }
@@ -31,11 +31,10 @@ function getServiceContent(className, serviceConten) {
     content += `}`
     return content
 }
-
 function getServiceResult(serviceList, serviceTemp) {
     return Object.keys(serviceList).reduce((res, service) => {
-        const filename = `${changeCase.camelCase(service)}Service.js`
-        const className = changeCase.pascalCase(service)
+        const filename = `${camelCase(service)}Service.js`
+        const className = pascalCase(service)
         let content = serviceList[service].reduce((pre, cur) => pre += serviceTemp(transfromInterfaceData(cur)), "")
         res.push({
             filePath: `./base/${filename}`,
