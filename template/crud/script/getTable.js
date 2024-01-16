@@ -1,6 +1,5 @@
 const { getFileInfo, initScript, addEmitMethodRow, getInfoByLabel, getInfoByBinFunction } = require("../../../src/common")
 const path = require('path')
-const ejs = require('ejs')
 const { LABEL_ENUM, FUNCTION_TYPE_ENUM } = require("../../../src/enum")
 function initPropList(script){
   script['propList']=[{

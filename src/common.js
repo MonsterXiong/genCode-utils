@@ -157,6 +157,10 @@ function getFormatRequestList(sourceData){
   return serviceList
 }
 
+async function getEjsFileTemplateData(templatePath,templateParam){
+  return await ejs.renderFile(templatePath,templateParam)
+}
+
 module.exports = {
   genCode,
   getTab,
@@ -172,6 +176,7 @@ module.exports = {
   parseUrl,
   getFormatRequestList,
   getEjsTemplate,
+  getEjsFileTemplateData,
   handleFormFieldList,
   getInfoByAttr,
   getInfoByLabel,

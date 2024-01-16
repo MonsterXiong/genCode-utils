@@ -1,6 +1,5 @@
 const { getFileInfo, initScript, handleImportList, addEmitMethodNoParam } = require("../../../src/common")
 const path = require('path')
-const ejs = require('ejs')
 function initDataList(script){
   script['dataList']=[{
     name: 'tableData',
@@ -131,7 +130,7 @@ async function getEntry(fileParam, sourceData) {
   //  temp
    handleScript(script,templateParam,sourceData)
 
-   const templateData = await ejs.renderFile(templatePath,templateParam)
+   const templateData = await getEjsFileTemplateData(templatePath,templateParam)
   return {
     ...fileInfo,
     params: {

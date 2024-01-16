@@ -1,14 +1,12 @@
 const {
   getFileInfo,
   addEmitMethodNoParam,
-  handleSelectEntityType,
   handleMethodListHasOption,
   handleImportList,
   initScript,
   handleFormFieldList,
   getInfoByBinFunction,
 } = require("../../../src/common")
-const ejs = require('ejs')
 const { nanoid } = require("nanoid")
 const path = require('path')
 const changeCase = require('change-case')
@@ -135,6 +133,7 @@ async function getQuery(fileParam, sourceData) {
   const templateParam = handleTemplate(fieldList,funcList)
 
   const templateData = await ejs.renderFile(templatePath,templateParam)
+
   return {
     ...fileInfo,
     params: {

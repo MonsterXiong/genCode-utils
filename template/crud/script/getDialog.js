@@ -1,6 +1,5 @@
-const { getFileInfo, initScript, parseUrl, handleImportList, handleMethodListHasOption, handleFormFieldList, getInfoByLabel } = require("../../../src/common")
+const { getFileInfo, initScript, parseUrl, handleImportList, handleMethodListHasOption, handleFormFieldList, getInfoByLabel, getEjsFileTemplateData } = require("../../../src/common")
 const path = require('path')
-const ejs = require('ejs')
 const changeCase = require('change-case')
 const { LABEL_ENUM, DISPLAY_TYPE_ENUM } = require("../../../src/enum")
 
@@ -182,7 +181,7 @@ async function getDialog(fileParam, sourceData) {
 
   const templateParam = { queryList }
 
-  const templateData = await ejs.renderFile(templatePath,templateParam)
+  const templateData = await getEjsFileTemplateData(templatePath,templateParam)
 
   return {
     ...fileInfo,
