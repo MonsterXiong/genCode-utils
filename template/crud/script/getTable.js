@@ -1,7 +1,7 @@
-const { getFileInfo, initScript, addEmitMethodRow, getInfoByLabel } = require("../../../src/common")
+const { getFileInfo, initScript, addEmitMethodRow, getInfoByLabel, getInfoByBinFunction } = require("../../../src/common")
 const path = require('path')
 const ejs = require('ejs')
-const { LABEL_ENUM } = require("../../../src/enum")
+const { LABEL_ENUM, FUNCTION_TYPE_ENUM } = require("../../../src/enum")
 function initPropList(script){
   script['propList']=[{
     name: 'tableData',
@@ -127,9 +127,9 @@ async function getTable(fileParam, sourceData) {
   const fileInfo = getFileInfo({ ...fileParam, type })
   //  --------------------
   const { functionList, elementList } = sourceData
-  const isDeleteBatch =!!functionList.find(item=>item.label == 'deleteBatch')
-  const funcList = functionList.filter(item => item.functionType == 'obj')
-  const fieldList = (elementList.find(item => item.bindFunction == 'queryList')?.data || [])
+  const isDeleteBatch =!!getInfoByLabel(functionList,LABEL_ENUM.DELETE_BATCH)
+  const funcList = functionList.filter(item => item.functionType == FUNCTION_TYPE_ENUM.OBJ)
+  const fieldList = (getInfoByBinFunction(elementList,LABEL_ENUM.QUERY_LIST)?.data || [])
   // 初始化script
   const script = initScript(fileInfo.filename)
   initStruct(script)
