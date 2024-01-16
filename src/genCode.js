@@ -84,7 +84,7 @@ async function getPageAdapterData(menuPageList) {
 // 返回页面需要的数据
 function parseJsonToPage(menuPage) {
   const { functionModel: functionList, elementConfig: elementList } = menuPage.pageInfo
-  
+
   return { menuInfo: menuPage, functionList, elementList }
 }
 function getPageResultAnddCollectServiceData(pagesCode) {

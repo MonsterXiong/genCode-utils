@@ -45,7 +45,7 @@ function initStruct(script,funcInfo){
   initDataList(script)
   initImportDataList(script)
   initMethodList(script)
-  const {code,name,label,request} = funcInfo
+  const {name,label} = funcInfo
   if(isUpdate(funcInfo)){
     script[VUE_DATA_SCRIPT_ENUM.DATA_LIST].push({name: 'row',type: 'null',initValue: 'null',})
   }
@@ -81,28 +81,29 @@ function getInterfaceData(requestInfo){
   if(!requestInfo){
     throw new Error('没有对应的请求信息')
   }
-  const { url } = requestInfo
-  const { serviceType,interfaceName }= parseUrl(url)
+  const { request } = requestInfo
+  const { serviceType,interfaceName }= parseUrl(request)
   return {
     ServiceName:`${pascalCase(serviceType)}Service`,
     InterfaceName:`${camelCase(interfaceName)}`
   }
 }
-function handleMethodList(script,funcInfo,fieldList){
+function handleMethodList(script,funcList,fieldList){
   const prikeyInfo = fieldList.find(item=>item.param.pk)
   const pri = prikeyInfo?.code
   let requestInfo = null
-  const { request } = funcInfo
-  if(isUpdate(funcInfo)){
-    requestInfo = getInfoByLabel(request,LABEL_ENUM.UPDATE)
-    const queryInfo =getInfoByLabel(request,LABEL_ENUM.QUERY)
-    const {ServiceName,InterfaceName} = getInterfaceData(queryInfo)
-    script[VUE_DATA_SCRIPT_ENUM.METHOD_LIST].unshift({type:'editGetData',pri,ServiceName,InterfaceName})
+  if(getInfoByLabel(funcList,LABEL_ENUM.UPDATE)){
+    requestInfo = getInfoByLabel(funcList,LABEL_ENUM.UPDATE)
+    const queryInfo =getInfoByLabel(funcList,LABEL_ENUM.QUERY)
+    if(!queryInfo){
+      const {ServiceName,InterfaceName} = getInterfaceData(queryInfo)
+      script[VUE_DATA_SCRIPT_ENUM.METHOD_LIST].unshift({type:'editGetData',pri,ServiceName,InterfaceName})
+      script[VUE_DATA_SCRIPT_ENUM.IMPORT_LIST].push({isDefault:false,content:`${ServiceName}`,from:'@/services'})
+    }
     script[VUE_DATA_SCRIPT_ENUM.METHOD_LIST].unshift({type:'editDialogShow',pri})
-    script[VUE_DATA_SCRIPT_ENUM.IMPORT_LIST].push({isDefault:false,content:`${ServiceName}`,from:'@/services'})
   }
-  if(isCreate(funcInfo)){
-    requestInfo = getInfoByLabel(request,LABEL_ENUM.INSERT)
+  if(getInfoByLabel(funcList,LABEL_ENUM.INSERT)){
+    requestInfo = getInfoByLabel(funcList,LABEL_ENUM.INSERT)
     script[VUE_DATA_SCRIPT_ENUM.METHOD_LIST].unshift({type:'createDialogShow'})
   }
   const {ServiceName,InterfaceName}= getInterfaceData(requestInfo)
@@ -164,13 +165,12 @@ async function getDialog(fileParam, sourceData) {
     // 不生成页面
     return ''
   }
-  const { request } = funcInfo
   // 初始化script
   const script = initScript(fileInfo.filename)
   initStruct(script,funcInfo)
   // 处理要素
   handleFieldList(script,fieldList)
-  handleMethodList(script,funcInfo,sourceFieldList)
+  handleMethodList(script,sourceData.functionList,sourceFieldList)
   //  整合一下imporList
   handleImportList(script)
   //  处理一下option

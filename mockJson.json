@@ -114,65 +114,37 @@
           "name": "查询指标列表",
           "code": "queryIndexList",
           "label": "queryList",
-          "functionType": "global",
-          "request": [
-            {
-              "label": "queryList",
-              "url": "/base/design_index/queryIndexList"
-            }
-          ]
+          "request": "/base/design_index/queryIndexList"
+        },
+        {
+          "name": "查询指标",
+          "code": "queryIndex",
+          "label": "query",
+          "request": "/base/design_index/queryIndex"
         },
         {
           "name": "新增指标",
           "code": "insertIndex",
           "label": "insert",
-          "functionType": "global",
-          "request": [
-            {
-              "label": "insert",
-              "url": "/base/design_index/insertIndex"
-            }
-          ]
+          "request": "/base/design_index/insertIndex"
         },
         {
           "name": "编辑指标",
           "code": "updateIndex",
           "label": "update",
-          "functionType": "obj",
-          "request": [
-            {
-              "label": "query",
-              "url": "/base/design_index/queryAbi"
-            },
-            {
-              "label": "update",
-              "url": "/base/design_index/updateIndex"
-            }
-          ]
+          "request": "/base/design_index/updateIndex"
         },
         {
           "name": "批量删除",
           "code": "deleteBatch",
           "label": "deleteBatch",
-          "functionType": "obj",
-          "request": [
-            {
-              "label": "deleteBatch",
-              "url": "/base/design_index/deleteAbiBatch"
-            }
-          ]
+          "request": "/base/design_index/deleteAbiBatch"
         },
         {
           "name": "计算数值",
           "code": "calValue",
           "label": "extGlobal",
-          "functionType": "global",
-          "request": [
-            {
-              "label": "extGlobal",
-              "url": "/base/design_index/calValue"
-            }
-          ]
+          "request": "/base/design_index/calValue"
         }
       ],
       "elementConfig": [
@@ -317,41 +289,25 @@
           "name": "查询能力列表",
           "code": "queryAbiList",
           "label": "queryList",
-          "functionType": "global",
-          "request": [
-            {
-              "label": "queryList",
-              "url": "/base/design_abi/queryAbiList"
-            }
-          ]
+          "request":"/base/design_abi/queryAbiList"
+        },
+        {
+          "name": "查询能力",
+          "code": "queryAbi",
+          "label": "query",
+          "request": "/base/design_index/queryAbi"
         },
         {
           "name": "新增能力",
           "code": "insertAbi",
           "label": "insert",
-          "functionType": "global",
-          "request": [
-            {
-              "label": "insert",
-              "url": "/base/design_abi/insertAbi"
-            }
-          ]
+          "request": "/base/design_abi/insertAbi"
         },
         {
           "name": "编辑能力",
           "code": "updateAbi",
           "label": "update",
-          "functionType": "obj",
-          "request": [
-            {
-              "label": "query",
-              "url": "/base/design_abi/queryAbi"
-            },
-            {
-              "label": "update",
-              "url": "/base/design_abi/updateAbi"
-            }
-          ]
+          "request": "/base/design_abi/updateAbi"
         }
       ],
       "elementConfig": [

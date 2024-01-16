@@ -33,8 +33,7 @@ function addServiceToImportList(script,serviceName){
 }
 function handleSelectEntityType(script,field){
   const { request,bindAttr,code } = field
-  const { url } = request
-  const { serviceType,interfaceName } = parseUrl(url)
+  const { serviceType,interfaceName } = parseUrl(request.url)
   const serviceName = `${pascalCase(serviceType)}Service`
   const variableName = `${camelCase(code)}Option`
   const functionName = `get${pascalCase(variableName)}`
@@ -122,27 +121,16 @@ function getFormatRequestList(sourceData){
     res[item.label] = item
     return res
   },{})
-  // 临时处理不存在要素中的功能
-  const functionServiceList = functionList.reduce((res,item)=>{
-    let request = item?.request || []
-    res = res.concat(request)
-    return res
-  },[])
   const serviceList = elementList.reduce((res,element) => {
-    let request = functionMap[element.bindFunction]?.request || []
+    let request = functionMap[element.bindFunction]
     const prikeyInfo = element.data.find(item=>item.param.pk) || {}
-    if(request.length){
-      request = request.map(item=>{
-        return {
-          ...item,
-          prikeyInfo:{...prikeyInfo,code:camelCase(prikeyInfo.code)}
-        }
-      })
-    }
-    res = res.concat(request)
+    res.push({
+      ...request,
+      prikeyInfo:{...prikeyInfo,code:camelCase(prikeyInfo.code)}
+    })
     return res
-  },functionServiceList).reduce((res,item)=>{
-    const { interfaceType, serviceType, interfaceName } = parseUrl(item.url)
+  },functionList).reduce((res,item)=>{
+    const { interfaceType, serviceType, interfaceName } = parseUrl(item.request)
     const param = {
       ...item,
       interfaceType,
