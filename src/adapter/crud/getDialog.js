@@ -7,7 +7,8 @@ function initDataList(script){
   script[VUE_DATA_SCRIPT_ENUM.DATA_LIST]=[  {
     name: 'dialogWidth',
     type: 'string',
-    initValue: 'CommonDialogWidth.smallForm',
+    // initValue: 'CommonDialogWidth.smallForm',
+    initValue: '"500px"',
   }, {
     name: 'dialogVisible',
     type: 'boolean',
@@ -20,7 +21,7 @@ function initDataList(script){
 }
 function initImportDataList(script){
   script[VUE_DATA_SCRIPT_ENUM.IMPORT_LIST] = [{isDefault: true,from: '@/utils/tools',content: 'tools'}]
-  script[VUE_DATA_SCRIPT_ENUM.IMPORT_LIST] = [{isDefault: true,from: '@/common/constants',content: 'CommonDialogWidth'}]
+  // script[VUE_DATA_SCRIPT_ENUM.IMPORT_LIST].push({isDefault: false,from: '@/common/constants',content: 'CommonDialogWidth'})
 }
 function initMethodList(script){
 script[VUE_DATA_SCRIPT_ENUM.METHOD_LIST]=[{
@@ -43,8 +44,9 @@ function initStruct(script){
 
 }
 function handleFieldList(script,fieldList){
+  let initValue = "{}"
   if(fieldList.length){
-    const initValue = [{
+    initValue = [{
       name: 'name',
       type: 'string',
       initValue: '""'
@@ -57,13 +59,13 @@ function handleFieldList(script,fieldList){
       })
       handleFormFieldList(script, field)
     })
-    const form = {
-      name: 'formData',
-      type: 'object',
-      initValue
-    }
-    script[VUE_DATA_SCRIPT_ENUM.DATA_LIST].push(form)
   }
+  const form = {
+    name: 'formData',
+    type: 'object',
+    initValue
+  }
+  script[VUE_DATA_SCRIPT_ENUM.DATA_LIST].push(form)
 
 }
 
@@ -86,7 +88,7 @@ function handleTemplate(fieldList){
 
 function updateScript(script,fieldList,queryInfo){
   const prikeyInfo = fieldList.find(item=>item.param.pk)
-  const pri = prikeyInfo?.code
+  const pri = prikeyInfo?.code || ''
   if(queryInfo){
     const {ServiceName,InterfaceName} = getInterfaceData(queryInfo)
     script[VUE_DATA_SCRIPT_ENUM.METHOD_LIST].unshift({type:'editGetData',pri,ServiceName,InterfaceName})
@@ -96,8 +98,7 @@ function updateScript(script,fieldList,queryInfo){
   script[VUE_DATA_SCRIPT_ENUM.DATA_LIST].push({name: 'row',type: 'null',initValue: 'null',})
 }
 
-function addScript(script,funcInfo){
-  script[VUE_DATA_SCRIPT_ENUM.DATA_LIST].push({name: 'title',type: 'string',initValue: funcInfo.name})
+function addScript(script){
   script[VUE_DATA_SCRIPT_ENUM.METHOD_LIST].unshift({type:'createDialogShow'})
 }
 async function getDialog(fileParam, sourceData) {
@@ -111,7 +112,6 @@ async function getDialog(fileParam, sourceData) {
   let sourceFieldList = []
   const isUpdate = name == 'updateDialog'
   let funcInfo = isUpdate ? updateInfo : addInfo
-  console.log('funcInfo',funcInfo);
   sourceFieldList = funcInfo?.elementList || []
   fieldList = sourceFieldList.filter(item=>!item.param.isHidden)
 
@@ -125,9 +125,9 @@ async function getDialog(fileParam, sourceData) {
     updateScript(script,sourceFieldList,queryInfo)
   }
   else{
-    addScript(script,funcInfo)
+    addScript(script)
   }
-
+  script[VUE_DATA_SCRIPT_ENUM.DATA_LIST].push({name: 'title',type: 'string',initValue: `'${funcInfo.name}'`})
   const {ServiceName,InterfaceName}= getInterfaceData(funcInfo)
   script[VUE_DATA_SCRIPT_ENUM.IMPORT_LIST].push({isDefault:false,content:`${ServiceName}`,from:'@/services'})
   // 添加onSubmitForm方法

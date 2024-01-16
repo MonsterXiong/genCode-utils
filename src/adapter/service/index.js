@@ -16,10 +16,10 @@ function formatService(serviceData) {
 
 // 转换为接口有模板需要的数据格式
 function transfromInterfaceData(serviceFunc) {
-    const { label, url, interfaceName, prikeyInfo } = serviceFunc
+    const { label, request, interfaceName, prikeyInfo } = serviceFunc
     const tempData = {
         functionType: label,
-        functionUrl: url,
+        functionUrl: request,
         functionName: interfaceName,
         prikey: prikeyInfo?.code
     }

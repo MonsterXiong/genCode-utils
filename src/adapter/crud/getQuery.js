@@ -18,16 +18,10 @@ function initQueryAndReset(script) {
   script[VUE_DATA_SCRIPT_ENUM.DATA_LIST].push({ name: 'queryForm', type: 'object', initValue: '{}' })
 }
 function handleMethodList(script, funcList) {
-  if (funcList.length) {
     funcList.forEach(func => {
-      const { label, code } = func
-      if (label !== LABEL_ENUM.QUERY_LIST) {
+      const { code } = func
         script[VUE_DATA_SCRIPT_ENUM.METHOD_LIST].push(addEmitMethodNoParam(code))
-      }else{
-        script[VUE_DATA_SCRIPT_ENUM.IMPORT_LIST].push({ isDefault: false, from: '@/utils/queryConditionBuilder', content: 'QueryConditionBuilder' })
-      }
     });
-  }
 }
 
 

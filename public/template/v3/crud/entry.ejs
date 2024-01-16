@@ -1,5 +1,5 @@
 <template>
-  <BasePage>
+  <TableLayout>
     <%_if(hasToolbar){-%>
     <template #query>
       <<%=pageName%>Query
@@ -39,5 +39,5 @@
     <%_if(hasAdd){-%>
     <<%=pageName%>AddDialog ref="addDialogRef" @refresh="queryTableData"></<%=pageName%>AddDialog>
     <%_}-%>
-  </BasePage>
+  </TableLayout>
 </template>

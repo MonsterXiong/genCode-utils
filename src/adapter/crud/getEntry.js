@@ -60,7 +60,8 @@ function handleScript(script, templateParam, sourceData) {
     deleteInfo,
     deleteBatchInfo,
     updateInfo,
-    addInfo
+    addInfo,
+    toolbarBtnList
   } = templateParam
 
   addComponent(script, `${pageName}Table`)
@@ -69,6 +70,11 @@ function handleScript(script, templateParam, sourceData) {
     script[VUE_DATA_SCRIPT_ENUM.DATA_LIST].push({ name: 'queryForm', type: 'object', initValue: '{}', })
     addComponent(script, `${pageName}Query`)
     script[VUE_DATA_SCRIPT_ENUM.METHOD_LIST].push({ type: 'entryOnReset' })
+
+    toolbarBtnList.forEach(item=>{
+      script[VUE_DATA_SCRIPT_ENUM.METHOD_LIST].push(addEmitMethodNoParam(item.code))
+    })
+
   }
   if (hasUpdate) {
     addComponent(script, `${pageName}UpdateDialog`)

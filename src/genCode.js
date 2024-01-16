@@ -1,6 +1,6 @@
 
 const { genCode } = require('./common')
-const { getPage } =require('./genPage.js')
+const { getPage } = require('./genPage.js')
 const { getCrudAdapterData, getServiceAdapterData, getMenuAdapterData, getRouteAdapterData, getRouteConstantAdapterData } = require('./adapter')
 const { constantCase, camelCase, pascalCase } = require('./utils/commonUtil.js')
 const fse = require('fs-extra')
@@ -8,18 +8,18 @@ const path = require('path')
 const { PAGE_TYPE_ENUM } = require('./enum/pageType.js')
 const { MENU_TYPE_ENUM } = require('./enum/menuType.js')
 const { FRAMEWORK_CONFIG } = require('./config/frameworkConfig.js')
+const { ENTRY_SUFFIX_ENUM } = require('./enum/entrySuffix.js')
 
 function getSoftwareData() {
   // 第一步:读取JSON数据
   const jsonData = fse.readJSONSync(path.resolve(__dirname, '../mockJson.json'))
   return jsonData
 }
-async function getGenCode(softwareData){
-  const { menuInfo, componentInfo:pages } = softwareData
+async function getGenCode(softwareData) {
+  const { menuInfo, componentInfo: pages } = softwareData
 
   // 获取路由常量、菜单、路由、页面数据
   const { menuList, routeList, routesConstantList, pageList } = getAdapterData(menuInfo, pages)
-
   const menuResult = getMenuAdapterData({ list: menuList })
   const routeResult = getRouteAdapterData({ list: routeList })
   const routesConstantResult = getRouteConstantAdapterData({ list: routesConstantList })
@@ -35,30 +35,34 @@ async function getGenCode(softwareData){
 
 function getAdapterData(menuInfo, pages) {
   const menuList = menuInfo.reduce((res, item) => {
-
     const { code } = item
     const CONST_CODE = constantCase(code)
     const CAMEL_CASE_CODE = camelCase(code)
     const PASCAL_CASE_CODE = pascalCase(code)
-    const VUE_FILE_NAME = `${CAMEL_CASE_CODE}/${PASCAL_CASE_CODE}.vue`
     res['menuList'].push({
       ...item,
       menuParams: CONST_CODE,
     })
     // 设置了功能菜单 且必须设置配置了pages才可以生成页面内容
     const pageInfo = pages.find(page => page.bindMenu == item.id)
-    if (item.menuType == MENU_TYPE_ENUM.PAGE && pageInfo) {
-      res['routesConstantList'].push({
-        const: CONST_CODE,
-        path: CAMEL_CASE_CODE,
-        name: PASCAL_CASE_CODE,
-      })
-      res['routeList'].push({
-        ...item,
-        const: CONST_CODE,
-        path: `${FRAMEWORK_CONFIG.ROUTE_COMPONENT_PREFIX}/${VUE_FILE_NAME}`,
-      })
-      res['pageList'].push({ ...item, pageInfo });
+    if (pageInfo) {
+
+      const { type } = pageInfo
+      const VUE_FILE_NAME = `${CAMEL_CASE_CODE}/${PASCAL_CASE_CODE}${ENTRY_SUFFIX_ENUM[type]}.vue`
+      if (item.menuType == MENU_TYPE_ENUM.PAGE && pageInfo) {
+        res['routesConstantList'].push({
+          const: CONST_CODE,
+          path: CAMEL_CASE_CODE,
+          name: PASCAL_CASE_CODE,
+        })
+
+        res['routeList'].push({
+          ...item,
+          const: CONST_CODE,
+          path: `${FRAMEWORK_CONFIG.ROUTE_COMPONENT_PREFIX}/${VUE_FILE_NAME}`,
+        })
+        res['pageList'].push({ ...item, pageInfo });
+      }
     }
     return res
   }, {
@@ -72,7 +76,7 @@ function getAdapterData(menuInfo, pages) {
 // 最终返回的是写入文件相对路径和内容,有page和services两类
 async function getPageAdapterData(menuPageList) {
   const pagesCode = []
-  for await(const menuPage of menuPageList){
+  for await (const menuPage of menuPageList) {
     // 根据页面的菜单信息去找对应的pages信息
     const { type } = menuPage.pageInfo
     const pageData = parseJsonToPage(menuPage)
@@ -114,7 +118,7 @@ function getPageReuslt(pageResult, pages) {
 }
 function getGenPageData(transformData) {
   const { dirpath, filepath, params } = transformData
-  const filePath = path.join(dirpath, filepath)
+  const filePath = path.join(FRAMEWORK_CONFIG.PAGE_DIR_PATH, dirpath, filepath)
   const content = getPage(params)
   return {
     filePath,
@@ -127,10 +131,10 @@ async function execCodeGen() {
   const softwareData = getSoftwareData()
   // 获取code
   const code = await getGenCode(softwareData)
-  const result = code.map(item=>{
+  const result = code.map(item => {
     return {
-      filePath:path.join(FRAMEWORK_CONFIG.CODE_OUTPUT_ROOT_PATH,item.filePath),
-      content:item.content
+      filePath: path.join(FRAMEWORK_CONFIG.CODE_OUTPUT_ROOT_PATH, item.filePath),
+      content: item.content
     }
   })
   // 生成

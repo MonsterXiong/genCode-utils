@@ -292,12 +292,6 @@
           "request":"/base/design_abi/queryAbiList"
         },
         {
-          "name": "查询能力",
-          "code": "queryAbi",
-          "label": "query",
-          "request": "/base/design_index/queryAbi"
-        },
-        {
           "name": "新增能力",
           "code": "insertAbi",
           "label": "insert",
@@ -312,9 +306,6 @@
       ],
       "elementConfig": [
         {
-          "label":"listElement",
-          "name":"能力列表元素",
-          "code": "indexListElement",
           "bindFunction": "queryList",
           "data": [
             {
@@ -342,6 +333,23 @@
               }
             }
      
+          ]
+        },
+        {
+          "bindFunction": "update",
+          "data": [
+            {
+              "name":"能力ID",
+              "code": "abiId",
+              "bindObj": "db_abi",
+              "bindAttr": "abi_id",
+              "param": {
+                "pk": true,
+                "displayType": "text",
+                "isHidden": true,
+                "isSearch": false
+              }
+            }
           ]
         }
       ]

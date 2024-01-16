@@ -6,7 +6,6 @@ const { getTable } = require("./getTable");
 const { getFormatRequestList, getInfoByLabel, getInfoByBinFunction } = require('../../common');
 const { camelCase, pascalCase } = require('../../utils/commonUtil');
 const { PAGE_TYPE_ENUM, LABEL_ENUM } = require('../../enum');
-
 function formatInfoByLabel({functionModel,elementConfig},label){
   const info = getInfoByLabel(functionModel,label)
   if(info){

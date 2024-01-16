@@ -5,6 +5,7 @@ const { uniqueArray } = require('./utils/array')
 const { DISPLAY_TYPE_ENUM, VUE_DATA_SCRIPT_ENUM } = require('./enum')
 const { pascalCase, camelCase } = require('./utils/commonUtil')
 const { COMPONENT_ENUM } = require('./enum/componentType')
+const { ENTRY_SUFFIX_ENUM } = require('./enum/entrySuffix')
 
 function getTab(number=1){
   return new Array(number).fill('').reduce((res)=>res+=`\t`,'')
@@ -12,7 +13,7 @@ function getTab(number=1){
 function getFileInfo({ name, type, dirpath, template }) {
   const componentName = pascalCase(`${dirpath}_${name ? name : type}`)
   const filetype = type !== COMPONENT_ENUM.ENTRY ? COMPONENT_ENUM.COMPONENT : COMPONENT_ENUM.ENTRY
-  const filename = filetype == COMPONENT_ENUM.COMPONENT ? componentName : `${pascalCase(dirpath)}Manage`
+  const filename = filetype == COMPONENT_ENUM.COMPONENT ? componentName : `${pascalCase(dirpath)}${ENTRY_SUFFIX_ENUM[template]}`
   const filepath = (filetype == COMPONENT_ENUM.COMPONENT ? `components/${filename}` : filename) + '.vue'
   return {
     filename,
@@ -41,6 +42,7 @@ function handleSelectEntityType(script,field){
   addServiceToImportList(script,serviceName)
   script[VUE_DATA_SCRIPT_ENUM.METHOD_LIST].unshift({ type: 'option', serviceName, interfaceName, variableName, functionName })
   script[VUE_DATA_SCRIPT_ENUM.DATA_LIST].push({ name: variableName, type: 'array', initValue: '[]' })
+  script[VUE_DATA_SCRIPT_ENUM.IMPORT_LIST].push({ isDefault: false, from: '@/utils/queryConditionBuilder', content: 'QueryConditionBuilder' })
 }
 function parseUrl (url){
   const [,interfaceType,serviceType,interfaceName]=url.split('/')

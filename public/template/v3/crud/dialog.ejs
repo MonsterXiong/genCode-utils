@@ -1,7 +1,7 @@
 <template>
   <base-dialog :title="title" :visible.sync="dialogVisible" :before-close="onDialogClose" :width="dialogWidth">
     <el-form ref="formRef" :model="formData" :rules="formDataRules" label-width="auto" size="small">
-      <%_ if (queryList.length > 0) { -%><%- include("../common/form.ejs",{list:queryList}) -%><%_ } -%>
+      <%_ if (queryList.length > 0) { -%><%- include("../common/form.ejs",{list:queryList,formData:'formData'}) -%><%_ } -%>
     </el-form>
     <template slot="footer">
       <el-button size="mini" @click="onDialogClose">取 消</el-button>
