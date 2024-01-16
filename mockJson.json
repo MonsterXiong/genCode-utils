@@ -165,11 +165,11 @@
         {
           "name": "计算数值",
           "code": "calValue",
-          "label": "globalExt",
+          "label": "extGlobal",
           "functionType": "global",
           "request": [
             {
-              "label": "globalExt",
+              "label": "extGlobal",
               "url": "/base/design_abi/calValue"
             }
           ]

@@ -67,6 +67,17 @@ function handleImportList(script){
   }
 }
 
+function getInfoByAttr(arr,type,attr){
+  return arr.find(item=>item[attr] == type)
+}
+
+function getInfoByLabel(request,type){
+  return getInfoByAttr(request,type,'label')
+}
+function getInfoByBinFunction(request,type){
+  return getInfoByAttr(request,type,'bindFunction')
+}
+
 function handleFormFieldList(script,field){
   const { param, request } = field
   const {displayType} =param 
@@ -160,5 +171,8 @@ module.exports = {
   parseUrl,
   getFormatRequestList,
   getEjsTemplate,
-  handleFormFieldList
+  handleFormFieldList,
+  getInfoByAttr,
+  getInfoByLabel,
+  getInfoByBinFunction,
 }

@@ -1,6 +1,7 @@
-const { getFileInfo, initScript, addEmitMethodRow } = require("../../../src/common")
+const { getFileInfo, initScript, addEmitMethodRow, getInfoByLabel } = require("../../../src/common")
 const path = require('path')
 const ejs = require('ejs')
+const { LABEL_ENUM } = require("../../../src/enum")
 function initPropList(script){
   script['propList']=[{
     name: 'tableData',
@@ -62,7 +63,7 @@ function handleMethodList(script, funcList) {
   if (funcList.length) {
     funcList.forEach(func => {
       const { label, code } = func
-      if (label !== 'queryList') {
+      if (label !== LABEL_ENUM.QUERY_LIST) {
         script['methodList'].push(addEmitMethodRow(code))
       }else{
         script['importList'].push({ isDefault: false, from: '@/utils/queryConditionBuilder', content: 'QueryConditionBuilder' })
@@ -81,8 +82,8 @@ function getDeleteOrEditBtnParam(btnInfo,type){
     isShow=true
     const {name:btnName,code} = btnInfo
     showInfo = {
-      name:btnName?btnName:type=='update'?'编辑':'删除',
-      functionName:code?code:type=='update'?'onEdit':'onDelete'
+      name:btnName?btnName:type==LABEL_ENUM.UPDATE?'编辑':'删除',
+      functionName:code?code:type==LABEL_ENUM.UPDATE?'onEdit':'onDelete'
     }
   }
   return {
@@ -92,12 +93,12 @@ function getDeleteOrEditBtnParam(btnInfo,type){
 }
 
 function handleTemplate(fieldList,funcList,isDeleteBatch=false){
-  const editInfo = funcList.find(item=>item.label == 'update')
-  const deleteInfo = funcList.find(item=>item.label == 'delete')
-  const {isShow:isEdit,showInfo:editBtnInfo} = getDeleteOrEditBtnParam(editInfo,'update')
-  const {isShow:isDelete,showInfo:deleteBtnInfo} = getDeleteOrEditBtnParam(deleteInfo,'delete')
+  const editInfo =getInfoByLabel(funcList,LABEL_ENUM.UPDATE)
+  const deleteInfo = getInfoByLabel(funcList,LABEL_ENUM.DELETE)
+  const {isShow:isEdit,showInfo:editBtnInfo} = getDeleteOrEditBtnParam(editInfo,LABEL_ENUM.UPDATE)
+  const {isShow:isDelete,showInfo:deleteBtnInfo} = getDeleteOrEditBtnParam(deleteInfo,LABEL_ENUM.DELETE)
 
-  const btns = funcList.filter(item=>!['delete','update'].includes(item.label)).map(item=>{
+  const btns = funcList.filter(item=>![LABEL_ENUM.DELETE,LABEL_ENUM.UPDATE].includes(item.label)).map(item=>{
     return{
       param:'scope.row',
       name:item?.name || 'name',

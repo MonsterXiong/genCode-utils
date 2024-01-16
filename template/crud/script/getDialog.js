@@ -1,7 +1,8 @@
-const { getFileInfo, initScript, parseUrl, handleImportList, handleSelectEntityType, handleMethodListHasOption, handleFormFieldList } = require("../../../src/common")
+const { getFileInfo, initScript, parseUrl, handleImportList, handleMethodListHasOption, handleFormFieldList, getInfoByLabel } = require("../../../src/common")
 const path = require('path')
 const ejs = require('ejs')
 const changeCase = require('change-case')
+const { LABEL_ENUM, DISPLAY_TYPE_ENUM } = require("../../../src/enum")
 
 function initDataList(script){
   script['dataList']=[  {
@@ -36,10 +37,10 @@ script['methodList']=[{
 },]
 }
 function isUpdate(funcInfo){
-  return funcInfo.label =='update'
+  return funcInfo.label ==LABEL_ENUM.UPDATE
 }
 function isCreate(funcInfo){
-  return funcInfo.label =='insert'
+  return funcInfo.label ==LABEL_ENUM.INSERT
 }
 function initStruct(script,funcInfo){
   initDataList(script)
@@ -50,7 +51,7 @@ function initStruct(script,funcInfo){
     script['dataList'].push({name: 'row',type: 'null',initValue: 'null',})
   }
   else if(isCreate(funcInfo)){
-    script['dataList'].push({name: 'title',type: 'string',initValue: name?name:label=='insert'?'新增':'编辑'})
+    script['dataList'].push({name: 'title',type: 'string',initValue: name?name:label==LABEL_ENUM.INSERT?'新增':'编辑'})
   }
 }
 function handleFieldList(script,fieldList){
@@ -88,21 +89,22 @@ function getInterfaceData(requestInfo){
     InterfaceName:`${changeCase.camelCase(interfaceName)}`
   }
 }
+
 function handleMethodList(script,funcInfo,fieldList){
   const prikeyInfo = fieldList.find(item=>item.param.pk)
   const pri = prikeyInfo.field
   let requestInfo = null
   const { request } = funcInfo
   if(isUpdate(funcInfo)){
-    requestInfo = request.find(item=>item.label == 'update')
-    const queryInfo = request.find(item=>item.label == 'query')
+    requestInfo = getInfoByLabel(request,LABEL_ENUM.UPDATE)
+    const queryInfo =getInfoByLabel(request,LABEL_ENUM.QUERY)
     const {ServiceName,InterfaceName} = getInterfaceData(queryInfo)
     script['methodList'].unshift({type:'editGetData',pri,ServiceName,InterfaceName})
     script['methodList'].unshift({type:'editDialogShow',pri})
     script['importList'].push({isDefault:false,content:`${ServiceName}`,from:'@/services'})
   }
   if(isCreate(funcInfo)){
-    requestInfo = request.find(item=>item.label == 'insert')
+    requestInfo = getInfoByLabel(request,LABEL_ENUM.INSERT)
     script['methodList'].unshift({type:'createDialogShow'})
   }
   const {ServiceName,InterfaceName}= getInterfaceData(requestInfo)
@@ -122,12 +124,12 @@ function handleTemplate(fileParam,sourceData){
   let fieldList = []
   let sourceFieldList = []
   if(name == 'editDialog'){
-    funcInfo = functionList.find(item=>item.label =='update')
-    sourceFieldList =  (elementList.find(item => item.bindFunction == 'update')?.data || [])
+    funcInfo = getInfoByLabel(functionList,LABEL_ENUM.UPDATE)
+    sourceFieldList =  (elementList.find(item => item.bindFunction == LABEL_ENUM.UPDATE)?.data || [])
     fieldList = sourceFieldList.filter(item=>!item.param.isHidden)
   }else if(name == 'createDialog'){
-    funcInfo = functionList.find(item=>item.label =='insert')
-    sourceFieldList= (elementList.find(item => item.bindFunction == 'insert')?.data || [])
+    funcInfo = getInfoByLabel(functionList,LABEL_ENUM.INSERT)
+    sourceFieldList= (elementList.find(item => item.bindFunction == LABEL_ENUM.INSERT)?.data || [])
     fieldList= sourceFieldList .filter(item=>!item.param.isHidden)
   }else{
     console.log(`不支持的dialog-${name}`);
@@ -141,7 +143,7 @@ function handleTemplate(fileParam,sourceData){
       displayType,
       prop
     }
-    if(displayType == 'select'){
+    if(displayType == DISPLAY_TYPE_ENUM.SELECT){
       param.entityKey = changeCase.camelCase(bindAttr)
       param.entityLabel = prop
     }

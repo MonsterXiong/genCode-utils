@@ -6,11 +6,13 @@ const {
   handleImportList,
   initScript,
   handleFormFieldList,
+  getInfoByBinFunction,
 } = require("../../../src/common")
 const ejs = require('ejs')
 const { nanoid } = require("nanoid")
 const path = require('path')
 const changeCase = require('change-case')
+const { LABEL_ENUM, FUNCTION_TYPE_ENUM, DISPLAY_TYPE_ENUM } = require("../../../src/enum")
 // 初始化查询和重置功能
 function initQueryAndReset(script) {
   script['methodList'].push(addEmitMethodNoParam('onQuery'))
@@ -22,7 +24,7 @@ function handleMethodList(script, funcList) {
   if (funcList.length) {
     funcList.forEach(func => {
       const { label, code } = func
-      if (label !== 'queryList') {
+      if (label !== LABEL_ENUM.QUERY_LIST) {
         script['methodList'].push(addEmitMethodNoParam(code))
       }else{
         script['importList'].push({ isDefault: false, from: '@/utils/queryConditionBuilder', content: 'QueryConditionBuilder' })
@@ -48,7 +50,7 @@ function handleTemplate(fieldList,funcList){
       displayType,
       prop
     }
-    if(displayType == 'select'){
+    if(displayType == DISPLAY_TYPE_ENUM.SELECT){
       param.entityKey = changeCase.camelCase(bindAttr)
       param.entityLabel = prop
     }
@@ -71,9 +73,9 @@ function handleTemplate(fieldList,funcList){
   //   })
   // }
 
-  funcList.filter(item=>item.label !=='queryList').forEach(func=>{
+  funcList.filter(item=>item.label !==LABEL_ENUM.QUERY_LIST).forEach(func=>{
     const {name,code,label} = func
-    if(label == 'insert'){
+    if(label == LABEL_ENUM.INSERT){
       toolbarBtnList.push({
         type:'success',
         icon:"el-icon-circle-plus-outline",
@@ -81,7 +83,7 @@ function handleTemplate(fieldList,funcList){
         name:name?name:'新增',
         param:""
       })
-    }else if(label == 'deleteBatch'){
+    }else if(label == LABEL_ENUM.DELETE_BATCH){
       toolbarBtnList.push({
         type:'danger',
         icon:"el-icon-delete",
@@ -89,7 +91,7 @@ function handleTemplate(fieldList,funcList){
         name:name?name:'批量删除',
         param:""
       })
-    }else if(label == 'globalExt'){
+    }else if(label == LABEL_ENUM.EXT_GLOBAL){
       toolbarBtnList.push({
         type:'',
         icon:'',
@@ -115,8 +117,8 @@ async function getQuery(fileParam, sourceData) {
   const fileInfo = getFileInfo({ ...fileParam, type })
   //  --------------------
   const { functionList, elementList } = sourceData
-  const funcList = functionList.filter(item => item.functionType == 'global')
-  const fieldList = (elementList.find(item => item.bindFunction == 'queryList')?.data || []).filter(item => item.param.isSearch)
+  const funcList = functionList.filter(item => item.functionType == FUNCTION_TYPE_ENUM.GLOBAL)
+  const fieldList = (getInfoByBinFunction(elementList,LABEL_ENUM.QUERY_LIST)?.data || []).filter(item => item.param.isSearch)
   // 初始化script
   const script = initScript(fileInfo.filename)
   // 处理要素
