@@ -135,6 +135,12 @@
           "request": "/base/design_index/updateIndex"
         },
         {
+          "name": "删除指标",
+          "code": "deleteIndex",
+          "label": "delete",
+          "request": "/base/design_index/deleteIndex"
+        },
+        {
           "name": "批量删除",
           "code": "deleteBatch",
           "label": "deleteBatch",
@@ -332,7 +338,7 @@
                 "isSearch": true
               }
             }
-     
+
           ]
         },
         {

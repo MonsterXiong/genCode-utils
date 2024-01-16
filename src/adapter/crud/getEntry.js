@@ -1,4 +1,4 @@
-const { getFileInfo, initScript, handleImportList, addEmitMethodNoParam, getEjsFileTemplateData, parseUrl, getInterfaceData } = require("../../common")
+const { getFileInfo, initScript, handleImportList, addEmitMethodNoParam, getEjsFileTemplateData, parseUrl, getInterfaceData, addExtFuncStruct } = require("../../common")
 const { VUE_DATA_SCRIPT_ENUM,  COMPONENT_CRUD_ENUM } = require("../../enum")
 const { TEMPLATE_PATH } = require("../../config/templateMap")
 function initDataList(script) {
@@ -49,8 +49,8 @@ function addComponent(script, componenName) {
 }
 
 function handleScript(script, templateParam, sourceData) {
-  const { 
-    hasQuery, 
+  const {
+    hasQuery,
     pageName,
     hasUpdate,
     hasAdd,
@@ -61,21 +61,23 @@ function handleScript(script, templateParam, sourceData) {
     deleteBatchInfo,
     updateInfo,
     addInfo,
-    toolbarBtnList
+    toolbarBtnList,
+    operateBtnList,
+    tablePrikey,
   } = templateParam
-
   addComponent(script, `${pageName}Table`)
 
   if (hasQuery) {
     script[VUE_DATA_SCRIPT_ENUM.DATA_LIST].push({ name: 'queryForm', type: 'object', initValue: '{}', })
     addComponent(script, `${pageName}Query`)
     script[VUE_DATA_SCRIPT_ENUM.METHOD_LIST].push({ type: 'entryOnReset' })
+    addExtFuncStruct(script,toolbarBtnList)
 
-    toolbarBtnList.forEach(item=>{
-      script[VUE_DATA_SCRIPT_ENUM.METHOD_LIST].push(addEmitMethodNoParam(item.code))
-    })
 
   }
+
+  operateBtnList.length && lengthaddExtFuncStruct(script,operateBtnList)
+
   if (hasUpdate) {
     addComponent(script, `${pageName}UpdateDialog`)
     script[VUE_DATA_SCRIPT_ENUM.METHOD_LIST].push({ type: 'openDialog', name: updateInfo.code, dialogRef: 'updateDialogRef', param: 'row' })
@@ -87,12 +89,12 @@ function handleScript(script, templateParam, sourceData) {
   if (hasDeleteBatch) {
     script[VUE_DATA_SCRIPT_ENUM.DATA_LIST].push({ name: 'multipleSelection', type: 'array', initValue: '[]', })
     script[VUE_DATA_SCRIPT_ENUM.METHOD_LIST].push({ type: 'selectionChange' })
-    // 还有批量删除的方法,会掉接口
-    script[VUE_DATA_SCRIPT_ENUM.METHOD_LIST].push(addEmitMethodNoParam(deleteBatchInfo.code))
+    const { ServiceName, InterfaceName }=getInterfaceData(deleteBatchInfo)
+    script[VUE_DATA_SCRIPT_ENUM.METHOD_LIST].push({ type: 'tableDeleteBatchMethod', name: deleteBatchInfo.code, ServiceName, InterfaceName,pri:tablePrikey, param: '' })
   }
   if (hasDelete) {
-    // 添加一个删除方法，会掉接口
-    script[VUE_DATA_SCRIPT_ENUM.METHOD_LIST].push(addEmitMethodNoParam(deleteInfo.code))
+    const { ServiceName, InterfaceName }=getInterfaceData(deleteInfo)
+    script[VUE_DATA_SCRIPT_ENUM.METHOD_LIST].push({ type: 'tableDeleteMethod', name: deleteInfo.code, ServiceName, InterfaceName,pri:tablePrikey, param: 'row' })
   }
 
 

@@ -73,7 +73,7 @@ function getParam(menuInfo) {
   }
 
   if (deleteInfo) {
-    tableBtnList.push(updateInfo)
+    tableBtnList.push(deleteInfo)
   }
 
   if (operateBtnList.length) {
@@ -92,6 +92,8 @@ function getParam(menuInfo) {
   if (toolbarBtnList.length) {
     queryBtnList.concat(toolbarBtnList)
   }
+
+  const tablePrikey = tableFieldList.find(item=>item.param.pk)?.code
 
   const param = {
     pageName,
@@ -115,7 +117,10 @@ function getParam(menuInfo) {
     tableBtnList,
     deleteBatchInfo,
     updateFieldList,
-    addFieldList
+    addFieldList,
+
+    // 默认主键
+    tablePrikey
   }
   return param
 }
@@ -136,6 +141,7 @@ function testPage(menuInfo,param){
   console.log(`${translateChinese(param.hasQuery)}筛选功能`);
   console.log(`${translateChinese(param.hasDelete)}删除功能`);
   console.log(`${translateChinese(param.hasDeleteBatch)}批量删除功能`);
+  console.log(`${(param.tablePrikey)}---主键`);
   console.log(`------------------------------------------`);
   // pageName,
 }

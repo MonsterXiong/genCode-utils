@@ -46,9 +46,54 @@ function getEditGetData(method){
       this.formData = data
     },`
 }
+function getEmptyEditGetData(method){
+  return `${getTab(2)}async getData() {
+      console.log('没有查询功能哦')
+    },`
+}
 function getCreateDialogShowMethod(method){
   return `${getTab(2)}show() {
       this.dialogVisible = true;
+    },`
+}
+function getTableDeleteMethod(method){
+  const { name, param,pri, ServiceName,InterfaceName } = method
+  return `${getTab(2)}async ${name}(${param}) {
+      try {
+        await this.$tools.confirm('请确认是否删除？')
+        const { code } = await ${ServiceName}.${InterfaceName}(${param}.${pri})
+        if (code === 200) this.$tools.message('删除成功')
+        this.queryTableData()
+      } catch (e) {
+        if (e == 'cancel') return this.$tools.message('已取消删除', { type: 'info' })
+        console.error('删除失败', e)
+      }
+    },`
+}
+function getTableDeleteBatchMethod(method){
+  const { name, param,pri, ServiceName,InterfaceName } = method
+  return `${getTab(2)}async ${name}() {
+      const rows = this.multipleSelection
+      if (Array.isArray(rows) && !rows.length) {
+        return this.$tools.message('请勾选要删除的文档信息！', { type: 'warning' })
+      }
+      try {
+        await this.$tools.confirm('请确认是否删除？')
+        const { code } = await ${ServiceName}.${InterfaceName}(rows.map((row) =>row.${pri}))
+        if (code === 200) this.$tools.message('删除成功')
+        this.queryTableData()
+      } catch (e) {
+        if (e == 'cancel') return this.$tools.message('已取消删除', { type: 'info' })
+        console.error('删除失败', e)
+      }
+    },`
+}
+
+function getExtMehodStruct(method){
+  const { name, ServiceName,InterfaceName } = method
+  return `${getTab(2)}async ${name}() {
+      await ${ServiceName}.${InterfaceName}()
+      this.$tools.message('操作成功')
     },`
 }
 function getOnDialogCloseMethod(method){
@@ -95,7 +140,7 @@ function getOptionMethod(option){
 function getEmitMethod(method){
   const { name, param } = method
   return `${getTab(2)}${name}(${param}) {
-      this.$emit('${name}',${param?param:''})
+      this.$emit('${name}'${param?','+param:''})
     },`
 }
 function getPlaceholderMethod(method){
@@ -158,6 +203,7 @@ function callMethod(){
     'onDialogClose':(method)=>getOnDialogCloseMethod(method),
     'onReset':(method)=>getOnResetMethod(method),
     'editGetData':(method)=>getEditGetData(method),
+    'emptyEditGetData':(method)=>getEmptyEditGetData(method),
     'editDialogShow':(method)=>getEditDialogShowMethod(method),
     'createDialogShow':(method)=>getCreateDialogShowMethod(method),
     'dialogSubmit':(method)=>getDialogSubmitMethod(method),
@@ -168,6 +214,9 @@ function callMethod(){
     'selectionChange':(method)=>getOnSelectionChanget(method),
     'openDialog':(method)=>getOpenDialog(method),
     'queryTableData':(method)=>getQueryTableData(method),
+    'tableDeleteMethod':(method)=>getTableDeleteMethod(method),
+    'tableDeleteBatchMethod':(method)=>getTableDeleteBatchMethod(method),
+    'extMehodStruct':(method)=>getExtMehodStruct(method)
   }
 }
 

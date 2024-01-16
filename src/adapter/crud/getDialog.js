@@ -72,7 +72,7 @@ function handleFieldList(script,fieldList){
 function handleTemplate(fieldList){
   return fieldList.map(field=>{
     const {name,code,param:fieldParam,bindAttr} = field
-    const {displayType} =fieldParam 
+    const {displayType} =fieldParam
     const param =  {
       label:name,
       displayType,
@@ -83,7 +83,7 @@ function handleTemplate(fieldList){
       param.entityLabel = code
     }
     return param
-  }) 
+  })
 }
 
 function updateScript(script,fieldList,queryInfo){
@@ -93,6 +93,8 @@ function updateScript(script,fieldList,queryInfo){
     const {ServiceName,InterfaceName} = getInterfaceData(queryInfo)
     script[VUE_DATA_SCRIPT_ENUM.METHOD_LIST].unshift({type:'editGetData',pri,ServiceName,InterfaceName})
     script[VUE_DATA_SCRIPT_ENUM.IMPORT_LIST].push({isDefault:false,content:`${ServiceName}`,from:'@/services'})
+  }else{
+    script[VUE_DATA_SCRIPT_ENUM.METHOD_LIST].unshift({type:'emptyEditGetData'})
   }
   script[VUE_DATA_SCRIPT_ENUM.METHOD_LIST].unshift({type:'editDialogShow',pri})
   script[VUE_DATA_SCRIPT_ENUM.DATA_LIST].push({name: 'row',type: 'null',initValue: 'null',})
@@ -120,7 +122,7 @@ async function getDialog(fileParam, sourceData) {
   initStruct(script)
   // 处理要素
   handleFieldList(script,fieldList)
- 
+
   if(isUpdate){
     updateScript(script,sourceFieldList,queryInfo)
   }
@@ -146,7 +148,7 @@ async function getDialog(fileParam, sourceData) {
   const templatePath = TEMPLATE_PATH[template][type]
 
   const templateParam = { queryList }
-  
+
   const templateData = await getEjsFileTemplateData(templatePath,templateParam)
 
   return {

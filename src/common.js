@@ -24,6 +24,14 @@ function getFileInfo({ name, type, dirpath, template }) {
     template,
   }
 }
+
+function addExtFuncStruct(script,extList){
+  extList.forEach(item=>{
+    const { ServiceName, InterfaceName }=getInterfaceData(item)
+    script[VUE_DATA_SCRIPT_ENUM.METHOD_LIST].push({type:'extMehodStruct',name:item.code,ServiceName,InterfaceName})
+  })
+}
+
 function addEmitMethodNoParam(emitName){
   return { type: 'emit', name: emitName, content: '', param: '' }
 }
@@ -93,7 +101,7 @@ function getInfoByBinFunction(arr,type){
 
 function handleFormFieldList(script,field){
   const { param, request } = field
-  const {displayType} =param 
+  const {displayType} =param
   if(request){
     if (displayType == DISPLAY_TYPE_ENUM.SELECT) {
       const { type } = request
@@ -187,5 +195,6 @@ module.exports = {
   getInfoByAttr,
   getInfoByLabel,
   getInfoByBinFunction,
-  getInterfaceData
+  getInterfaceData,
+  addExtFuncStruct
 }
