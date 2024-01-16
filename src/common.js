@@ -71,11 +71,11 @@ function getInfoByAttr(arr,type,attr){
   return arr.find(item=>item[attr] == type)
 }
 
-function getInfoByLabel(request,type){
-  return getInfoByAttr(request,type,'label')
+function getInfoByLabel(arr,type){
+  return getInfoByAttr(arr,type,'label')
 }
-function getInfoByBinFunction(request,type){
-  return getInfoByAttr(request,type,'bindFunction')
+function getInfoByBinFunction(arr,type){
+  return getInfoByAttr(arr,type,'bindFunction')
 }
 
 function handleFormFieldList(script,field){
