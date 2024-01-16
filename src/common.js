@@ -1,7 +1,6 @@
 const fse = require('fs-extra')
 const fs = require('fs')
 const ejs = require('ejs')
-const { templateDataMap } = require('../template/crud/view/templateData')
 const { uniqueArray } = require('./utils/array')
 const { DISPLAY_TYPE_ENUM, VUE_DATA_SCRIPT_ENUM } = require('./enum')
 const { pascalCase, camelCase } = require('./utils/commonUtil')
@@ -104,9 +103,7 @@ function getEjsTemplate(templatePath) {
   const templateFile = fs.readFileSync(templatePath, "utf8");
   return ejs.compile(templateFile);
 }
-function getTemplate(template,type){
-  return templateDataMap[template][type]
-}
+
 function initScript(name=""){
   return {
     name,
@@ -180,7 +177,6 @@ module.exports = {
   handleMethodListHasOption,
   handleImportList,
   initScript,
-  getTemplate,
   parseUrl,
   getFormatRequestList,
   getEjsTemplate,
