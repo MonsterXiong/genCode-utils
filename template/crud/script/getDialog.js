@@ -1,4 +1,4 @@
-const { getFileInfo, initScript, parseUrl, handleImportList, handleSelectEntityType, handleMethodListHasOption } = require("../../../src/common")
+const { getFileInfo, initScript, parseUrl, handleImportList, handleSelectEntityType, handleMethodListHasOption, handleFormFieldList } = require("../../../src/common")
 const path = require('path')
 const ejs = require('ejs')
 const changeCase = require('change-case')
@@ -66,17 +66,7 @@ function handleFieldList(script,fieldList){
         type:'string',
         initValue: '""',
       })
-      const { param, request } = field
-      const {displayType} = param
-      if(request){
-        if (displayType == 'select') {
-          const { type } = request
-          if (type == 'entity') {
-            handleSelectEntityType(script, field)
-          }
-        }
-      }
-
+      handleFormFieldList(script, field)
     })
     const form = {
       name: 'formData',

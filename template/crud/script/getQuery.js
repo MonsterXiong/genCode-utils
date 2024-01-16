@@ -5,6 +5,7 @@ const {
   handleMethodListHasOption,
   handleImportList,
   initScript,
+  handleFormFieldList,
 } = require("../../../src/common")
 const ejs = require('ejs')
 const { nanoid } = require("nanoid")
@@ -34,16 +35,7 @@ function handleMethodList(script, funcList) {
 function handleFieldList(script,fieldList){
   if (fieldList.length) {
     initQueryAndReset(script)
-    fieldList.forEach(field => {
-      const { param, request } = field
-      const {displayType} =param 
-      if (displayType == 'select') {
-        const { type } = request
-        if (type == 'entity') {
-          handleSelectEntityType(script, field)
-        }
-      }
-    })
+    fieldList.forEach(field =>handleFormFieldList(script, field))
   }
 }
 

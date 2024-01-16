@@ -66,6 +66,20 @@ function handleImportList(script){
     script['importList'].push({ isDefault:false, from:'@/services',content:importService})
   }
 }
+
+function handleFormFieldList(script,field){
+  const { param, request } = field
+  const {displayType} =param 
+  if(request){
+    if (displayType == 'select') {
+      const { type } = request
+      if (type == 'entity') {
+        handleSelectEntityType(script, field)
+      }
+    }
+  }
+}
+
 // 输出到文件系统
 async function genCode(result) {
   for (const writeItem of result) {
@@ -145,5 +159,6 @@ module.exports = {
   getTemplate,
   parseUrl,
   getFormatRequestList,
-  getEjsTemplate
+  getEjsTemplate,
+  handleFormFieldList
 }
