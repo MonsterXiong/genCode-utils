@@ -6,6 +6,7 @@ const {
   initScript,
   handleFormFieldList,
   getInfoByBinFunction,
+  getEjsFileTemplateData,
 } = require("../../../src/common")
 const { nanoid } = require("nanoid")
 const path = require('path')
@@ -17,7 +18,6 @@ function initQueryAndReset(script) {
   script['methodList'].push(addEmitMethodNoParam('onReset'))
   script['propList'].push({ name: 'queryForm', type: 'object', initValue: '{}' })
 }
-
 function handleMethodList(script, funcList) {
   if (funcList.length) {
     funcList.forEach(func => {
@@ -132,7 +132,7 @@ async function getQuery(fileParam, sourceData) {
 
   const templateParam = handleTemplate(fieldList,funcList)
 
-  const templateData = await ejs.renderFile(templatePath,templateParam)
+  const templateData = await getEjsFileTemplateData(templatePath,templateParam)
 
   return {
     ...fileInfo,

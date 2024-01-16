@@ -1,4 +1,4 @@
-const { getFileInfo, initScript, addEmitMethodRow, getInfoByLabel, getInfoByBinFunction } = require("../../../src/common")
+const { getFileInfo, initScript, addEmitMethodRow, getInfoByLabel, getInfoByBinFunction, getEjsFileTemplateData } = require("../../../src/common")
 const path = require('path')
 const { LABEL_ENUM, FUNCTION_TYPE_ENUM } = require("../../../src/enum")
 function initPropList(script){
@@ -138,7 +138,7 @@ async function getTable(fileParam, sourceData) {
 
   const templateParam = handleTemplate(fieldList,funcList,true)
 
-  const templateData = await ejs.renderFile(templatePath,templateParam)
+  const templateData = await getEjsFileTemplateData(templatePath,templateParam)
   return {
     ...fileInfo,
     params: {

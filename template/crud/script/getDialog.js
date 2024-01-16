@@ -180,7 +180,7 @@ async function getDialog(fileParam, sourceData) {
   const templatePath = path.join(__dirname, '../view/dialog.ejs')
 
   const templateParam = { queryList }
-
+  
   const templateData = await getEjsFileTemplateData(templatePath,templateParam)
 
   return {
