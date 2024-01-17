@@ -3,7 +3,7 @@ const { getDialog } = require("./getDialog");
 const { getEntry } = require("./getEntry");
 const { getQuery } = require("./getQuery");
 const { getTable } = require("./getTable");
-const { getFormatRequestList, getInfoByLabel, getInfoByBinFunction } = require('../../common');
+const { getFormatRequestList, getInfoByLabel, getInfoByBinFunction, getPrikeyInfoByList } = require('../../common');
 const { camelCase, pascalCase } = require('../../utils/commonUtil');
 const { PAGE_TYPE_ENUM, LABEL_ENUM } = require('../../enum');
 
@@ -93,7 +93,7 @@ function getParam(menuInfo) {
     queryBtnList.concat(toolbarBtnList)
   }
 
-  const tablePrikey = tableFieldList.find(item=>item.param.pk)?.code
+  const tablePrikey = getPrikeyInfoByList(tableFieldList)?.code
 
   const param = {
     pageName,

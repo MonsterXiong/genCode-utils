@@ -166,7 +166,7 @@
               "bindObj": "db_index",
               "bindAttr": "index_id",
               "param": {
-                "pk": true,
+                "isMajorKey": true,
                 "displayType": "text",
                 "isHidden": true,
                 "isSearch": false
@@ -178,7 +178,7 @@
               "name":"指标名称",
               "code": "indexName",
               "param": {
-                "pk": false,
+                "isMajorKey": false,
                 "displayType": "text",
                 "isHidden": false,
                 "isSearch": true
@@ -194,7 +194,7 @@
                 "url":"/base/design_index/queryList"
               },
               "param": {
-                "pk": false,
+                "isMajorKey": false,
                 "displayType": "select",
                 "isHidden": false,
                 "isSearch": true
@@ -214,7 +214,7 @@
               "bindObj": "db_index",
               "bindAttr": "index_id",
               "param": {
-                "pk": true,
+                "isMajorKey": true,
                 "displayType": "text",
                 "isHidden": true,
                 "isSearch": true
@@ -226,7 +226,7 @@
               "bindObj": "db_index",
               "bindAttr": "name",
               "param": {
-                "pk": false,
+                "isMajorKey": false,
                 "displayType": "text",
                 "isHidden": false,
                 "isRequired": true
@@ -247,7 +247,7 @@
               "bindAttr": "index_id",
               "param": {
                 "displayType": "text",
-                "pk": true,
+                "isMajorKey": true,
                 "isHidden": true,
                 "isSearch": true
               }
@@ -259,7 +259,7 @@
               "bindAttr": "name",
               "param": {
                 "displayType": "text",
-                "pk": false,
+                "isMajorKey": false,
                 "isHidden": false,
                 "isRequired": true
               }
@@ -270,7 +270,7 @@
               "bindObj": "db_index",
               "bindAttr": "bind_abi",
               "param": {
-                "pk": false,
+                "isMajorKey": false,
                 "displayType": "select",
                 "isRequired": true,
                 "isMulti": false
@@ -320,7 +320,7 @@
               "bindObj": "db_abi",
               "bindAttr": "abi_id",
               "param": {
-                "pk": true,
+                "isMajorKey": true,
                 "displayType": "text",
                 "isHidden": true,
                 "isSearch": false
@@ -332,7 +332,7 @@
               "name":"能力名称",
               "code": "abiName",
               "param": {
-                "pk": false,
+                "isMajorKey": false,
                 "displayType": "text",
                 "isHidden": false,
                 "isSearch": true
@@ -350,7 +350,7 @@
               "bindObj": "db_abi",
               "bindAttr": "abi_id",
               "param": {
-                "pk": true,
+                "isMajorKey": true,
                 "displayType": "text",
                 "isHidden": true,
                 "isSearch": false

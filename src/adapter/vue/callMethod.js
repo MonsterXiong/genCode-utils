@@ -35,6 +35,9 @@ function getEditDialogShowMethod(method){
   return `${getTab(2)}async show(row) {
       this.dialogVisible = true;
       this.row = row;
+      if(row) {
+        this.formData = {...row}
+      }
       await this.getData(row.${pri})
     },`
 }

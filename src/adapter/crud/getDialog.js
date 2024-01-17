@@ -1,4 +1,4 @@
-const { getFileInfo, initScript,  handleImportList, handleMethodListHasOption, handleFormFieldList,  getEjsFileTemplateData, getInterfaceData } = require("../../common")
+const { getFileInfo, initScript,  handleImportList, handleMethodListHasOption, handleFormFieldList,  getEjsFileTemplateData, getInterfaceData, getPrikeyInfoByList } = require("../../common")
 const { DISPLAY_TYPE_ENUM, VUE_DATA_SCRIPT_ENUM, COMPONENT_CRUD_ENUM } = require("../../enum")
 const {  camelCase } = require("../../utils/commonUtil")
 const { TEMPLATE_PATH } = require("../../config/templateMap")
@@ -87,7 +87,7 @@ function handleTemplate(fieldList){
 }
 
 function updateScript(script,fieldList,queryInfo){
-  const prikeyInfo = fieldList.find(item=>item.param.pk)
+  const prikeyInfo = getPrikeyInfoByList(fieldList)
   const pri = prikeyInfo?.code || ''
   if(queryInfo){
     const {ServiceName,InterfaceName} = getInterfaceData(queryInfo)

@@ -137,6 +137,10 @@ function initScript(name=""){
     componentList: []
   }
 }
+
+function getPrikeyInfoByList(arr,attr='isMajorKey'){
+  return arr.find(item=>item?.param && item[param][attr]) || {}
+}
 function getFormatRequestList(sourceData){
   const {functionList,elementList} = sourceData
   const functionMap = functionList.reduce((res,item)=>{
@@ -145,7 +149,7 @@ function getFormatRequestList(sourceData){
   },{})
   const serviceList = elementList.reduce((res,element) => {
     let request = functionMap[element.bindFunction]
-    const prikeyInfo = element.data.find(item=>item.param.pk) || {}
+    const prikeyInfo = getPrikeyInfoByList(element.data)
     res.push({
       ...request,
       prikeyInfo:{...prikeyInfo,code:camelCase(prikeyInfo.code)}
@@ -196,5 +200,6 @@ module.exports = {
   getInfoByLabel,
   getInfoByBinFunction,
   getInterfaceData,
-  addExtFuncStruct
+  addExtFuncStruct,
+  getPrikeyInfoByList
 }
