@@ -139,7 +139,7 @@ function initScript(name=""){
 }
 
 function getPrikeyInfoByList(arr,attr='isMajorKey'){
-  return arr.find(item=>item?.param && item[param][attr]) || {}
+  return arr.find(item=>item?.param && item['param'][attr]) || {}
 }
 function getFormatRequestList(sourceData){
   const {functionList,elementList} = sourceData
