@@ -1,4 +1,4 @@
-const { getFileInfo, initScript,  handleImportList, handleMethodListHasOption, handleFormFieldList,  getEjsFileTemplateData, getInterfaceData } = require("../../common")
+const { getFileInfo, initScript,  handleImportList, handleMethodListHasOption, handleFormFieldList,  getEjsFileTemplateData, getInterfaceData, getPrikeyInfoByList } = require("../../common")
 const { DISPLAY_TYPE_ENUM, VUE_DATA_SCRIPT_ENUM, COMPONENT_CRUD_ENUM } = require("../../enum")
 const {  camelCase } = require("../../utils/commonUtil")
 const { TEMPLATE_PATH } = require("../../config/templateMap")
@@ -46,11 +46,7 @@ function initStruct(script){
 function handleFieldList(script,fieldList){
   let initValue = "{}"
   if(fieldList.length){
-    initValue = [{
-      name: 'name',
-      type: 'string',
-      initValue: '""'
-    }]
+    initValue = []
     fieldList.forEach(field=>{
       initValue.push({
         name: field.code,
@@ -87,7 +83,7 @@ function handleTemplate(fieldList){
 }
 
 function updateScript(script,fieldList,queryInfo){
-  const prikeyInfo = fieldList.find(item=>item.param.pk)
+  const prikeyInfo = getPrikeyInfoByList(fieldList)
   const pri = prikeyInfo?.code || ''
   if(queryInfo){
     const {ServiceName,InterfaceName} = getInterfaceData(queryInfo)
@@ -115,7 +111,7 @@ async function getDialog(fileParam, sourceData) {
   const isUpdate = name == 'updateDialog'
   let funcInfo = isUpdate ? updateInfo : addInfo
   sourceFieldList = funcInfo?.elementList || []
-  fieldList = sourceFieldList.filter(item=>!item.param.isHidden)
+  fieldList = sourceFieldList.filter(item=>!item.param?.isHidden)
 
   // 初始化script
   const script = initScript(fileInfo.filename)

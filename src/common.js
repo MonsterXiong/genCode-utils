@@ -25,10 +25,13 @@ function getFileInfo({ name, type, dirpath, template }) {
   }
 }
 
-function addExtFuncStruct(script,extList){
+function addExtFuncStruct(script, extList, param = '') {
+  if (extList.length) {
+    script[VUE_DATA_SCRIPT_ENUM.IMPORT_LIST].push({isDefault: true,from: '@/utils/tools',content: 'tools'})
+  }
   extList.forEach(item=>{
     const { ServiceName, InterfaceName }=getInterfaceData(item)
-    script[VUE_DATA_SCRIPT_ENUM.METHOD_LIST].push({type:'extMehodStruct',name:item.code,ServiceName,InterfaceName})
+    script[VUE_DATA_SCRIPT_ENUM.METHOD_LIST].push({type:'extMehodStruct',name:item.code,ServiceName,InterfaceName,param})
   })
 }
 
@@ -137,19 +140,25 @@ function initScript(name=""){
     componentList: []
   }
 }
+
+function getPrikeyInfoByList(arr,attr='isMajorKey'){
+  return arr.find(item=>item?.param && item['param'][attr]) || {}
+}
 function getFormatRequestList(sourceData){
   const {functionList,elementList} = sourceData
   const functionMap = functionList.reduce((res,item)=>{
     res[item.label] = item
     return res
-  },{})
+  }, {})
+
   const serviceList = elementList.reduce((res,element) => {
     let request = functionMap[element.bindFunction]
-    const prikeyInfo = element.data.find(item=>item.param.pk) || {}
-    res.push({
-      ...request,
-      prikeyInfo:{...prikeyInfo,code:camelCase(prikeyInfo.code)}
-    })
+    const prikeyInfo = getPrikeyInfoByList(element.data)
+    const param = {...request}
+    if (prikeyInfo && prikeyInfo.code) {
+      param.prikeyInfo={...prikeyInfo,code:camelCase(prikeyInfo.code)}
+    }
+    res.push(param)
     return res
   },functionList).reduce((res,item)=>{
     const { interfaceType, serviceType, interfaceName } = parseUrl(item.request)
@@ -196,5 +205,6 @@ module.exports = {
   getInfoByLabel,
   getInfoByBinFunction,
   getInterfaceData,
-  addExtFuncStruct
+  addExtFuncStruct,
+  getPrikeyInfoByList
 }

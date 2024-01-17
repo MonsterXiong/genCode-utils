@@ -35,34 +35,38 @@ async function getGenCode(softwareData) {
 
 function getAdapterData(menuInfo, pages) {
   const menuList = menuInfo.reduce((res, item) => {
-    const { code } = item
+    const { code,menuType } = item
     const CONST_CODE = constantCase(code)
     const CAMEL_CASE_CODE = camelCase(code)
     const PASCAL_CASE_CODE = pascalCase(code)
-    res['menuList'].push({
-      ...item,
-      menuParams: CONST_CODE,
-    })
-    // 设置了功能菜单 且必须设置配置了pages才可以生成页面内容
-    const pageInfo = pages.find(page => page.bindMenu == item.id)
-    if (pageInfo) {
+    if (menuType == MENU_TYPE_ENUM.MODULE) {
+      res['menuList'].push({
+        ...item,
+        menuParams: CONST_CODE,
+      })
+    } else {
+      // 设置了功能菜单 且必须设置配置了pages才可以生成页面内容
+      const pageInfo = pages.find(page => page.bindMenu == item.id)
+      if (pageInfo) {
+        const { label } = pageInfo
+        const VUE_FILE_NAME = `${CAMEL_CASE_CODE}/${PASCAL_CASE_CODE}${ENTRY_SUFFIX_ENUM[label]}.vue`
+            res['menuList'].push({
+              ...item,
+              menuParams: CONST_CODE,
+            })
+            res['routesConstantList'].push({
+              const: CONST_CODE,
+              path: CAMEL_CASE_CODE,
+              name: PASCAL_CASE_CODE,
+            })
 
-      const { type } = pageInfo
-      const VUE_FILE_NAME = `${CAMEL_CASE_CODE}/${PASCAL_CASE_CODE}${ENTRY_SUFFIX_ENUM[type]}.vue`
-      if (item.menuType == MENU_TYPE_ENUM.PAGE && pageInfo) {
-        res['routesConstantList'].push({
-          const: CONST_CODE,
-          path: CAMEL_CASE_CODE,
-          name: PASCAL_CASE_CODE,
-        })
-
-        res['routeList'].push({
-          ...item,
-          const: CONST_CODE,
-          path: `${FRAMEWORK_CONFIG.ROUTE_COMPONENT_PREFIX}/${VUE_FILE_NAME}`,
-        })
-        res['pageList'].push({ ...item, pageInfo });
-      }
+            res['routeList'].push({
+              ...item,
+              const: CONST_CODE,
+              path: `${FRAMEWORK_CONFIG.ROUTE_COMPONENT_PREFIX}/${VUE_FILE_NAME}`,
+            })
+            res['pageList'].push({ ...item, pageInfo });
+        }
     }
     return res
   }, {
@@ -78,9 +82,9 @@ async function getPageAdapterData(menuPageList) {
   const pagesCode = []
   for await (const menuPage of menuPageList) {
     // 根据页面的菜单信息去找对应的pages信息
-    const { type } = menuPage.pageInfo
+    const { label } = menuPage.pageInfo
     const pageData = parseJsonToPage(menuPage)
-    if (type == PAGE_TYPE_ENUM.CRUD) {
+    if (label == PAGE_TYPE_ENUM.CRUD) {
       pagesCode.push(await getCrudAdapterData(pageData))
     }
   }
@@ -152,4 +156,19 @@ async function execCodeGenTest() {
   genCode(result)
   console.timeEnd('开始生成');
 }
-execCodeGenTest()
+// execCodeGenTest()
+
+async function execCodeGen(){
+  console.time('开始生成');
+  // 获取软件数据
+  const softwareData = getSoftwareData()
+  // 获取code
+  const code = await getGenCode(softwareData)
+  console.timeEnd('开始生成')
+  return code
+}
+
+module.exports = {
+  execCodeGen,
+  getGenCode
+}

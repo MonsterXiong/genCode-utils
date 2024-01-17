@@ -1,5 +1,6 @@
 const MENU_TYPE_ENUM = {
-    PAGE:'page',
+    PAGE: 'page',
+    MODULE:'module'
 }
 
 module.exports = {

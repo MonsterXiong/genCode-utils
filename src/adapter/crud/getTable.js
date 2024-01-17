@@ -102,7 +102,7 @@ function handleTemplate(fieldList,funcList){
     }
   })
 
-  const fields = fieldList.filter(item=>!item.param.isHidden).map(field=>{
+  const fields = fieldList.filter(item=>!item.param?.isHidden).map(field=>{
     return{
       key:field.code,
       label:field.name

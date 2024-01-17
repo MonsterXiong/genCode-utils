@@ -1,5 +1,5 @@
 const PAGE_TYPE_ENUM = {
-    CRUD:'crud',
+    CRUD:'table_general',
 }
 
 module.exports = {

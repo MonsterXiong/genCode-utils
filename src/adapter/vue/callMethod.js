@@ -35,7 +35,10 @@ function getEditDialogShowMethod(method){
   return `${getTab(2)}async show(row) {
       this.dialogVisible = true;
       this.row = row;
-      await this.getData(row.${pri})
+      if(row) {
+        this.formData = {...row}
+      }
+      await this.getData(${pri?'row.'+pri:''})
     },`
 }
 function getEditGetData(method){
@@ -60,12 +63,12 @@ function getTableDeleteMethod(method){
   const { name, param,pri, ServiceName,InterfaceName } = method
   return `${getTab(2)}async ${name}(${param}) {
       try {
-        await this.$tools.confirm('请确认是否删除？')
+        await tools.confirm('请确认是否删除？')
         const { code } = await ${ServiceName}.${InterfaceName}(${param}.${pri})
-        if (code === 200) this.$tools.message('删除成功')
+        if (code === 200) tools.message('删除成功')
         this.queryTableData()
       } catch (e) {
-        if (e == 'cancel') return this.$tools.message('已取消删除', { type: 'info' })
+        if (e == 'cancel') return tools.message('已取消删除', { type: 'info' })
         console.error('删除失败', e)
       }
     },`
@@ -75,25 +78,25 @@ function getTableDeleteBatchMethod(method){
   return `${getTab(2)}async ${name}() {
       const rows = this.multipleSelection
       if (Array.isArray(rows) && !rows.length) {
-        return this.$tools.message('请勾选要删除的文档信息！', { type: 'warning' })
+        return tools.message('请勾选要删除的文档信息！', { type: 'warning' })
       }
       try {
-        await this.$tools.confirm('请确认是否删除？')
+        await tools.confirm('请确认是否删除？')
         const { code } = await ${ServiceName}.${InterfaceName}(rows.map((row) =>row.${pri}))
-        if (code === 200) this.$tools.message('删除成功')
+        if (code === 200) tools.message('删除成功')
         this.queryTableData()
       } catch (e) {
-        if (e == 'cancel') return this.$tools.message('已取消删除', { type: 'info' })
+        if (e == 'cancel') return tools.message('已取消删除', { type: 'info' })
         console.error('删除失败', e)
       }
     },`
 }
 
 function getExtMehodStruct(method){
-  const { name, ServiceName,InterfaceName } = method
-  return `${getTab(2)}async ${name}() {
-      await ${ServiceName}.${InterfaceName}()
-      this.$tools.message('操作成功')
+  const { name, ServiceName,InterfaceName,param } = method
+  return `${getTab(2)}async ${name}(${param}) {
+      await ${ServiceName}.${InterfaceName}(${param})
+      tools.message('操作成功')
     },`
 }
 function getOnDialogCloseMethod(method){
@@ -178,14 +181,14 @@ function getOnSelectionChanget(method){
     },`
 }
 function getQueryTableData(method){
-  const { ServiceName,InterfaceName } = method
+  const { ServiceName,InterfaceName,hasQuery } = method
   return `${getTab(2)}async queryTableData() {
       let queryCondition = QueryConditionBuilder.getInstance(this.pageInfo.page, this.pageInfo.rows)
-      Object.keys(this.queryForm).forEach((key) => {
+      ${hasQuery?`Object.keys(this.queryForm).forEach((key) => {
         if (this.queryForm[key] || this.queryForm[key] == 0) {
           queryCondition.buildLikeQuery(key, this.queryForm[key])
         }
-      })
+      })`:''}
       const { data, count } = await ${ServiceName}.${InterfaceName}(queryCondition)
       this.tableData = data
       this.total = count

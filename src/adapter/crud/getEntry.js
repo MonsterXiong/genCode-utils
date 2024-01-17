@@ -50,6 +50,7 @@ function addComponent(script, componenName) {
 
 function handleScript(script, templateParam, sourceData) {
   const {
+    hasToolbar,
     hasQuery,
     pageName,
     hasUpdate,
@@ -69,14 +70,14 @@ function handleScript(script, templateParam, sourceData) {
 
   if (hasQuery) {
     script[VUE_DATA_SCRIPT_ENUM.DATA_LIST].push({ name: 'queryForm', type: 'object', initValue: '{}', })
-    addComponent(script, `${pageName}Query`)
     script[VUE_DATA_SCRIPT_ENUM.METHOD_LIST].push({ type: 'entryOnReset' })
+  }
+  if (hasToolbar) {
+    addComponent(script, `${pageName}Query`)
     addExtFuncStruct(script,toolbarBtnList)
-
-
   }
 
-  operateBtnList.length && lengthaddExtFuncStruct(script,operateBtnList)
+  operateBtnList.length && addExtFuncStruct(script,operateBtnList,'row')
 
   if (hasUpdate) {
     addComponent(script, `${pageName}UpdateDialog`)
@@ -100,7 +101,7 @@ function handleScript(script, templateParam, sourceData) {
 
   const { ServiceName, InterfaceName }=getInterfaceData(tableInfo)
   // 初始化查询方法
-  script[VUE_DATA_SCRIPT_ENUM.METHOD_LIST].push({ type: 'queryTableData', ServiceName, InterfaceName })
+  script[VUE_DATA_SCRIPT_ENUM.METHOD_LIST].push({ type: 'queryTableData', ServiceName, InterfaceName,hasQuery })
   script[VUE_DATA_SCRIPT_ENUM.IMPORT_LIST].push({ isDefault: false, content: ServiceName, from: '@/services' })
 
   script[VUE_DATA_SCRIPT_ENUM.IMPORT_LIST].push({ isDefault: false, from: '@/utils/queryConditionBuilder', content: 'QueryConditionBuilder' })

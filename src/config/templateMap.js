@@ -25,20 +25,20 @@ function getPath(filepath){
 
 const TEMPLATE_PATH={
     [PAGE_TYPE_ENUM.CRUD]:{
-        [COMPONENT_CRUD_ENUM.QUERY]:isDev?getPath('public/template/v3/crud/query.ejs'):'E://temp//genCode-utils//public//template//v3//crud//query.ejs',
-        [COMPONENT_CRUD_ENUM.TABLE]:isDev?getPath('public/template/v3/crud/table.ejs'):'E://temp//genCode-utils//public//template//v3//crud//table.ejs',
-        [COMPONENT_CRUD_ENUM.DIALOG]:isDev?getPath('public/template/v3/crud/dialog.ejs'):'E://temp//genCode-utils//public//template//v3//crud//dialog.ejs',
-        [COMPONENT_CRUD_ENUM.ENTRY]:isDev?getPath('public/template/v3/crud/entry.ejs'):"E://temp//genCode-utils//public//template//v3//crud//entry.ejs",
+        [COMPONENT_CRUD_ENUM.QUERY]:!isDev?getPath('public/template/v3/crud/query.ejs'):'E://temp//genCode-utils//public//template//v3//crud//query.ejs',
+        [COMPONENT_CRUD_ENUM.TABLE]:!isDev?getPath('public/template/v3/crud/table.ejs'):'E://temp//genCode-utils//public//template//v3//crud//table.ejs',
+        [COMPONENT_CRUD_ENUM.DIALOG]:!isDev?getPath('public/template/v3/crud/dialog.ejs'):'E://temp//genCode-utils//public//template//v3//crud//dialog.ejs',
+        [COMPONENT_CRUD_ENUM.ENTRY]:!isDev?getPath('public/template/v3/crud/entry.ejs'):"E://temp//genCode-utils//public//template//v3//crud//entry.ejs",
     },
-    [ELEMENT_ENUM.MENU]:isDev?getPath('public/template/v3/menu/menu.ejs'):"E://temp//genCode-utils//public//template//v3//menu//menu.ejs",
-    [ELEMENT_ENUM.ROUTE]:isDev?getPath('public/template/v3/route/route.ejs'):"E://temp//genCode-utils//public//template//v3//route//route.ejs",
-    [ELEMENT_ENUM.ROUTE_CONSTANT]:isDev?getPath('public/template/v3/routeConstant/routeConstant.ejs'):"E://temp//genCode-utils//public//template//v3//routeConstant//routeConstant.ejs",
-    [ELEMENT_ENUM.SERVICE]:isDev?getPath('public/template/v3/service/service.ejs'):"E://temp//genCode-utils//public//template//v3//service//service.ejs",
+    [ELEMENT_ENUM.MENU]:!isDev?getPath('public/template/v3/menu/menu.ejs'):"E://temp//genCode-utils//public//template//v3//menu//menu.ejs",
+    [ELEMENT_ENUM.ROUTE]:!isDev?getPath('public/template/v3/route/route.ejs'):"E://temp//genCode-utils//public//template//v3//route//route.ejs",
+    [ELEMENT_ENUM.ROUTE_CONSTANT]:!isDev?getPath('public/template/v3/routeConstant/routeConstant.ejs'):"E://temp//genCode-utils//public//template//v3//routeConstant//routeConstant.ejs",
+    [ELEMENT_ENUM.SERVICE]:!isDev?getPath('public/template/v3/service/service.ejs'):"E://temp//genCode-utils//public//template//v3//service//service.ejs",
     [PROJECT_CONSTANT]:{
-        [PROJETC_CONFIG_ENUM.ENV]:isDev?getPath('public/template/v3/project/env.ejs'):'E://temp//genCode-utils//public//template//v3//project//env.ejs',
-        [PROJETC_CONFIG_ENUM.ENV_DEV]:isDev?getPath('public/template/v3/project/env.dev.ejs'):'E://temp//genCode-utils//public//template//v3//project//env.dev.ejs',
-        [PROJETC_CONFIG_ENUM.ENV_PROD]:isDev?getPath('public/template/v3/project/env.prod.ejs'):'E://temp//genCode-utils//public//template//v3//project//env.prod.ejs',
-        [PROJETC_CONFIG_ENUM.PACKAGE_JSON]:isDev?getPath('public/template/v3/project/packageJson.ejs'):'E://temp//genCode-utils//public//template//v3//project//packageJson.ejs',
+        [PROJETC_CONFIG_ENUM.ENV]:!isDev?getPath('public/template/v3/project/env.ejs'):'E://temp//genCode-utils//public//template//v3//project//env.ejs',
+        [PROJETC_CONFIG_ENUM.ENV_DEV]:!isDev?getPath('public/template/v3/project/env.dev.ejs'):'E://temp//genCode-utils//public//template//v3//project//env.dev.ejs',
+        [PROJETC_CONFIG_ENUM.ENV_PROD]:!isDev?getPath('public/template/v3/project/env.prod.ejs'):'E://temp//genCode-utils//public//template//v3//project//env.prod.ejs',
+        [PROJETC_CONFIG_ENUM.PACKAGE_JSON]:!isDev?getPath('public/template/v3/project/packageJson.ejs'):'E://temp//genCode-utils//public//template//v3//project//packageJson.ejs',
     }
 
 }

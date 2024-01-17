@@ -3,7 +3,7 @@ const { getDialog } = require("./getDialog");
 const { getEntry } = require("./getEntry");
 const { getQuery } = require("./getQuery");
 const { getTable } = require("./getTable");
-const { getFormatRequestList, getInfoByLabel, getInfoByBinFunction } = require('../../common');
+const { getFormatRequestList, getInfoByLabel, getInfoByBinFunction, getPrikeyInfoByList } = require('../../common');
 const { camelCase, pascalCase } = require('../../utils/commonUtil');
 const { PAGE_TYPE_ENUM, LABEL_ENUM } = require('../../enum');
 
@@ -33,7 +33,7 @@ function getToolbarBtnAndObjBtn(functionList) {
 }
 
 function getQueryList(tableFieldList) {
-  return tableFieldList.filter(item => item.param.isSearch)
+  return tableFieldList.filter(item => item?.param?.isSearch)
 }
 
 function getParam(menuInfo) {
@@ -93,7 +93,7 @@ function getParam(menuInfo) {
     queryBtnList.concat(toolbarBtnList)
   }
 
-  const tablePrikey = tableFieldList.find(item=>item.param.pk)?.code
+  const tablePrikey = getPrikeyInfoByList(tableFieldList)?.code
 
   const param = {
     pageName,
@@ -176,7 +176,6 @@ async function getCrudAdapterData(sourceData) {
   if (hasUpdate) {
     pages.push(await getDialog({ ...fileParam, name: 'updateDialog' }, param))
   }
-
   return {
     services: getFormatRequestList(sourceData),
     pages: pages.filter(item => !!item)

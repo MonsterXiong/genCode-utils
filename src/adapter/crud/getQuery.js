@@ -15,7 +15,7 @@ const { TEMPLATE_PATH } = require("../../config/templateMap")
 function initQueryAndReset(script) {
   script[VUE_DATA_SCRIPT_ENUM.METHOD_LIST].push(addEmitMethodNoParam('onQuery'))
   script[VUE_DATA_SCRIPT_ENUM.METHOD_LIST].push(addEmitMethodNoParam('onReset'))
-  script[VUE_DATA_SCRIPT_ENUM.DATA_LIST].push({ name: 'queryForm', type: 'object', initValue: '{}' })
+  script[VUE_DATA_SCRIPT_ENUM.PROP_LIST].push({ name: 'queryForm', type: 'object', initValue: '{}' })
 }
 function handleMethodList(script, funcList) {
     funcList.forEach(func => {
@@ -35,7 +35,7 @@ function handleFieldList(script,fieldList){
 function handleTemplate(fieldList,funcList){
   const queryList = fieldList.map(field=>{
     const {name,code,param:fieldParam,bindAttr} = field
-    const {displayType} =fieldParam 
+    const {displayType} =fieldParam
     const param =  {
       label:name,
       displayType,
