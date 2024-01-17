@@ -1,6 +1,6 @@
 <template>
-  <el-form :model="queryForm" size="small" :inline="true" class="query-form-container">
-    <%_ if (hasQuery) { -%><%- include("../common/form.ejs",{list:queryList,formData:'queryForm'}) -%>
+  <el-form <%if (hasQuery) { -%>:model="queryForm"<%_ } -%> size="small" :inline="true" class="query-form-container">
+    <%_ if (hasToolbar) { -%><%- include("../common/form.ejs",{list:queryList,formData:'queryForm'}) -%>
     <el-form-item label="">
       <div class="btn-container">
         <%_if (hasQuery) { -%>

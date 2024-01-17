@@ -13,9 +13,11 @@
         @<%=btn.code%> ="<%=btn.code%>"
         <%_ }); -%>
       <%_}-%>
+      <%_if (hasQuery){-%>
         @onQuery="queryTableData"
         @onReset="onReset"
         :queryForm.sync="queryForm"
+      <%_}-%>
       ></<%=pageName%>Query>
     </template>
     <%_}-%>
@@ -26,6 +28,11 @@
       :total="total"
       <%_if(hasDeleteBatch){-%>
       @selection-change="onSelectionChange"
+      <%_}-%>
+      <%_if (operateBtnList.length){-%>
+        <%_ operateBtnList.forEach(function(btn){ -%>
+        @<%=btn.code%> ="<%=btn.code%>"
+        <%_ }); -%>
       <%_}-%>
       <%_if (tableBtnList.length){-%>
       <%_ tableBtnList.forEach(function(btn){ -%>

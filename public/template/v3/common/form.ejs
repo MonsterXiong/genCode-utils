@@ -3,19 +3,18 @@
     <el-form-item label="<%=formItem.label%>" prop="<%=formItem.prop%>">
       <%_ if (formItem.displayType == 'text') { -%>
       <el-input v-model.trim="<%=formData%>.<%=formItem.prop%>" placeholder="请输入<%=formItem.label%>"></el-input>
-      <%_ } -%>
-      <%_ if (formItem.displayType=='textarea' ){ -%>
+      <%_ } else if (formItem.displayType=='textarea' ){ -%>
       <el-input v-model.trim="<%=formData%>.<%=formItem.prop%>" type="textarea"></el-input>
-      <%_ } -%>
-      <%_ if (formItem.displayType == 'select') { -%>
+      <%_ } else if (formItem.displayType == 'select') { -%>
       <el-select v-model="<%=formData%>.<%=formItem.prop%>" clearable placeholder="请选择<%=formItem.label%>">
         <el-option v-for="item in <%=formItem.prop%>Option" :key="item.<%=formItem.entityKey%>" :label="item.<%=formItem.entityLabel%>" :value="item.<%=formItem.entityKey%>"></el-option>
       </el-select>
-      <%_ } -%>
-      <%_ if (formItem.displayType == 'dict') { -%>
+      <%_ } else if (formItem.displayType == 'dict') { -%>
       <el-select v-model="<%=formData%>.<%=formItem.prop%>" clearable placeholder="请选择<%=formItem.label%>">
         <el-option v-for="item in $root.getEnumByCode(dictCategory.<%=formItem.dictCode %>) || []" :key="item.code" :label="item.name" :value="item.code"></el-option>
       </el-select>
+      <%_ } else {  -%>
+        <el-input v-model.trim="<%=formData%>.<%=formItem.prop%>" placeholder="请输入<%=formItem.label%>"></el-input>
       <%_ } -%>
     </el-form-item>
 <%_ }); -%>
