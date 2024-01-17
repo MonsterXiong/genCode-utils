@@ -159,6 +159,7 @@ function getFormatRequestList(sourceData){
       param.prikeyInfo={...prikeyInfo,code:camelCase(prikeyInfo.code)}
     }
     res.push(param)
+
     return res
   },functionList).reduce((res,item)=>{
     const { interfaceType, serviceType, interfaceName } = parseUrl(item.request)
