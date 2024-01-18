@@ -41,7 +41,7 @@ function handleTemplate(fieldList,funcList){
       displayType,
       prop:code
     }
-    if(displayType == DISPLAY_TYPE_ENUM.SELECT){
+    if([DISPLAY_TYPE_ENUM.SINGLE_SELECT,DISPLAY_TYPE_ENUM.MULTIPLE_SELECT].includes(displayType)){
       param.entityKey = camelCase(bindAttr)
       param.entityLabel = code
     }

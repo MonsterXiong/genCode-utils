@@ -56,7 +56,7 @@ function handleSelectEntityType(script,field){
   script[VUE_DATA_SCRIPT_ENUM.IMPORT_LIST].push({ isDefault: false, from: '@/utils/queryConditionBuilder', content: 'QueryConditionBuilder' })
 }
 function parseUrl (url){
-  const [,interfaceType,serviceType,interfaceName]=url.split('/')
+  const [,interfaceType,serviceType,_,interfaceName]=url.split('/')
   return {
     interfaceType,
     serviceType,
@@ -106,7 +106,7 @@ function handleFormFieldList(script,field){
   const { param, request } = field
   const {displayType} =param
   if(request){
-    if (displayType == DISPLAY_TYPE_ENUM.SELECT) {
+    if([DISPLAY_TYPE_ENUM.SINGLE_SELECT,DISPLAY_TYPE_ENUM.MULTIPLE_SELECT].includes(displayType)){
       const { type } = request
       if (type == 'entity') {
         handleSelectEntityType(script, field)
@@ -147,34 +147,34 @@ function getPrikeyInfoByList(arr,attr='isMajorKey'){
 function getFormatRequestList(sourceData){
   const {functionList,elementList} = sourceData
   const functionMap = functionList.reduce((res,item)=>{
-    res[item.label] = item
-    return res
+  res[item.label] = item
+  return res
   }, {})
 
   const serviceList = elementList.reduce((res,element) => {
-    let request = functionMap[element.bindFunction]
-    const prikeyInfo = getPrikeyInfoByList(element.data)
-    const param = {...request}
-    if (prikeyInfo && prikeyInfo.code) {
-      param.prikeyInfo={...prikeyInfo,code:camelCase(prikeyInfo.code)}
-    }
+  let request = functionMap[element.bindFunction]
+  const prikeyInfo = getPrikeyInfoByList(element.data)
+  const param = {...request}
+  if (prikeyInfo && prikeyInfo.code) {
+  param.prikeyInfo={...prikeyInfo,code:camelCase(prikeyInfo.code)}
+  }
     res.push(param)
 
-    return res
+  return res
   },functionList).reduce((res,item)=>{
-    const { interfaceType, serviceType, interfaceName } = parseUrl(item.request)
-    const param = {
-      ...item,
-      interfaceType,
-      serviceType,
-      serviceName:pascalCase(serviceType),
-      interfaceName
-    }
+  const { interfaceType, serviceType, interfaceName } = parseUrl(item.request)
+  const param = {
+  ...item,
+  interfaceType,
+  serviceType,
+  serviceName:pascalCase(serviceType),
+  interfaceName
+  }
     if(!res[serviceType]){
-      res[serviceType] = [param]
-    }else{
-      res[serviceType].push(param)
-    }
+  res[serviceType] = [param]
+  }else{
+  res[serviceType].push(param)
+  }
     return res
   },{})
   return serviceList
