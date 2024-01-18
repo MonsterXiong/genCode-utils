@@ -47,6 +47,9 @@ function getParam(menuInfo) {
   const tableInfo = formatInfoByLabel(functionModel, LABEL_ENUM.QUERY_LIST)
   const deleteInfo = formatInfoByLabel(functionModel, LABEL_ENUM.DELETE)
   const deleteBatchInfo = formatInfoByLabel(functionModel, LABEL_ENUM.DELETE_BATCH)
+  const exportTemplateInfo = formatInfoByLabel(functionModel, LABEL_ENUM.EXPORT_TEMPLATE)
+  const exportInfo = formatInfoByLabel(functionModel, LABEL_ENUM.EXPORT)
+  const importInfo = formatInfoByLabel(functionModel, LABEL_ENUM.IMPORT)
   // 操作栏按钮和工具栏按钮
   const { toolbarBtnList, operateBtnList } = getToolbarBtnAndObjBtn(functionModel)
 
@@ -56,8 +59,11 @@ function getParam(menuInfo) {
   const hasDeleteBatch = !!deleteBatchInfo
   const hasDelete = !!deleteInfo
   const hasUpdate = !!updateInfo
+  const hasExport = !!exportInfo
+  const hasImport = !!importInfo
+  const hasExportTemplate = !!exportTemplateInfo
   const hasAdd = !!addInfo
-  const hasToolbar = hasAdd || hasDeleteBatch || hasQuery || toolbarBtnList.length > 0
+  const hasToolbar = hasAdd || hasDeleteBatch || hasQuery || hasExport || hasImport || hasExportTemplate || toolbarBtnList.length > 0
   // Query需要的数据有=>queryFieldList + queryBtnList
   let queryBtnList = []
   // table需要的数据  tableFieldList + tableBtnList
@@ -102,12 +108,18 @@ function getParam(menuInfo) {
     hasQuery,
     hasDelete,
     hasDeleteBatch,
+    hasExport,
+    hasImport,
+    hasExportTemplate,
     tableFieldList,
     queryFieldList,
     addInfo,
     tableInfo,
     deleteInfo,
     updateInfo,
+    exportInfo,
+    importInfo,
+    exportTemplateInfo,
     toolbarBtnList,
     operateBtnList,
     tableFieldList,
@@ -150,9 +162,8 @@ async function getCrudAdapterData(menuInfo) {
   const fileParam = { dirpath: camelCase(dirpath), template }
 
   const param = getParam(menuInfo)
-  // console.log(param,'xxxx');
-  // // 输出提示语
-  // testPage(menuInfo,param)
+  // 输出提示语
+  testPage(menuInfo,param)
 
   const { hasToolbar, hasAdd, hasUpdate } = param
 

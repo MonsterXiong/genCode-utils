@@ -81,8 +81,9 @@ function getInterfaceData(requestInfo, attr = 'operateUrl') {
   }
 }
 function handleImportList(script) {
-  const serviceList = uniqueArray(script[VUE_DATA_SCRIPT_ENUM.IMPORT_LIST], 'content').filter(item => item.from == '@/services')
-  const otherList = script[VUE_DATA_SCRIPT_ENUM.IMPORT_LIST].filter(item => item.from != '@/services')
+  const importList = uniqueArray(script[VUE_DATA_SCRIPT_ENUM.IMPORT_LIST],'content')
+  const serviceList = importList.filter(item => item.from == '@/services')
+  const otherList = importList.filter(item => item.from != '@/services')
   const importService = serviceList.map(item => item.content).join(', ')
   script[VUE_DATA_SCRIPT_ENUM.IMPORT_LIST] = otherList
   if (serviceList.length) {

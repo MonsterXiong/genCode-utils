@@ -57,6 +57,7 @@ function handleScript(script, templateParam, sourceData) {
     hasAdd,
     hasDeleteBatch,
     hasDelete,
+    hasImport,
     tableInfo,
     deleteInfo,
     deleteBatchInfo,
@@ -70,6 +71,8 @@ function handleScript(script, templateParam, sourceData) {
 
   if (hasQuery) {
     script[VUE_DATA_SCRIPT_ENUM.DATA_LIST].push({ name: 'queryForm', type: 'object', initValue: '{}', })
+  }
+  if (hasQuery || hasImport) {
     script[VUE_DATA_SCRIPT_ENUM.METHOD_LIST].push({ type: 'entryOnReset' })
   }
   if (hasToolbar) {

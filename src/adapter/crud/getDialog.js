@@ -74,10 +74,6 @@ function handleTemplate(fieldList){
       displayType,
       prop:code
     }
-    if(displayType == DISPLAY_TYPE_ENUM.SELECT){
-      param.entityKey = camelCase(bindAttr)
-      param.entityLabel = code
-    }
     return param
   })
 }

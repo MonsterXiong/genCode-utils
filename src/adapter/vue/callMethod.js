@@ -194,6 +194,29 @@ function getQueryTableData(method){
       this.total = count
     },`
 }
+function getTableExportMethod(method){
+  const { name,ServiceName,InterfaceName,exportName } = method
+  return `${getTab(2)}async ${name}() {
+      const fileData = await ${ServiceName}.${InterfaceName}()
+      exportFile('${exportName}导入模板.xlsx', fileData, 'application/vnd.ms-excel')
+    },`
+}
+function getTableImportMethod(method){
+  const { ServiceName,InterfaceName,name } = method
+  return `${getTab(2)}async ${name}(file) {
+      await ${ServiceName}.${InterfaceName}({file})
+      this.$message.success('导入成功')
+      this.$emit('onReset')
+    },`
+}
+function getTableExportTemplateMethod(method){
+  const { ServiceName,InterfaceName,exportName,name } = method
+  return `${getTab(2)}async ${name}() {
+      const queryCondition = QueryConditionBuilder.getInstanceNoPage()
+      const fileData = await ${ServiceName}.${InterfaceName}(queryCondition)
+      exportFile('${exportName}.xlsx', fileData, 'application/vnd.ms-excel')
+    },`
+}
 function callMethod(){
   return {
     'emit':(method)=>getEmitMethod(method),
@@ -219,7 +242,10 @@ function callMethod(){
     'queryTableData':(method)=>getQueryTableData(method),
     'tableDeleteMethod':(method)=>getTableDeleteMethod(method),
     'tableDeleteBatchMethod':(method)=>getTableDeleteBatchMethod(method),
-    'extMehodStruct':(method)=>getExtMehodStruct(method)
+    'extMehodStruct':(method)=>getExtMehodStruct(method),
+    'tableExportMethod':(method)=>getTableExportMethod(method),
+    'tableImportMethod':(method)=>getTableImportMethod(method),
+    'tableExportTemplateMethod':(method)=>getTableExportTemplateMethod(method),
   }
 }
 

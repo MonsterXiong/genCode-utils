@@ -6,6 +6,7 @@ const {
   initScript,
   handleFormFieldList,
   getEjsFileTemplateData,
+  getInterfaceData,
 } = require("../../common")
 const { nanoid } = require("nanoid")
 const { LABEL_ENUM, DISPLAY_TYPE_ENUM, VUE_DATA_SCRIPT_ENUM,  COMPONENT_CRUD_ENUM } = require("../../enum")
@@ -83,13 +84,31 @@ async function getQuery(fileParam, sourceData) {
   const type = COMPONENT_CRUD_ENUM.QUERY
   const fileInfo = getFileInfo({ ...fileParam, type })
   //  --------------------
-  const {queryBtnList,queryFieldList:fieldList,toolbarBtnList:extBtnList} = sourceData
+  const {queryBtnList,queryFieldList:fieldList,toolbarBtnList:extBtnList,exportInfo,importInfo,exportTemplateInfo,hasExport,hasImport,hasExportTemplate} = sourceData
   // 初始化script
   const script = initScript(fileInfo.filename)
   // 处理要素
   handleFieldList(script,fieldList)
   //  处理功能
   handleMethodList(script, [...queryBtnList,...extBtnList])
+  if(hasExport){
+    const { ServiceName, InterfaceName }=getInterfaceData(exportInfo)
+    script[VUE_DATA_SCRIPT_ENUM.METHOD_LIST].push({ type: 'tableExportMethod',exportName:exportInfo.name, name: exportInfo.code, ServiceName, InterfaceName, param: '' })
+    script[VUE_DATA_SCRIPT_ENUM.IMPORT_LIST].push({ isDefault: false, content: ServiceName, from: '@/services' })
+    script[VUE_DATA_SCRIPT_ENUM.IMPORT_LIST].push({ isDefault: false, content: 'exportFile', from: '@/utils/commonUtil' })
+  }
+  if(hasImport){
+    const { ServiceName, InterfaceName }=getInterfaceData(importInfo)
+    script[VUE_DATA_SCRIPT_ENUM.METHOD_LIST].push({ type: 'tableImportMethod', name: importInfo.code, ServiceName, InterfaceName, param: '' })
+    script[VUE_DATA_SCRIPT_ENUM.IMPORT_LIST].push({ isDefault: false, content: ServiceName, from: '@/services' })
+  }
+  if(hasExportTemplate){
+    const { ServiceName, InterfaceName }=getInterfaceData(exportTemplateInfo)
+    script[VUE_DATA_SCRIPT_ENUM.METHOD_LIST].push({ type: 'tableExportTemplateMethod',exportName:exportTemplateInfo.name, name: exportTemplateInfo.code, ServiceName, InterfaceName, param: '' })
+    script[VUE_DATA_SCRIPT_ENUM.IMPORT_LIST].push({ isDefault: false, content: ServiceName, from: '@/services' })
+    script[VUE_DATA_SCRIPT_ENUM.IMPORT_LIST].push({ isDefault: false, content: 'exportFile', from: '@/utils/commonUtil' })
+    script[VUE_DATA_SCRIPT_ENUM.IMPORT_LIST].push({ isDefault: false, from: '@/utils/queryConditionBuilder', content: 'QueryConditionBuilder' })
+  }
   //  整合一下imporList
   handleImportList(script)
   //  处理一下option
