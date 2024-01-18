@@ -24,10 +24,10 @@ async function getGenCode(softwareData) {
   const routeResult = getRouteAdapterData({ list: routeList })
   const routesConstantResult = getRouteConstantAdapterData({ list: routesConstantList })
 
-  // 获取页面内容 and 收集service数据
+  // // 获取页面内容 and 收集service数据
   const { pageResult, serviceData } = await getPageAdapterData(pageList)
 
-  // 统一处理所有的serviceData
+  // // 统一处理所有的serviceData
   const servieceResult = getServiceAdapterData(serviceData)
 
   return [...projectResult,...menuResult, ...routeResult, ...routesConstantResult, ...pageResult, ...servieceResult]
@@ -83,19 +83,19 @@ async function getPageAdapterData(menuPageList) {
   for await (const menuPage of menuPageList) {
     // 根据页面的菜单信息去找对应的pages信息
     const { label } = menuPage.pageInfo
-    const pageData = parseJsonToPage(menuPage)
+    // const pageData = parseJsonToPage(menuPage)
     if (label == PAGE_TYPE_ENUM.CRUD) {
-      pagesCode.push(await getCrudAdapterData(pageData))
+      pagesCode.push(await getCrudAdapterData(menuPage))
     }
   }
   return getPageResultAnddCollectServiceData(pagesCode)
 }
 // 返回页面需要的数据
-function parseJsonToPage(menuPage) {
-  const { functionModel: functionList, elementConfig: elementList } = menuPage.pageInfo
+// function parseJsonToPage(menuPage) {
+//   const { function: functionList, elementConfig: elementList } = menuPage.pageInfo
 
-  return { menuInfo: menuPage, functionList, elementList }
-}
+//   return { menuInfo: menuPage, functionList, elementList }
+// }
 function getPageResultAnddCollectServiceData(pagesCode) {
   return pagesCode.reduce((res, { services, pages }) => {
     collectServiceData(res['serviceData'], services)

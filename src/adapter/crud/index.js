@@ -8,10 +8,11 @@ const { camelCase, pascalCase } = require('../../utils/commonUtil');
 const { PAGE_TYPE_ENUM, LABEL_ENUM } = require('../../enum');
 
 // 根据label拿到功能信息并将对应的元素信息挂在elementList下
-function formatInfoByLabel({ functionModel, elementConfig }, label) {
+function formatInfoByLabel(functionModel , label) {
   const info = getInfoByLabel(functionModel, label)
   if (info) {
-    info.elementList = getInfoByBinFunction(elementConfig, label)?.data || []
+    // info.elementList = getInfoByBinFunction(elementConfig, label)?.data || []
+    info.elementList = info.elements[0]?.data || []
   }
   return info
 }
@@ -38,20 +39,18 @@ function getQueryList(tableFieldList) {
 
 function getParam(menuInfo) {
   const { code, pageInfo } = menuInfo
-  const { functionModel, elementConfig } = pageInfo
+  const { function:functionModel } = pageInfo
   const pageName = pascalCase(code)
 
-  const updateInfo = formatInfoByLabel(pageInfo, LABEL_ENUM.UPDATE)
-  const addInfo = formatInfoByLabel(pageInfo, LABEL_ENUM.INSERT)
-  const tableInfo = formatInfoByLabel(pageInfo, LABEL_ENUM.QUERY_LIST)
-  const queryInfo = formatInfoByLabel(pageInfo, LABEL_ENUM.QUERY)
-  const deleteInfo = formatInfoByLabel(pageInfo, LABEL_ENUM.DELETE)
-  const deleteBatchInfo = formatInfoByLabel(pageInfo, LABEL_ENUM.DELETE_BATCH)
+  const updateInfo = formatInfoByLabel(functionModel, LABEL_ENUM.UPDATE)
+  const addInfo = formatInfoByLabel(functionModel, LABEL_ENUM.INSERT)
+  const tableInfo = formatInfoByLabel(functionModel, LABEL_ENUM.QUERY_LIST)
+  const deleteInfo = formatInfoByLabel(functionModel, LABEL_ENUM.DELETE)
+  const deleteBatchInfo = formatInfoByLabel(functionModel, LABEL_ENUM.DELETE_BATCH)
   // 操作栏按钮和工具栏按钮
   const { toolbarBtnList, operateBtnList } = getToolbarBtnAndObjBtn(functionModel)
 
   const tableFieldList = tableInfo?.elementList || []
-
   const queryFieldList = getQueryList(tableFieldList)
   const hasQuery = queryFieldList.length > 0
   const hasDeleteBatch = !!deleteBatchInfo
@@ -63,7 +62,7 @@ function getParam(menuInfo) {
   let queryBtnList = []
   // table需要的数据  tableFieldList + tableBtnList
   let tableBtnList = []
-  // updateDiaLog需要的数据 还需要一个queryInfo
+  // updateDiaLog需要的数据 
   let updateFieldList = []
   // addDiaLog需要的数据 addFieldList
   let addFieldList = []
@@ -107,7 +106,6 @@ function getParam(menuInfo) {
     queryFieldList,
     addInfo,
     tableInfo,
-    queryInfo,
     deleteInfo,
     updateInfo,
     toolbarBtnList,
@@ -142,21 +140,19 @@ function testPage(menuInfo,param){
   console.log(`${translateChinese(param.hasDelete)}删除功能`);
   console.log(`${translateChinese(param.hasDeleteBatch)}批量删除功能`);
   console.log(`${(param.tablePrikey)}---主键`);
-  console.log(`------------------------------------------`);
   // pageName,
 }
 
-async function getCrudAdapterData(sourceData) {
-  const { menuInfo } = sourceData
-  const { code: menuCode } = menuInfo
+async function getCrudAdapterData(menuInfo) {
+  const { code: menuCode,pageInfo } = menuInfo
   const dirpath = menuCode ? menuCode : nanoid()
   const template = menuInfo?.pageInfo?.type || PAGE_TYPE_ENUM.CRUD
   const fileParam = { dirpath: camelCase(dirpath), template }
 
-
   const param = getParam(menuInfo)
-  // 输出提示语
-  testPage(menuInfo,param)
+  // console.log(param,'xxxx');
+  // // 输出提示语
+  // testPage(menuInfo,param)
 
   const { hasToolbar, hasAdd, hasUpdate } = param
 
@@ -177,7 +173,7 @@ async function getCrudAdapterData(sourceData) {
     pages.push(await getDialog({ ...fileParam, name: 'updateDialog' }, param))
   }
   return {
-    services: getFormatRequestList(sourceData),
+    services: getFormatRequestList(pageInfo),
     pages: pages.filter(item => !!item)
   }
 }

@@ -1,6 +1,6 @@
-const { getFileInfo, initScript,  handleImportList, handleMethodListHasOption, handleFormFieldList,  getEjsFileTemplateData, getInterfaceData, getPrikeyInfoByList } = require("../../common")
+const { getFileInfo, initScript,  handleImportList, handleMethodListHasOption, handleFormFieldList,  getEjsFileTemplateData, getInterfaceData, getPrikeyInfoByList, getUpdateQueryUrl, parseUrl } = require("../../common")
 const { DISPLAY_TYPE_ENUM, VUE_DATA_SCRIPT_ENUM, COMPONENT_CRUD_ENUM } = require("../../enum")
-const {  camelCase } = require("../../utils/commonUtil")
+const {  camelCase, pascalCase } = require("../../utils/commonUtil")
 const { TEMPLATE_PATH } = require("../../config/templateMap")
 
 function initDataList(script){
@@ -82,11 +82,15 @@ function handleTemplate(fieldList){
   })
 }
 
-function updateScript(script,fieldList,queryInfo){
+function updateScript(script,fieldList,updateInfo){
   const prikeyInfo = getPrikeyInfoByList(fieldList)
   const pri = prikeyInfo?.code || ''
-  if(queryInfo){
-    const {ServiceName,InterfaceName} = getInterfaceData(queryInfo)
+  if(updateInfo?.operateUrl){
+    const {url} =getUpdateQueryUrl(updateInfo.operateUrl)
+    const { serviceType, interfaceName } = parseUrl(url)
+    const ServiceName= `${pascalCase(serviceType)}Service`
+    const InterfaceName= `${camelCase(interfaceName)}`
+    // const {ServiceName,InterfaceName} = getInterfaceData(updateInfo,'queryUrl')
     script[VUE_DATA_SCRIPT_ENUM.METHOD_LIST].unshift({type:'editGetData',pri,ServiceName,InterfaceName})
     script[VUE_DATA_SCRIPT_ENUM.IMPORT_LIST].push({isDefault:false,content:`${ServiceName}`,from:'@/services'})
   }else{
@@ -104,7 +108,7 @@ async function getDialog(fileParam, sourceData) {
   const type = COMPONENT_CRUD_ENUM.DIALOG
   const fileInfo = getFileInfo({ ...fileParam, type })
   //  --------------------
-  const {addInfo,updateInfo,queryInfo} = sourceData
+  const {addInfo,updateInfo} = sourceData
 
   let fieldList = []
   let sourceFieldList = []
@@ -120,13 +124,13 @@ async function getDialog(fileParam, sourceData) {
   handleFieldList(script,fieldList)
 
   if(isUpdate){
-    updateScript(script,sourceFieldList,queryInfo)
+    updateScript(script,sourceFieldList,updateInfo)
   }
   else{
     addScript(script)
   }
   script[VUE_DATA_SCRIPT_ENUM.DATA_LIST].push({name: 'title',type: 'string',initValue: `'${funcInfo.name}'`})
-  const {ServiceName,InterfaceName}= getInterfaceData(funcInfo)
+  const {ServiceName,InterfaceName}= getInterfaceData(funcInfo,'operateUrl')
   script[VUE_DATA_SCRIPT_ENUM.IMPORT_LIST].push({isDefault:false,content:`${ServiceName}`,from:'@/services'})
   // 添加onSubmitForm方法
   script[VUE_DATA_SCRIPT_ENUM.METHOD_LIST].push({

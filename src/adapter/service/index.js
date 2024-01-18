@@ -8,7 +8,7 @@ const { FRAMEWORK_CONFIG } = require('../../config/frameworkConfig')
 // 根据label进行去重
 function formatService(serviceData) {
     const serviceList = Object.keys(serviceData).reduce((res, serviceName) => {
-        res[serviceName] = uniqueArray(serviceData[serviceName], 'label')
+        res[serviceName] = uniqueArray(serviceData[serviceName], 'request')
         return res
     }, {})
     return serviceList

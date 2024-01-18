@@ -3,18 +3,38 @@
     <el-form-item label="<%=formItem.label%>" prop="<%=formItem.prop%>">
       <%_ if (formItem.displayType == 'text') { -%>
       <el-input v-model.trim="<%=formData%>.<%=formItem.prop%>" placeholder="请输入<%=formItem.label%>"></el-input>
+      <%_ } else if (formItem.displayType=='inputNumber' ){ -%>
+      <el-input-number v-model="<%=formData%>.<%=formItem.prop%>"></el-input-number>
+      <%_ } else if (['singleSelect','multipleSelect'].includes(formItem.displayType)) { -%>
+      <el-select v-model="<%=formData%>.<%=formItem.prop%>" <%if(formItem.displayType =='multipleSelect'){-%>multiple<%_}-%> clearable placeholder="请选择<%=formItem.label%>">
+        <el-option v-for="item in <%=formItem.prop%>Option" :key="item.id" :label="item.name" :value="item.id"></el-option>
+      </el-select>
       <%_ } else if (formItem.displayType=='textarea' ){ -%>
       <el-input v-model.trim="<%=formData%>.<%=formItem.prop%>" type="textarea"></el-input>
-      <%_ } else if (formItem.displayType == 'select') { -%>
-      <el-select v-model="<%=formData%>.<%=formItem.prop%>" clearable placeholder="请选择<%=formItem.label%>">
-        <el-option v-for="item in <%=formItem.prop%>Option" :key="item.<%=formItem.entityKey%>" :label="item.<%=formItem.entityLabel%>" :value="item.<%=formItem.entityKey%>"></el-option>
-      </el-select>
-      <%_ } else if (formItem.displayType == 'dict') { -%>
-      <el-select v-model="<%=formData%>.<%=formItem.prop%>" clearable placeholder="请选择<%=formItem.label%>">
-        <el-option v-for="item in $root.getEnumByCode(dictCategory.<%=formItem.dictCode %>) || []" :key="item.code" :label="item.name" :value="item.code"></el-option>
-      </el-select>
+      <%_ } else if (formItem.displayType == 'radio') { -%>
+      <el-radio-group v-model="<%=formData%>.<%=formItem.prop%>">
+        <el-radio v-for="item in <%=formItem.prop%>Option" :key="item.id" :label="item.id">{{item.name}}</el-radio>
+      </el-radio-group>
+      <%_ } else if (formItem.displayType == 'datetime') { -%>
+      <el-date-picker v-model="<%=formData%>.<%=formItem.prop%>" type="datetime" placeholder="请选择<%=formItem.label%>"></el-date-picker>  
+      <%_ } else if (formItem.displayType == 'date') { -%>
+      <el-date-picker v-model="<%=formData%>.<%=formItem.prop%>" type="date" placeholder="请选择<%=formItem.label%>"></el-date-picker>  
+      <%_ } else if (formItem.displayType == 'time') { -%>
+      <el-time-picker v-model="<%=formData%>.<%=formItem.prop%>""></el-time-picker>
+      <%_ } else if (formItem.displayType == 'checkbox') { -%>
+      <el-checkbox-group v-model="<%=formData%>.<%=formItem.prop%>">
+        <el-checkbox v-for="item in <%=formItem.prop%>Option" :key="item.id" :label="item.id">{{item.name}}</el-checkbox>
+      </el-checkbox-group>
+      <%_ } else if (formItem.displayType == 'switch') { -%>
+      <el-switch v-model="<%=formData%>.<%=formItem.prop%>" active-color="#13ce66" inactive-color="#ff4949"></el-switch>
+      <%_ } else if (formItem.displayType == 'colorPicker') { -%>
+      <el-color-picker v-model="color1"></el-color-picker>
+      <%_ } else if (formItem.displayType == 'rate') { -%>
+      <el-rate v-model="<%=formData%>.<%=formItem.prop%>"></el-rate>
+      <%_ } else if (formItem.displayType == 'slider') { -%>
+      <el-slider v-model="<%=formData%>.<%=formItem.prop%>"></el-slider>
       <%_ } else {  -%>
-        <el-input v-model.trim="<%=formData%>.<%=formItem.prop%>" placeholder="请输入<%=formItem.label%>"></el-input>
+      <el-input v-model.trim="<%=formData%>.<%=formItem.prop%>" placeholder="请输入<%=formItem.label%>"></el-input>
       <%_ } -%>
     </el-form-item>
 <%_ }); -%>

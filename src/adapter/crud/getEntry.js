@@ -90,16 +90,16 @@ function handleScript(script, templateParam, sourceData) {
   if (hasDeleteBatch) {
     script[VUE_DATA_SCRIPT_ENUM.DATA_LIST].push({ name: 'multipleSelection', type: 'array', initValue: '[]', })
     script[VUE_DATA_SCRIPT_ENUM.METHOD_LIST].push({ type: 'selectionChange' })
-    const { ServiceName, InterfaceName }=getInterfaceData(deleteBatchInfo)
+    const { ServiceName, InterfaceName }=getInterfaceData(deleteBatchInfo,'operateUrl')
     script[VUE_DATA_SCRIPT_ENUM.METHOD_LIST].push({ type: 'tableDeleteBatchMethod', name: deleteBatchInfo.code, ServiceName, InterfaceName,pri:tablePrikey, param: '' })
   }
   if (hasDelete) {
-    const { ServiceName, InterfaceName }=getInterfaceData(deleteInfo)
+    const { ServiceName, InterfaceName }=getInterfaceData(deleteInfo,'operateUrl')
     script[VUE_DATA_SCRIPT_ENUM.METHOD_LIST].push({ type: 'tableDeleteMethod', name: deleteInfo.code, ServiceName, InterfaceName,pri:tablePrikey, param: 'row' })
   }
 
 
-  const { ServiceName, InterfaceName }=getInterfaceData(tableInfo)
+  const { ServiceName, InterfaceName }=getInterfaceData(tableInfo,'queryUrl')
   // 初始化查询方法
   script[VUE_DATA_SCRIPT_ENUM.METHOD_LIST].push({ type: 'queryTableData', ServiceName, InterfaceName,hasQuery })
   script[VUE_DATA_SCRIPT_ENUM.IMPORT_LIST].push({ isDefault: false, content: ServiceName, from: '@/services' })
