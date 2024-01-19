@@ -1,4 +1,4 @@
-const { getFileInfo, initScript, addEmitMethodRow, getEjsFileTemplateData } = require("../../common")
+const { getFileInfo, initScript, addEmitMethodRow, getEjsFileTemplateData, parseUrlGetParam } = require("../../common")
 const { LABEL_ENUM, VUE_DATA_SCRIPT_ENUM, PAGE_TYPE_ENUM, COMPONENT_CRUD_ENUM } = require("../../enum")
 const { TEMPLATE_PATH } = require("../../config/templateMap")
 
@@ -103,9 +103,17 @@ function handleTemplate(fieldList,funcList){
   })
 
   const fields = fieldList.filter(item=>!item.param?.isHidden).map(field=>{
+    const {code,name,selectUrl} = field
+    let key = code
+    if(selectUrl){
+      const {param:{displayAttr}} = parseUrlGetParam
+      if(displayAttr){
+        key = `${item.key}_quote[0].${displayAttr}`
+      }
+    }
     return{
-      key:field.code,
-      label:field.name
+      key,
+      label:name
     }
   })
   return {

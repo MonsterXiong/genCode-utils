@@ -81,8 +81,9 @@ function handleTemplate(fieldList){
 function updateScript(script,fieldList,updateInfo){
   const prikeyInfo = getPrikeyInfoByList(fieldList)
   const pri = prikeyInfo?.code || ''
-  if(updateInfo?.operateUrl){
-    const {url} =getUpdateQueryUrl(updateInfo.operateUrl)
+  const operateUrl = updateInfo?.operateUrl
+  if(operateUrl){
+    const {url} =getUpdateQueryUrl(operateUrl)
     const { serviceType, interfaceName } = parseUrl(url)
     const ServiceName= `${pascalCase(serviceType)}Service`
     const InterfaceName= `${camelCase(interfaceName)}`
@@ -126,7 +127,7 @@ async function getDialog(fileParam, sourceData) {
     addScript(script)
   }
   script[VUE_DATA_SCRIPT_ENUM.DATA_LIST].push({name: 'title',type: 'string',initValue: `'${funcInfo.name}'`})
-  const {ServiceName,InterfaceName}= getInterfaceData(funcInfo,'operateUrl')
+  const {ServiceName,InterfaceName}= getInterfaceData(funcInfo)
   script[VUE_DATA_SCRIPT_ENUM.IMPORT_LIST].push({isDefault:false,content:`${ServiceName}`,from:'@/services'})
   // 添加onSubmitForm方法
   script[VUE_DATA_SCRIPT_ENUM.METHOD_LIST].push({

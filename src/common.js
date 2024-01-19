@@ -6,6 +6,7 @@ const { DISPLAY_TYPE_ENUM, VUE_DATA_SCRIPT_ENUM, LABEL_ENUM } = require('./enum'
 const { pascalCase, camelCase } = require('./utils/commonUtil')
 const { COMPONENT_ENUM } = require('./enum/componentType')
 const { ENTRY_SUFFIX_ENUM } = require('./enum/entrySuffix')
+const qs = require('qs')
 
 function getTab(number = 1) {
   return new Array(number).fill('').reduce((res) => res += `\t`, '')
@@ -30,7 +31,7 @@ function addExtFuncStruct(script, extList, param = '') {
     script[VUE_DATA_SCRIPT_ENUM.IMPORT_LIST].push({ isDefault: true, from: '@/utils/tools', content: 'tools' })
   }
   extList.forEach(item => {
-    const { ServiceName, InterfaceName } = getInterfaceData(item, 'operateUrl')
+    const { ServiceName, InterfaceName } = getInterfaceData(item)
     script[VUE_DATA_SCRIPT_ENUM.METHOD_LIST].push({ type: 'extMehodStruct', name: item.code, ServiceName, InterfaceName, param })
   })
 }
@@ -107,10 +108,7 @@ function handleFormFieldList(script, field) {
   const { displayType } = param
   if ([DISPLAY_TYPE_ENUM.SINGLE_SELECT, DISPLAY_TYPE_ENUM.MULTIPLE_SELECT].includes(displayType)) {
       if (selectUrl) {
-      // const { type } = request
-      // if (type == 'entity') {
         handleSelectEntityType(script, field)
-      // }
     }
   }
 }
@@ -168,6 +166,17 @@ function getUpdateQueryUrl(requestUrl){
   const url = `${prefix}/${queryInterfaceName}`
   return {interfaceName:queryInterfaceName,url}
 }
+function parseUrlGetParam(url){
+  const queryParam = url.split('?')
+  if(queryParam.length <=1){
+      return {}
+  }else{
+    return {
+      url:queryParam[0],
+      param:qs.parse(queryParam[1])
+    }
+  }
+}
 function getFormatRequestList(pageInfo) {
   const { function: functionList } = pageInfo
   const serviceList = functionList.reduce((res, element) => {
@@ -177,7 +186,12 @@ function getFormatRequestList(pageInfo) {
     elementList?.forEach(item => {
       const selectUrl = item.selectUrl
       if (selectUrl) {
-        res.push(getServiceParam(element, selectUrl))
+        const {url} = parseUrlGetParam(selectUrl)
+        if(url){
+          res.push(getServiceParam(element, url))
+        }else{
+          res.push(getServiceParam(element, selectUrl))
+        }
       }
     })
     if (queryUrl) {
@@ -187,10 +201,6 @@ function getFormatRequestList(pageInfo) {
       res.push(getServiceParam(element, operateUrl, prikeyInfo))
     }
     if (label == LABEL_ENUM.UPDATE && operateUrl) {
-      // const { interfaceName } = parseUrl(operateUrl)
-      // const queryInterfaceName = camelCase(`query_${interfaceName}`)
-      // const prefix = operateUrl.substring(0, operateUrl.lastIndexOf('/'))
-      // const url = `${prefix}/${queryInterfaceName}`
       const { interfaceName,url } =getUpdateQueryUrl(operateUrl)
       const param = {
         ...getServiceParam(element, url, prikeyInfo),
@@ -245,5 +255,6 @@ module.exports = {
   getInterfaceData,
   addExtFuncStruct,
   getPrikeyInfoByList,
-  getUpdateQueryUrl
+  getUpdateQueryUrl,
+  parseUrlGetParam
 }

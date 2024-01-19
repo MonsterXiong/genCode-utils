@@ -93,12 +93,14 @@ function handleScript(script, templateParam, sourceData) {
   if (hasDeleteBatch) {
     script[VUE_DATA_SCRIPT_ENUM.DATA_LIST].push({ name: 'multipleSelection', type: 'array', initValue: '[]', })
     script[VUE_DATA_SCRIPT_ENUM.METHOD_LIST].push({ type: 'selectionChange' })
-    const { ServiceName, InterfaceName }=getInterfaceData(deleteBatchInfo,'operateUrl')
+    const { ServiceName, InterfaceName }=getInterfaceData(deleteBatchInfo)
     script[VUE_DATA_SCRIPT_ENUM.METHOD_LIST].push({ type: 'tableDeleteBatchMethod', name: deleteBatchInfo.code, ServiceName, InterfaceName,pri:tablePrikey, param: '' })
+    script[VUE_DATA_SCRIPT_ENUM.METHOD_LIST].push({isDefault: true,from: '@/utils/tools',content: 'tools'})
   }
   if (hasDelete) {
-    const { ServiceName, InterfaceName }=getInterfaceData(deleteInfo,'operateUrl')
+    const { ServiceName, InterfaceName }=getInterfaceData(deleteInfo)
     script[VUE_DATA_SCRIPT_ENUM.METHOD_LIST].push({ type: 'tableDeleteMethod', name: deleteInfo.code, ServiceName, InterfaceName,pri:tablePrikey, param: 'row' })
+    script[VUE_DATA_SCRIPT_ENUM.METHOD_LIST].push({isDefault: true,from: '@/utils/tools',content: 'tools'})
   }
 
 
