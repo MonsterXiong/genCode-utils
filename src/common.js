@@ -57,7 +57,8 @@ function handleSelectEntityType(script, field) {
   script[VUE_DATA_SCRIPT_ENUM.IMPORT_LIST].push({ isDefault: false, from: '@/utils/queryConditionBuilder', content: 'QueryConditionBuilder' })
 }
 function parseUrl(url) {
-  const [, interfaceType, serviceType, _, interfaceName] = url.split('/')
+  const {url:request} = parseUrlGetParam(url)
+  const [, interfaceType, serviceType, _, interfaceName] = request.split('/')
   return {
     interfaceType,
     serviceType,
@@ -169,7 +170,9 @@ function getUpdateQueryUrl(requestUrl){
 function parseUrlGetParam(url){
   const queryParam = url.split('?')
   if(queryParam.length <=1){
-      return {}
+      return {
+        url
+      }
   }else{
     return {
       url:queryParam[0],
