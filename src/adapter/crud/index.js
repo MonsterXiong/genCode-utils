@@ -3,7 +3,7 @@ const { getDialog } = require("./getDialog");
 const { getEntry } = require("./getEntry");
 const { getQuery } = require("./getQuery");
 const { getTable } = require("./getTable");
-const { getFormatRequestList, getInfoByLabel, getInfoByBinFunction, getPrikeyInfoByList } = require('../../common');
+const { getFormatRequestList, getInfoByLabel,  getPrikeyInfoByList } = require('../../common');
 const { camelCase, pascalCase } = require('../../utils/commonUtil');
 const { PAGE_TYPE_ENUM, LABEL_ENUM } = require('../../enum');
 
@@ -11,7 +11,6 @@ const { PAGE_TYPE_ENUM, LABEL_ENUM } = require('../../enum');
 function formatInfoByLabel(functionModel , label) {
   const info = getInfoByLabel(functionModel, label)
   if (info) {
-    // info.elementList = getInfoByBinFunction(elementConfig, label)?.data || []
     info.elementList = info.elements[0]?.data || []
   }
   return info

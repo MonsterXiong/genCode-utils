@@ -1,7 +1,8 @@
 const { getFileInfo, initScript,  handleImportList, handleMethodListHasOption, handleFormFieldList,  getEjsFileTemplateData, getInterfaceData, getPrikeyInfoByList, getUpdateQueryUrl, parseUrl } = require("../../common")
-const { DISPLAY_TYPE_ENUM, VUE_DATA_SCRIPT_ENUM, COMPONENT_CRUD_ENUM } = require("../../enum")
+const {  VUE_DATA_SCRIPT_ENUM, COMPONENT_CRUD_ENUM } = require("../../enum")
 const {  camelCase, pascalCase } = require("../../utils/commonUtil")
 const { TEMPLATE_PATH } = require("../../config/templateMap")
+const { addImportService, addCommonTools } = require("../commonMethod")
 
 function initDataList(script){
   script[VUE_DATA_SCRIPT_ENUM.DATA_LIST]=[  {
@@ -20,7 +21,7 @@ function initDataList(script){
   }]
 }
 function initImportDataList(script){
-  script[VUE_DATA_SCRIPT_ENUM.IMPORT_LIST] = [{isDefault: true,from: '@/utils/tools',content: 'tools'}]
+  addCommonTools(script)
   // script[VUE_DATA_SCRIPT_ENUM.IMPORT_LIST].push({isDefault: false,from: '@/common/constants',content: 'CommonDialogWidth'})
 }
 function initMethodList(script){
@@ -87,9 +88,8 @@ function updateScript(script,fieldList,updateInfo){
     const { serviceType, interfaceName } = parseUrl(url)
     const ServiceName= `${pascalCase(serviceType)}Service`
     const InterfaceName= `${camelCase(interfaceName)}`
-    // const {ServiceName,InterfaceName} = getInterfaceData(updateInfo,'queryUrl')
     script[VUE_DATA_SCRIPT_ENUM.METHOD_LIST].unshift({type:'editGetData',pri,ServiceName,InterfaceName})
-    script[VUE_DATA_SCRIPT_ENUM.IMPORT_LIST].push({isDefault:false,content:`${ServiceName}`,from:'@/services'})
+    addImportService(script,ServiceName)
   }else{
     script[VUE_DATA_SCRIPT_ENUM.METHOD_LIST].unshift({type:'emptyEditGetData'})
   }
@@ -128,7 +128,7 @@ async function getDialog(fileParam, sourceData) {
   }
   script[VUE_DATA_SCRIPT_ENUM.DATA_LIST].push({name: 'title',type: 'string',initValue: `'${funcInfo.name}'`})
   const {ServiceName,InterfaceName}= getInterfaceData(funcInfo)
-  script[VUE_DATA_SCRIPT_ENUM.IMPORT_LIST].push({isDefault:false,content:`${ServiceName}`,from:'@/services'})
+  addImportService(script,ServiceName)
   // 添加onSubmitForm方法
   script[VUE_DATA_SCRIPT_ENUM.METHOD_LIST].push({
     type:'dialogSubmit',

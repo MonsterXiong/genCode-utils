@@ -1,6 +1,7 @@
 const { getFileInfo, initScript, addEmitMethodRow, getEjsFileTemplateData, parseUrlGetParam } = require("../../common")
 const { LABEL_ENUM, VUE_DATA_SCRIPT_ENUM, PAGE_TYPE_ENUM, COMPONENT_CRUD_ENUM } = require("../../enum")
 const { TEMPLATE_PATH } = require("../../config/templateMap")
+const { addCommonQueryConditionBuilder } = require("../commonMethod")
 
 function initPropList(script) {
   script[VUE_DATA_SCRIPT_ENUM.PROP_LIST] = [{
@@ -66,14 +67,11 @@ function handleMethodList(script, funcList) {
       if (label !== LABEL_ENUM.QUERY_LIST) {
         script[VUE_DATA_SCRIPT_ENUM.METHOD_LIST].push(addEmitMethodRow(code))
       } else {
-        script[VUE_DATA_SCRIPT_ENUM.IMPORT_LIST].push({ isDefault: false, from: '@/utils/queryConditionBuilder', content: 'QueryConditionBuilder' })
+        addCommonQueryConditionBuilder(script)
       }
     });
   }
 }
-// TODO:
-function handleFieldList() { }
-
 
 function getDeleteOrEditBtnParam(btnInfo, type) {
   let isShow = false

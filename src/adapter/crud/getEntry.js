@@ -1,6 +1,7 @@
 const { getFileInfo, initScript, handleImportList,  getEjsFileTemplateData,  getInterfaceData, addExtFuncStruct } = require("../../common")
 const { VUE_DATA_SCRIPT_ENUM,  COMPONENT_CRUD_ENUM } = require("../../enum")
 const { TEMPLATE_PATH } = require("../../config/templateMap")
+const { addImportComponent, addCommonTools, addCommonQueryConditionBuilder, addCompComponent } = require("../commonMethod")
 function initDataList(script) {
   script[VUE_DATA_SCRIPT_ENUM.DATA_LIST] = [{
     name: 'tableData',
@@ -24,9 +25,6 @@ function initDataList(script) {
     }],
   }]
 }
-function initComponentList(script) {
-  script[VUE_DATA_SCRIPT_ENUM.COMPONENT_LIST] = []
-}
 
 function initMountList(script) {
   script[VUE_DATA_SCRIPT_ENUM.MOUNT_LIST] = [{ isAwait: true, type: 'callMethod', content: 'queryTableData' }]
@@ -38,17 +36,16 @@ function initMethodList(script) {
 
 function initStruct(script) {
   initDataList(script)
-  initComponentList(script)
   initMountList(script)
   initMethodList(script)
 }
 
 function addComponent(script, componenName) {
-  script[VUE_DATA_SCRIPT_ENUM.COMPONENT_LIST].push(componenName)
-  script[VUE_DATA_SCRIPT_ENUM.IMPORT_LIST].push({ isDefault: true, content: componenName, from: `./components/${componenName}.vue` })
+  addCompComponent(script, componenName)
+  addImportComponent(script,componenName,`./components/${componenName}.vue`)
 }
 
-function handleScript(script, templateParam, sourceData) {
+function handleScript(script, templateParam) {
   const {
     hasToolbar,
     hasQuery,
@@ -67,6 +64,8 @@ function handleScript(script, templateParam, sourceData) {
     operateBtnList,
     tablePrikey,
   } = templateParam
+
+
   addComponent(script, `${pageName}Table`)
 
   if (hasQuery) {
@@ -95,21 +94,21 @@ function handleScript(script, templateParam, sourceData) {
     script[VUE_DATA_SCRIPT_ENUM.METHOD_LIST].push({ type: 'selectionChange' })
     const { ServiceName, InterfaceName }=getInterfaceData(deleteBatchInfo)
     script[VUE_DATA_SCRIPT_ENUM.METHOD_LIST].push({ type: 'tableDeleteBatchMethod', name: deleteBatchInfo.code, ServiceName, InterfaceName,pri:tablePrikey, param: '' })
-    script[VUE_DATA_SCRIPT_ENUM.IMPORT_LIST].push({isDefault: true,from: '@/utils/tools',content: 'tools'})
+    addCommonTools(script)
   }
   if (hasDelete) {
     const { ServiceName, InterfaceName }=getInterfaceData(deleteInfo)
     script[VUE_DATA_SCRIPT_ENUM.METHOD_LIST].push({ type: 'tableDeleteMethod', name: deleteInfo.code, ServiceName, InterfaceName,pri:tablePrikey, param: 'row' })
-    script[VUE_DATA_SCRIPT_ENUM.IMPORT_LIST].push({isDefault: true,from: '@/utils/tools',content: 'tools'})
+    addCommonTools(script)
   }
 
 
-  const { ServiceName, InterfaceName }=getInterfaceData(tableInfo)
+  const { ServiceName, InterfaceName }=getInterfaceData(tableInfo,'queryUrl')
   // 初始化查询方法
   script[VUE_DATA_SCRIPT_ENUM.METHOD_LIST].push({ type: 'queryTableData', ServiceName, InterfaceName,hasQuery })
   script[VUE_DATA_SCRIPT_ENUM.IMPORT_LIST].push({ isDefault: false, content: ServiceName, from: '@/services' })
 
-  script[VUE_DATA_SCRIPT_ENUM.IMPORT_LIST].push({ isDefault: false, from: '@/utils/queryConditionBuilder', content: 'QueryConditionBuilder' })
+  addCommonQueryConditionBuilder(script)
   // 初始化watch
   script[VUE_DATA_SCRIPT_ENUM.WATCH_LIST].push({ type: 'entryPageInfo' })
   handleImportList(script)

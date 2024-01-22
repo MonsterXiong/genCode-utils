@@ -7,6 +7,7 @@ const { pascalCase, camelCase } = require('./utils/commonUtil')
 const { COMPONENT_ENUM } = require('./enum/componentType')
 const { ENTRY_SUFFIX_ENUM } = require('./enum/entrySuffix')
 const qs = require('qs')
+const { addCommonTools, addCommonQueryConditionBuilder, addImportService } = require('./adapter/commonMethod')
 
 function getTab(number = 1) {
   return new Array(number).fill('').reduce((res) => res += `\t`, '')
@@ -28,7 +29,7 @@ function getFileInfo({ name, type, dirpath, template }) {
 
 function addExtFuncStruct(script, extList, param = '') {
   if (extList.length) {
-    script[VUE_DATA_SCRIPT_ENUM.IMPORT_LIST].push({ isDefault: true, from: '@/utils/tools', content: 'tools' })
+    addCommonTools(script)
   }
   extList.forEach(item => {
     const { ServiceName, InterfaceName } = getInterfaceData(item)
@@ -42,19 +43,16 @@ function addEmitMethodNoParam(emitName) {
 function addEmitMethodRow(emitName) {
   return { type: 'emit', name: emitName, content: '', param: 'row' }
 }
-function addServiceToImportList(script, serviceName) {
-  script[VUE_DATA_SCRIPT_ENUM.IMPORT_LIST].push({ isDefault: false, from: '@/services', content: serviceName })
-}
 function handleSelectEntityType(script, field) {
   const { selectUrl, bindAttr, code } = field
   const { serviceType, interfaceName } = parseUrl(selectUrl)
   const serviceName = `${pascalCase(serviceType)}Service`
   const variableName = `${camelCase(code)}Option`
   const functionName = `get${pascalCase(variableName)}`
-  addServiceToImportList(script, serviceName)
+  addImportService(script, serviceName)
   script[VUE_DATA_SCRIPT_ENUM.METHOD_LIST].unshift({ type: 'option', serviceName, interfaceName, variableName, functionName })
   script[VUE_DATA_SCRIPT_ENUM.DATA_LIST].push({ name: variableName, type: 'array', initValue: '[]' })
-  script[VUE_DATA_SCRIPT_ENUM.IMPORT_LIST].push({ isDefault: false, from: '@/utils/queryConditionBuilder', content: 'QueryConditionBuilder' })
+  addCommonQueryConditionBuilder(script)
 }
 function parseUrl(url) {
   const {url:request} = parseUrlGetParam(url)
@@ -89,7 +87,8 @@ function handleImportList(script) {
   const importService = serviceList.map(item => item.content).join(', ')
   script[VUE_DATA_SCRIPT_ENUM.IMPORT_LIST] = otherList
   if (serviceList.length) {
-    script[VUE_DATA_SCRIPT_ENUM.IMPORT_LIST].push({ isDefault: false, from: '@/services', content: importService })
+    script[VUE_DATA_SCRIPT_ENUM.IMPORT_LIST] =[]
+    addImportService(script,importService)
   }
 }
 
@@ -99,9 +98,6 @@ function getInfoByAttr(arr, type, attr) {
 
 function getInfoByLabel(arr, type) {
   return getInfoByAttr(arr, type, 'label')
-}
-function getInfoByBinFunction(arr, type) {
-  return getInfoByAttr(arr, type, 'bindFunction')
 }
 
 function handleFormFieldList(script, field) {
@@ -242,7 +238,6 @@ module.exports = {
   getFileInfo,
   addEmitMethodNoParam,
   addEmitMethodRow,
-  addServiceToImportList,
   handleSelectEntityType,
   handleMethodListHasOption,
   handleImportList,
@@ -254,7 +249,6 @@ module.exports = {
   handleFormFieldList,
   getInfoByAttr,
   getInfoByLabel,
-  getInfoByBinFunction,
   getInterfaceData,
   addExtFuncStruct,
   getPrikeyInfoByList,
