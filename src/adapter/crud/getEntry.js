@@ -84,7 +84,7 @@ function handleScript(script, templateParam) {
     addDeleteOrDeleteBatch(script, deleteInfo)
   }
 
-  const { ServiceName, InterfaceName } = getInterfaceData(tableInfo, 'queryUrl')
+  const { ServiceName, InterfaceName } = getInterfaceData(tableInfo)
   // 初始化查询方法
   script[VUE_DATA_SCRIPT_ENUM.METHOD_LIST].push({ type: 'queryTableData', ServiceName, InterfaceName, hasQuery })
   addImportService(script,ServiceName)
