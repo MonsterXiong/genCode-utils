@@ -13,6 +13,7 @@ const DISPLAY_TYPE_ENUM = {
     COLOR_PICKER:'colorPicker', // 颜色选择器
     RATE:'rate', // 评分
     SLIDER:'slider', // 滑块
+    IMAGE:'image', // 图片
     // TODO:上传组件 - 穿梭框 - 级联选择器
 }
 

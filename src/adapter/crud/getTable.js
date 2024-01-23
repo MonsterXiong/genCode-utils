@@ -1,8 +1,8 @@
-const { getFileInfo, initScript, addEmitMethodRow, getEjsFileTemplateData, parseUrlGetParam } = require("../../common")
+const { getFileInfo, initScript, addEmitMethodRow, getEjsFileTemplateData,  } = require("../../common")
 const { LABEL_ENUM, VUE_DATA_SCRIPT_ENUM, PAGE_TYPE_ENUM, COMPONENT_CRUD_ENUM } = require("../../enum")
 const { TEMPLATE_PATH } = require("../../config/templateMap")
 const { addCommonQueryConditionBuilder } = require("../commonMethod")
-
+const { parseUrlGetParam } = require("../commonMethod/util")
 function initPropList(script) {
   script[VUE_DATA_SCRIPT_ENUM.PROP_LIST] = [{
     name: 'tableData',

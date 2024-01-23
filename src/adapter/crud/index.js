@@ -3,10 +3,9 @@ const { getDialog } = require("./getDialog");
 const { getEntry } = require("./getEntry");
 const { getQuery } = require("./getQuery");
 const { getTable } = require("./getTable");
-const { getFormatRequestList, getInfoByLabel,  getPrikeyInfoByList } = require('../../common');
+const { getFormatRequestList, getInfoByLabel, getPrikeyInfoByList } = require('../../common');
 const { camelCase, pascalCase } = require('../../utils/commonUtil');
 const { PAGE_TYPE_ENUM, LABEL_ENUM } = require('../../enum');
-
 // 根据label拿到功能信息并将对应的元素信息挂在elementList下
 function formatInfoByLabel(functionModel , label) {
   const info = getInfoByLabel(functionModel, label)

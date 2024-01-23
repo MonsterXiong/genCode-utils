@@ -28,7 +28,7 @@
       <%_ } else if (formItem.displayType == 'switch') { -%>
       <el-switch v-model="<%=formData%>.<%=formItem.prop%>" active-value="0" inactive-value="1"></el-switch>
       <%_ } else if (formItem.displayType == 'colorPicker') { -%>
-      <el-color-picker v-model="color1"></el-color-picker>
+      <el-color-picker v-model="<%=formData%>.<%=formItem.prop%>"></el-color-picker>
       <%_ } else if (formItem.displayType == 'rate') { -%>
       <el-rate v-model="<%=formData%>.<%=formItem.prop%>"></el-rate>
       <%_ } else if (formItem.displayType == 'slider') { -%>

@@ -295,6 +295,31 @@
                     ]
                 },
                 {
+                    "label": "delete",
+                    "name": "删除指标",
+                    "code": "deleteIndex",
+                    "operateUrl": "/base/design_index/abiComponent/deleteIndex",
+                    "elements": [
+                        {
+                            "label": "deleteElement",
+                            "primary": "indexId",
+                            "param": {},
+                            "data": [
+                                {
+                                    "bindObj": "db_index",
+                                    "bindAttr": "index_id",
+                                    "name": "指标ID",
+                                    "code": "indexId",
+                                    "param": {
+                                        "isMajorKey": true,
+                                        "isHidden":true
+                                    }
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
                     "label": "update",
                     "name": "编辑指标",
                     "code": "updateIndex",

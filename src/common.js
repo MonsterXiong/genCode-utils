@@ -1,17 +1,12 @@
 const fse = require('fs-extra')
 const fs = require('fs')
 const ejs = require('ejs')
-const { uniqueArray } = require('./utils/array')
 const { DISPLAY_TYPE_ENUM, VUE_DATA_SCRIPT_ENUM, LABEL_ENUM } = require('./enum')
 const { pascalCase, camelCase } = require('./utils/commonUtil')
 const { COMPONENT_ENUM } = require('./enum/componentType')
 const { ENTRY_SUFFIX_ENUM } = require('./enum/entrySuffix')
-const qs = require('qs')
 const { addCommonTools, addCommonQueryConditionBuilder, addImportService } = require('./adapter/commonMethod')
-
-function getTab(number = 1) {
-  return new Array(number).fill('').reduce((res) => res += `\t`, '')
-}
+const { parseUrl, parseUrlGetParam, getInterfaceData, getTab, getPrikeyInfoByList } = require('./adapter/commonMethod/util')
 function getFileInfo({ name, type, dirpath, template }) {
   const componentName = pascalCase(`${dirpath}_${name ? name : type}`)
   const filetype = type !== COMPONENT_ENUM.ENTRY ? COMPONENT_ENUM.COMPONENT : COMPONENT_ENUM.ENTRY
@@ -54,15 +49,7 @@ function handleSelectEntityType(script, field) {
   script[VUE_DATA_SCRIPT_ENUM.DATA_LIST].push({ name: variableName, type: 'array', initValue: '[]' })
   addCommonQueryConditionBuilder(script)
 }
-function parseUrl(url) {
-  const {url:request} = parseUrlGetParam(url)
-  const [, interfaceType, serviceType, _, interfaceName] = request.split('/')
-  return {
-    interfaceType,
-    serviceType,
-    interfaceName
-  }
-}
+
 function handleMethodListHasOption(script) {
   const initOptionList = script[VUE_DATA_SCRIPT_ENUM.METHOD_LIST].filter(item => item.type == 'option')
   if (initOptionList.length) {
@@ -70,27 +57,7 @@ function handleMethodListHasOption(script) {
     script[VUE_DATA_SCRIPT_ENUM.MOUNT_LIST].push({ isAwait: true, type: 'callMethod', content: 'initOption' })
   }
 }
-function getInterfaceData(requestInfo, attr = 'operateUrl') {
-  if (!requestInfo) {
-    throw new Error('没有对应的请求信息')
-  }
-  const { serviceType, interfaceName } = parseUrl(requestInfo[attr])
-  return {
-    ServiceName: `${pascalCase(serviceType)}Service`,
-    InterfaceName: `${camelCase(interfaceName)}`
-  }
-}
-function handleImportList(script) {
-  const importList = uniqueArray(script[VUE_DATA_SCRIPT_ENUM.IMPORT_LIST],'content')
-  const serviceList = importList.filter(item => item.from == '@/services')
-  const otherList = importList.filter(item => item.from != '@/services')
-  const importService = serviceList.map(item => item.content).join(', ')
-  script[VUE_DATA_SCRIPT_ENUM.IMPORT_LIST] = otherList
-  if (serviceList.length) {
-    script[VUE_DATA_SCRIPT_ENUM.IMPORT_LIST] =[]
-    addImportService(script,importService)
-  }
-}
+
 
 function getInfoByAttr(arr, type, attr) {
   return arr.find(item => item[attr] == type)
@@ -136,10 +103,6 @@ function initScript(name = "") {
   }
 }
 
-function getPrikeyInfoByList(arr, attr = 'isMajorKey') {
-  return arr.find(item => item?.param && item['param'][attr]) || {}
-}
-
 
 function getServiceParam(element, url, prikeyInfo) {
   const { interfaceType, serviceType, interfaceName } = parseUrl(url)
@@ -163,19 +126,7 @@ function getUpdateQueryUrl(requestUrl){
   const url = `${prefix}/${queryInterfaceName}`
   return {interfaceName:queryInterfaceName,url}
 }
-function parseUrlGetParam(url){
-  const queryParam = url.split('?')
-  if(queryParam.length <=1){
-      return {
-        url
-      }
-  }else{
-    return {
-      url:queryParam[0],
-      param:qs.parse(queryParam[1])
-    }
-  }
-}
+
 function getFormatRequestList(pageInfo) {
   const { function: functionList } = pageInfo
   const serviceList = functionList.reduce((res, element) => {
@@ -240,18 +191,14 @@ module.exports = {
   addEmitMethodRow,
   handleSelectEntityType,
   handleMethodListHasOption,
-  handleImportList,
   initScript,
-  parseUrl,
   getFormatRequestList,
   getEjsTemplate,
   getEjsFileTemplateData,
   handleFormFieldList,
   getInfoByAttr,
   getInfoByLabel,
-  getInterfaceData,
   addExtFuncStruct,
   getPrikeyInfoByList,
   getUpdateQueryUrl,
-  parseUrlGetParam
 }

@@ -2,16 +2,15 @@ const {
   getFileInfo,
   addEmitMethodNoParam,
   handleMethodListHasOption,
-  handleImportList,
   initScript,
   handleFormFieldList,
   getEjsFileTemplateData,
-  getInterfaceData,
 } = require("../../common")
 const { nanoid } = require("nanoid")
-const { LABEL_ENUM, DISPLAY_TYPE_ENUM, VUE_DATA_SCRIPT_ENUM,  COMPONENT_CRUD_ENUM } = require("../../enum")
-const { camelCase } = require("../../utils/commonUtil")
+const { LABEL_ENUM,VUE_DATA_SCRIPT_ENUM,  COMPONENT_CRUD_ENUM } = require("../../enum")
 const { TEMPLATE_PATH } = require("../../config/templateMap")
+const { handleImportList } = require("../commonMethod/genScriptUtils")
+const { getInterfaceData } = require("../commonMethod/util")
 // 初始化查询和重置功能
 function initQueryAndReset(script) {
   script[VUE_DATA_SCRIPT_ENUM.METHOD_LIST].push(addEmitMethodNoParam('onQuery'))
