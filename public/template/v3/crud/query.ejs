@@ -13,6 +13,17 @@
         <%_if (hasDeleteBatch) { -%>
         <el-button type="danger" icon="el-icon-delete" @click="<%=deleteBatchInfo.code%>"><%=deleteBatchInfo.name%></el-button>
         <%_ } -%>
+        <%_if (hasExportTemplate) { -%>
+        <el-button type="primary" icon="el-icon-download" @click="<%=exportTemplateInfo.code%>"><%=exportTemplateInfo.name%></el-button>
+        <%_ } -%>
+        <%_if (hasImport) { -%>
+        <el-upload action="#" accept=".xls,.xlsx" :limit="1" :before-upload="<%=importInfo.code%>" :show-file-list="false">
+          <el-button type="primary" icon="el-icon-upload2"><%=importInfo.name%></el-button>
+        </el-upload>
+        <%_ } -%>
+        <%_if (hasExport) { -%>
+        <el-button type="primary" icon="el-icon-download" @click="<%=exportInfo.code%>"><%=exportInfo.name%></el-button>
+        <%_ } -%>
         <%_ toolbarBtnList.forEach(function(btn){ -%>
         <%- include("../common/btn.ejs",{...btn}) %>
         <%_ }); -%>

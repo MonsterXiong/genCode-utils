@@ -13,9 +13,11 @@
         @<%=btn.code%> ="<%=btn.code%>"
         <%_ }); -%>
       <%_}-%>
+      <%_if (hasQuery || hasImport){-%>
+        @onReset="onReset"
+        <%_}-%>
       <%_if (hasQuery){-%>
         @onQuery="queryTableData"
-        @onReset="onReset"
         :queryForm.sync="queryForm"
       <%_}-%>
       ></<%=pageName%>Query>

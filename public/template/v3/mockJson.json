@@ -342,6 +342,27 @@
                     "code": "calValue",
                     "operateUrl": "/base/design_index/abiComponent/calValue",
                     "elements": []
+                },
+                {
+                    "label": "export",
+                    "name": "导出",
+                    "code": "onExport",
+                    "operateUrl": "/base/design_index/abiComponent/exportIndex",
+                    "elements": []
+                },
+                {
+                    "label": "exportTemplate",
+                    "name": "导出模板",
+                    "code": "onExportTemplate",
+                    "operateUrl": "/base/design_index/abiComponent/onExportTemplateIndex",
+                    "elements": []
+                },
+                {
+                    "label": "import",
+                    "name": "导入",
+                    "code": "onImport",
+                    "operateUrl": "/base/design_index/abiComponent/importIndex",
+                    "elements": []
                 }
             ]
         }
