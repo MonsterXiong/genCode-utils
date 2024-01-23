@@ -1,8 +1,8 @@
 const DISPLAY_TYPE_ENUM = {
     INPUT:'text', //文本框
-    INPUT_NUMBER:'inputNumber', //数字框
-    SINGLE_SELECT:'singleSelect', // 下拉单选
-    MULTIPLE_SELECT:'multipleSelect', // 下拉多选
+    INPUT_NUMBER: 'inputNumber', //数字框
+    SELECT:'select',
+    ENUM:'enum',
     TEXT_AREA:'textarea', // 文本域
     RADIO:'radio', // 单选
     DATE_TIME:'datetime', // 日期时间

@@ -14,7 +14,7 @@ const FRAMEWORK_CONFIG = {
 
     ROUTE_CONSTANT_OUTPUT_PATH:'src/router/base/baseRoutesConstant.js',
 
-    CODE_OUTPUT_ROOT_PATH:isDev?'./submodule/txsj-fe-template':'./temp'
+    CODE_OUTPUT_ROOT_PATH:isDev?'./submodule/txsj-fe-template':'D://liuxiongcheng//company//dev//com.tixi.sf.fe'
 }
 
 

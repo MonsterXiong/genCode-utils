@@ -1,5 +1,5 @@
 const { getFileInfo, initScript, addEmitMethodRow, getEjsFileTemplateData,  } = require("../../common")
-const { LABEL_ENUM, VUE_DATA_SCRIPT_ENUM, PAGE_TYPE_ENUM, COMPONENT_CRUD_ENUM } = require("../../enum")
+const { LABEL_ENUM, VUE_DATA_SCRIPT_ENUM, PAGE_TYPE_ENUM, COMPONENT_CRUD_ENUM, DISPLAY_TYPE_ENUM } = require("../../enum")
 const { TEMPLATE_PATH } = require("../../config/templateMap")
 const { addCommonQueryConditionBuilder } = require("../commonMethod")
 const { parseUrlGetParam } = require("../commonMethod/util")
@@ -60,6 +60,18 @@ function initStruct(script) {
   initMountList(script)
 }
 
+function handleFieldList(script, fieldList) {
+  if (fieldList.length) {
+    fieldList.forEach(field => {
+      const { param: { displayType },code } = field
+      if (displayType == DISPLAY_TYPE_ENUM.ENUM) {
+        script[VUE_DATA_SCRIPT_ENUM.METHOD_LIST].push({type:'tableEnumMethod',name:`${code}EnumData`})
+      }
+    })
+  }
+
+}
+
 function handleMethodList(script, funcList) {
   if (funcList.length) {
     funcList.forEach(func => {
@@ -101,7 +113,7 @@ function handleTemplate(fieldList, funcList) {
   })
 
   const fields = fieldList.filter(item => !item.param?.isHidden).map(field => {
-    const { code, name, selectUrl } = field
+    const { code, name, selectUrl,param:{displayType} } = field
     let key = code
     if (selectUrl) {
       const { param } = parseUrlGetParam(selectUrl)
@@ -112,13 +124,13 @@ function handleTemplate(fieldList, funcList) {
     }
     return {
       key,
-      label: name
+      label: name,
+      displayType
     }
   })
   return {
     btns,
     fields
-
   }
 }
 async function getTable(fileParam, sourceData) {
@@ -134,6 +146,7 @@ async function getTable(fileParam, sourceData) {
   const script = initScript(fileInfo.filename)
   initStruct(script)
   handleMethodList(script, funcList)
+  handleFieldList(script, tableFieldList)
   //  --------------------
   const templatePath = TEMPLATE_PATH[template][type]
 

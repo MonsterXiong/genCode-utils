@@ -217,6 +217,23 @@ function getTableExportTemplateMethod(method){
       exportFile('${exportName}.xlsx', fileData, 'application/vnd.ms-excel')
     },`
 }
+function getTableEnumMethod(method){
+  const { name } = method
+  return `${getTab(2)}${name}(row, key) {
+      const enumData = row[\`\${key}_enum\`]
+      const item = enumData.find((item) => item.code == row[key])?.name
+      return item
+    },`
+}
+function getDialogUploadFileMethod(method){
+  const { code } = method
+  return `${getTab(2)}async handleUploadFile(params) {
+      const fd = new FormData()
+      fd.append('file', params.file)
+      const { data } = await SystemService.uploadFile(fd)
+      this.formData.${code} = 'http://' + data
+    },`
+}
 function callMethod(){
   return {
     'emit':(method)=>getEmitMethod(method),
@@ -246,6 +263,8 @@ function callMethod(){
     'tableExportMethod':(method)=>getTableExportMethod(method),
     'tableImportMethod':(method)=>getTableImportMethod(method),
     'tableExportTemplateMethod':(method)=>getTableExportTemplateMethod(method),
+    'dialogUploadFileMethod':(method)=>getDialogUploadFileMethod(method),
+    'tableEnumMethod':(method)=>getTableEnumMethod(method),
   }
 }
 

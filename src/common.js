@@ -50,6 +50,12 @@ function handleSelectEntityType(script, field) {
   addCommonQueryConditionBuilder(script)
 }
 
+function handleUploadFile(script, field) {
+  const { code } = field
+  addImportService(script, 'SystemService')
+  script[VUE_DATA_SCRIPT_ENUM.METHOD_LIST].push({ type: 'dialogUploadFileMethod', code })
+}
+
 function handleMethodListHasOption(script) {
   const initOptionList = script[VUE_DATA_SCRIPT_ENUM.METHOD_LIST].filter(item => item.type == 'option')
   if (initOptionList.length) {
@@ -70,10 +76,12 @@ function getInfoByLabel(arr, type) {
 function handleFormFieldList(script, field) {
   const { param, selectUrl } = field
   const { displayType } = param
-  if ([DISPLAY_TYPE_ENUM.SINGLE_SELECT, DISPLAY_TYPE_ENUM.MULTIPLE_SELECT].includes(displayType)) {
+  if ([DISPLAY_TYPE_ENUM.SELECT,DISPLAY_TYPE_ENUM.ENUM].includes(displayType) ) {
       if (selectUrl) {
         handleSelectEntityType(script, field)
     }
+  } else if (displayType === DISPLAY_TYPE_ENUM.IMAGE) {
+    handleUploadFile(script, field)
   }
 }
 
@@ -172,7 +180,7 @@ function getFormatRequestList(pageInfo) {
           result[serviceType].push(service)
         }
       }
-    return result 
+    return result
   }, {})
   return serviceList
 }
