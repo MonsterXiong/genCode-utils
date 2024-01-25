@@ -82,7 +82,9 @@ function getComponent(list=[]){
 function getMount(mountList=[]){
   let res = ''
   mountList.forEach((item,index)=>{
-    if(item.type == 'callMethod'){
+    if(item.type === 'extendParam'){
+      res+=`${getTab(2)}${item.content}${index!=mountList.length-1?'\n':''}`
+    }else if(item.type == 'callMethod'){
       res+=`${getTab(2)}${item.isAwait?'await':''} this.${item.content}()${index!=mountList.length-1?'\n':''}`
     }
   })
@@ -111,6 +113,9 @@ function getDataItem(dataItem,indent){
       })
       result += `],`
     }
+  }
+  if(type == 'string'){
+    return `'${initValue}'`
   }
   return `${initValue}`
 }

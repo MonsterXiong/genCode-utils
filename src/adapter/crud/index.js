@@ -96,6 +96,9 @@ function getParam(menuInfo) {
     queryBtnList.concat(toolbarBtnList)
   }
 
+  const extendParamFieldList = tableFieldList.filter(item=>item?.param?.paramConfig?.extend)
+  const extendParamList =  extendParamFieldList.map(item=>item?.param?.paramConfig?.extend)
+
   const tablePrikey = getPrikeyInfoByList(tableFieldList)?.code
 
   const param = {
@@ -126,6 +129,8 @@ function getParam(menuInfo) {
     deleteBatchInfo,
     updateFieldList,
     addFieldList,
+    extendParamFieldList,
+    extendParamList,
 
     // 默认主键
     tablePrikey

@@ -15,11 +15,21 @@ function getSetHeightMethod(method){
       })
     },`
 }
+function setFormDataField(extendParamFieldList){
+  let res = ""
+  extendParamFieldList.forEach((field,index)=>{
+    const extend = field?.param?.paramConfig?.extend
+    const code = field?.code
+    res+=`this.formData.${code} = this.${extend}${index!==extendParamFieldList.length-1?`\n${getTab(5)}`:''}`
+  })
+  return res
+}
 function getDialogSubmitMethod(method){
-  const { ServiceName,InterfaceName } = method
+  const { ServiceName,InterfaceName,extendParamFieldList } = method
   return `${getTab(2)}async onSubmit() {
       this.$refs.formRef.validate(async valid => {
         if (valid) {
+          ${extendParamFieldList?.length && setFormDataField(extendParamFieldList)}
           await ${ServiceName}.${InterfaceName}(this.formData);
           tools.message("操作成功");
           this.onDialogClose();
@@ -180,8 +190,17 @@ function getOnSelectionChanget(method){
       this.multipleSelection = val
     },`
 }
+function handleSetQueryCondition(extendParamFieldList){
+  let res = ""
+  extendParamFieldList.forEach((field,index)=>{
+    const extend = field?.param?.paramConfig?.extend
+    const code = field?.code
+    res+=`queryCondition('${code}',this.${extend})${index!==extendParamFieldList.length-1?`\n${getTab(3)}`:''}`
+  })
+  return res
+}
 function getQueryTableData(method){
-  const { ServiceName,InterfaceName,hasQuery } = method
+  const { ServiceName,InterfaceName,hasQuery,extendParamFieldList } = method
   return `${getTab(2)}async queryTableData() {
       let queryCondition = QueryConditionBuilder.getInstance(this.pageInfo.page, this.pageInfo.rows)
       ${hasQuery?`Object.keys(this.queryForm).forEach((key) => {
@@ -189,6 +208,7 @@ function getQueryTableData(method){
           queryCondition.buildLikeQuery(key, this.queryForm[key])
         }
       })`:''}
+      ${extendParamFieldList?.length && handleSetQueryCondition(extendParamFieldList)}
       const { data, count } = await ${ServiceName}.${InterfaceName}(queryCondition)
       this.tableData = data
       this.total = count

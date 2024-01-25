@@ -42,7 +42,7 @@ function initDataList(script) {
   script[VUE_DATA_SCRIPT_ENUM.DATA_LIST] = [{
     name: 'tableHeight',
     type: 'string',
-    initValue: `'500px'`,
+    initValue: '500px',
   }]
 }
 function initMountList(script) {

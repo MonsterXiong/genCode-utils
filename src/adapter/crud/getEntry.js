@@ -33,7 +33,12 @@ function initStruct(script) {
   initMethodList(script)
 }
 
-
+function handleExtendParamList(script,fieldList){
+  fieldList.forEach(field => {
+      script[VUE_DATA_SCRIPT_ENUM.MOUNT_LIST].unshift({  type: 'extendParam', content: `this.${field} = this.$route.query.${field}` })
+      script[VUE_DATA_SCRIPT_ENUM.DATA_LIST].push({name:field,type: 'string', initValue:"" })
+  });
+}
 
 function handleScript(script, templateParam) {
   const {
@@ -52,6 +57,9 @@ function handleScript(script, templateParam) {
     addInfo,
     toolbarBtnList,
     operateBtnList,
+    tableFieldList,
+    extendParamList,
+    extendParamFieldList
   } = templateParam
 
 
@@ -84,13 +92,16 @@ function handleScript(script, templateParam) {
     addDeleteOrDeleteBatch(script, deleteInfo)
   }
 
-  const { ServiceName, InterfaceName } = getInterfaceData(tableInfo)
   // 初始化查询方法
-  script[VUE_DATA_SCRIPT_ENUM.METHOD_LIST].push({ type: 'queryTableData', ServiceName, InterfaceName, hasQuery })
+  const { ServiceName, InterfaceName } = getInterfaceData(tableInfo)
+  script[VUE_DATA_SCRIPT_ENUM.METHOD_LIST].push({ type: 'queryTableData', ServiceName, InterfaceName, hasQuery,extendParamFieldList })
   addImportService(script,ServiceName)
   addCommonQueryConditionBuilder(script)
   // 初始化watch
   script[VUE_DATA_SCRIPT_ENUM.WATCH_LIST].push({ type: 'entryPageInfo' })
+  // 处理字段
+  handleExtendParamList(script,extendParamList)
+
   handleImportList(script)
 
 }
