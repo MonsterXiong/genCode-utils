@@ -23,7 +23,6 @@ function initDataList(script) {
 }
 function initImportDataList(script) {
   addCommonTools(script)
-  // script[VUE_DATA_SCRIPT_ENUM.IMPORT_LIST].push({isDefault: false,from: '@/common/constants',content: 'CommonDialogWidth'})
 }
 function initMethodList(script) {
   script[VUE_DATA_SCRIPT_ENUM.METHOD_LIST] = [{
@@ -69,7 +68,7 @@ function handleFieldList(script, fieldList) {
 
 function handleTemplate(fieldList) {
   return fieldList.map(field => {
-    const { name, code, param: fieldParam, bindAttr } = field
+    const { name, code, param: fieldParam } = field
     const { displayType } = fieldParam
     const param = {
       label: name,
