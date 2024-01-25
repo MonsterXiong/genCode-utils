@@ -85,23 +85,6 @@ function handleMethodList(script, funcList) {
   }
 }
 
-function getDeleteOrEditBtnParam(btnInfo, type) {
-  let isShow = false
-  let showInfo = null
-  if (btnInfo) {
-    isShow = true
-    const { name: btnName, code } = btnInfo
-    showInfo = {
-      name: btnName ? btnName : type == LABEL_ENUM.UPDATE ? '编辑' : '删除',
-      functionName: code ? code : type == LABEL_ENUM.UPDATE ? 'onEdit' : 'onDelete'
-    }
-  }
-  return {
-    isShow,
-    showInfo
-  }
-}
-
 function handleTemplate(fieldList, funcList) {
 
   const btns = funcList.filter(item => item.label == LABEL_ENUM.EXT_OBJ).map(item => {
