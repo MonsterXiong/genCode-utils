@@ -14,13 +14,12 @@ function getSetHeightMethod(){
     },`
 }
 function setFormDataField(extendParamFieldList){
-  let res = ""
-  extendParamFieldList.forEach((field,index)=>{
-    const extend = field?.param?.paramConfig?.extend
-    const code = field?.code
-    res+=`this.formData.${code} = this.${extend}${index!==extendParamFieldList.length-1?`\n${getTab(5)}`:''}`
-  })
-  return res
+  return extendParamFieldList.reduce((res,cur,index,arr)=>{
+    const extend = cur?.param?.paramConfig?.extend
+    const code = cur?.code
+    res+=`this.formData.${code} = this.${extend}${index!==arr.length-1?`\n${getTab(5)}`:''}`
+    return res
+  },"")
 }
 function getDialogSubmitMethod(method){
   const { ServiceName,InterfaceName,extendParamFieldList } = method
@@ -188,13 +187,12 @@ function getOnSelectionChanget(){
     },`
 }
 function handleSetQueryCondition(extendParamFieldList){
-  let res = ""
-  extendParamFieldList.forEach((field,index)=>{
-    const extend = field?.param?.paramConfig?.extend
-    const code = field?.code
-    res+=`queryCondition('${code}',this.${extend})${index!==extendParamFieldList.length-1?`\n${getTab(3)}`:''}`
-  })
-  return res
+  return extendParamFieldList.reduce((res,cur,index,arr)=>{
+    const extend = cur?.param?.paramConfig?.extend
+    const code = cur?.code
+    res+=`queryCondition.buildEqualQuery('${code}',this.${extend})${index!==arr.length-1?`\n${getTab(3)}`:''}`
+    return res
+  },"")
 }
 function getQueryTableData(method){
   const { ServiceName,InterfaceName,hasQuery,extendParamFieldList } = method
