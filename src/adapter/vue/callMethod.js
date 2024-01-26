@@ -1,14 +1,12 @@
 const { getTab } = require("../../common")
 
-
 function getPageInfoMethod(method){
   const { name, param } = method
   return `${getTab(2)}${name}(${param}) {
       this.pageInfo.${param} = ${param}
     },`
 }
-function getSetHeightMethod(method){
-  const { name, param } = method
+function getSetHeightMethod(){
   return `${getTab(2)}setHeight() {
       this.$nextTick(() => {
         this.tableHeight = this.$refs.tableRef.offsetHeight - this.$refs.paginationRef.offsetHeight + 'px'
@@ -41,7 +39,7 @@ function getDialogSubmitMethod(method){
     },`
 }
 function getEditDialogShowMethod(method){
-  const { name, param,pri } = method
+  const { pri } = method
   return `${getTab(2)}async show(row) {
       this.dialogVisible = true;
       this.row = row;
@@ -52,19 +50,19 @@ function getEditDialogShowMethod(method){
     },`
 }
 function getEditGetData(method){
-  const { name, param,pri } = method
+  const { pri } = method
   const { ServiceName,InterfaceName } = method
   return `${getTab(2)}async getData(${pri}) {
       const { data } = await ${ServiceName}.${InterfaceName}(${pri})
       this.formData = data
     },`
 }
-function getEmptyEditGetData(method){
+function getEmptyEditGetData(){
   return `${getTab(2)}async getData() {
       console.log('没有查询功能哦')
     },`
 }
-function getCreateDialogShowMethod(method){
+function getCreateDialogShowMethod(){
   return `${getTab(2)}show() {
       this.dialogVisible = true;
     },`
@@ -88,7 +86,7 @@ function getTableDeleteBatchMethod(method){
   return `${getTab(2)}async ${name}() {
       const rows = this.multipleSelection
       if (Array.isArray(rows) && !rows.length) {
-        return tools.message('请勾选要删除的文档信息！', { type: 'warning' })
+        return tools.message('请勾选要删除的信息！', { type: 'warning' })
       }
       try {
         await tools.confirm('请确认是否删除？')
@@ -110,14 +108,13 @@ function getExtMehodStruct(method){
     },`
 }
 function getOnDialogCloseMethod(method){
-  const { name, param } = method
+  const { name } = method
   return `${getTab(2)}${name}() {
       this.onReset();
       this.dialogVisible = false;
     },`
 }
-function getOnResetMethod(method){
-  const { name, param } = method
+function getOnResetMethod(){
   return `${getTab(2)}onReset() {
       Object.keys(this.formData).forEach(key=>{
         this.formData[key] = ""
@@ -125,13 +122,13 @@ function getOnResetMethod(method){
     },`
 }
 function getOnDeleteMethod(method){
-  const { name, param } = method
+  const { name } = method
   return `${getTab(2)}${name}(row) {
       this.apiDelete([row])
     },`
 }
 function getOnEditMethod(method){
-  const { name, param,dialogRef,dialogTitle } = method
+  const { name, dialogRef,dialogTitle } = method
   return `${getTab(2)}${name}(row) {
       this.$refs.${dialogRef}.show({ row, title: '编辑${dialogTitle}' })
     },`
@@ -163,7 +160,7 @@ function getPlaceholderMethod(method){
     },`
 }
 
-function getRefreshPagination(method){
+function getRefreshPagination(){
   return `${getTab(2)}refreshPagination() {
       this.pageInfo = {
         rows: 20,
@@ -171,7 +168,7 @@ function getRefreshPagination(method){
       }
     },`
 }
-function getEntryOnReset(method){
+function getEntryOnReset(){
   return `${getTab(2)}onReset() {
       Object.keys(this.queryForm).forEach((key) => {
         this.queryForm[key] = ''
@@ -185,7 +182,7 @@ function getOpenDialog(method){
       this.$refs.${dialogRef}.show(${param})
     },`
 }
-function getOnSelectionChanget(method){
+function getOnSelectionChanget(){
   return `${getTab(2)}onSelectionChange(val) {
       this.multipleSelection = val
     },`
