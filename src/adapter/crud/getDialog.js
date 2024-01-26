@@ -9,7 +9,6 @@ function initDataList(script) {
   script[VUE_DATA_SCRIPT_ENUM.DATA_LIST] = [{
     name: 'dialogWidth',
     type: 'string',
-    // initValue: 'CommonDialogWidth.smallForm',
     initValue: '500px',
   }, {
     name: 'dialogVisible',
@@ -42,7 +41,6 @@ function initStruct(script) {
   initDataList(script)
   initImportDataList(script)
   initMethodList(script)
-
 }
 function handleFieldList(script, fieldList) {
   let initValue = "{}"
@@ -63,7 +61,6 @@ function handleFieldList(script, fieldList) {
     initValue
   }
   script[VUE_DATA_SCRIPT_ENUM.DATA_LIST].push(form)
-
 }
 
 function handleTemplate(fieldList) {
@@ -97,14 +94,12 @@ function updateScript(script, fieldList, updateInfo) {
   script[VUE_DATA_SCRIPT_ENUM.DATA_LIST].push({ name: 'row', type: 'null', initValue: 'null', })
 }
 
-function handleExtendParamList(script,fieldList){
-  script[VUE_DATA_SCRIPT_ENUM.PROP_LIST]=[]
-  fieldList.forEach(field=>{
+function handleExtendParamList(script, fieldList) {
+  script[VUE_DATA_SCRIPT_ENUM.PROP_LIST] = []
+  fieldList.forEach(field => {
     script[VUE_DATA_SCRIPT_ENUM.PROP_LIST].push({ name: field, type: 'object', initValue: '{}' })
   })
 }
-
-
 
 function addScript(script) {
   script[VUE_DATA_SCRIPT_ENUM.METHOD_LIST].unshift({ type: 'createDialogShow' })
@@ -114,7 +109,7 @@ async function getDialog(fileParam, sourceData) {
   const type = COMPONENT_CRUD_ENUM.DIALOG
   const fileInfo = getFileInfo({ ...fileParam, type })
   //  --------------------
-  const { addInfo, updateInfo,extendParamList,extendParamFieldList } = sourceData
+  const { addInfo, updateInfo, extendParamList, extendParamFieldList } = sourceData
 
   let fieldList = []
   let sourceFieldList = []
@@ -128,31 +123,27 @@ async function getDialog(fileParam, sourceData) {
   initStruct(script)
   // 处理要素
   handleFieldList(script, fieldList)
-  // 处理外部参数
-  handleExtendParamList(script, extendParamList)
+
+  if (extendParamList?.length) {
+    // 处理外部参数
+    handleExtendParamList(script, extendParamList)
+  }
 
   const { ServiceName, InterfaceName } = getInterfaceData(funcInfo)
+  const methodParam = { type: 'dialogSubmit', ServiceName, InterfaceName }
   if (isUpdate) {
     updateScript(script, sourceFieldList, updateInfo)
-      // 添加onSubmitForm方法
-    script[VUE_DATA_SCRIPT_ENUM.METHOD_LIST].push({
-      type: 'dialogSubmit',
-      ServiceName,
-      InterfaceName
-    })
   }
   else {
     addScript(script)
-      // 添加onSubmitForm方法
-      script[VUE_DATA_SCRIPT_ENUM.METHOD_LIST].push({
-        type: 'dialogSubmit',
-        ServiceName,
-        InterfaceName,
-        extendParamFieldList
-      })
+    if (extendParamFieldList.length) {
+      methodParam.extendParamFieldList = extendParamFieldList
+    }
   }
+  // 添加onSubmitForm方法
+  script[VUE_DATA_SCRIPT_ENUM.METHOD_LIST].push(methodParam)
   script[VUE_DATA_SCRIPT_ENUM.DATA_LIST].push({ name: 'title', type: 'string', initValue: funcInfo.name })
- 
+
   addImportService(script, ServiceName)
 
   //  整合一下imporList
