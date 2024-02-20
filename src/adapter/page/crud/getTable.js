@@ -1,8 +1,8 @@
-const { getFileInfo, initScript, addEmitMethodRow, getEjsFileTemplateData,  } = require("../../common")
-const { LABEL_ENUM, VUE_DATA_SCRIPT_ENUM, PAGE_TYPE_ENUM, COMPONENT_CRUD_ENUM, DISPLAY_TYPE_ENUM } = require("../../enum")
-const { TEMPLATE_PATH } = require("../../config/templateMap")
-const { addCommonQueryConditionBuilder } = require("../commonMethod")
-const { parseUrlGetParam } = require("../commonMethod/util")
+const { getFileInfo, initScript, addEmitMethodRow, getEjsFileTemplateData,  } = require("../../../common")
+const { CRUD_LABEL_ENUM, VUE_DATA_SCRIPT_ENUM, PAGE_TYPE_ENUM, COMPONENT_CRUD_ENUM, DISPLAY_TYPE_ENUM } = require("../../../enum")
+const { TEMPLATE_PATH } = require("../../../config/templateMap")
+const { addCommonQueryConditionBuilder } = require("../../commonMethod")
+const { parseUrlGetParam } = require("../../commonMethod/util")
 function initPropList(script) {
   script[VUE_DATA_SCRIPT_ENUM.PROP_LIST] = [{
     name: 'tableData',
@@ -76,7 +76,7 @@ function handleMethodList(script, funcList) {
   if (funcList.length) {
     funcList.forEach(func => {
       const { label, code } = func
-      if (label !== LABEL_ENUM.QUERY_LIST) {
+      if (label !== CRUD_LABEL_ENUM.QUERY_LIST) {
         script[VUE_DATA_SCRIPT_ENUM.METHOD_LIST].push(addEmitMethodRow(code))
       } else {
         addCommonQueryConditionBuilder(script)
@@ -87,7 +87,7 @@ function handleMethodList(script, funcList) {
 
 function handleTemplate(fieldList, funcList) {
 
-  const btns = funcList.filter(item => item.label == LABEL_ENUM.EXT_OBJ).map(item => {
+  const btns = funcList.filter(item => item.label == CRUD_LABEL_ENUM.EXT_OBJ).map(item => {
     return {
       param: 'scope.row',
       name: item.name,

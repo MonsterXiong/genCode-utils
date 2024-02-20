@@ -1,7 +1,7 @@
 const fse = require('fs-extra')
 const fs = require('fs')
 const ejs = require('ejs')
-const { DISPLAY_TYPE_ENUM, VUE_DATA_SCRIPT_ENUM, LABEL_ENUM } = require('./enum')
+const { DISPLAY_TYPE_ENUM, VUE_DATA_SCRIPT_ENUM, CRUD_LABEL_ENUM } = require('./enum')
 const { pascalCase, camelCase } = require('./utils/commonUtil')
 const { COMPONENT_ENUM } = require('./enum/componentType')
 const { ENTRY_SUFFIX_ENUM } = require('./enum/entrySuffix')
@@ -76,9 +76,9 @@ function getInfoByLabel(arr, type) {
 function handleFormFieldList(script, field) {
   const { param, selectUrl } = field
   const { displayType } = param
-  if ([DISPLAY_TYPE_ENUM.SELECT,DISPLAY_TYPE_ENUM.ENUM].includes(displayType) ) {
-      if (selectUrl) {
-        handleSelectEntityType(script, field)
+  if ([DISPLAY_TYPE_ENUM.SELECT, DISPLAY_TYPE_ENUM.ENUM].includes(displayType)) {
+    if (selectUrl) {
+      handleSelectEntityType(script, field)
     }
   } else if (displayType === DISPLAY_TYPE_ENUM.IMAGE) {
     handleUploadFile(script, field)
@@ -127,12 +127,12 @@ function getServiceParam(element, url, prikeyInfo) {
   }
   return param
 }
-function getUpdateQueryUrl(requestUrl){
+function getUpdateQueryUrl(requestUrl) {
   const { interfaceName } = parseUrl(requestUrl)
   const queryInterfaceName = camelCase(`query_${interfaceName}`)
   const prefix = requestUrl.substring(0, requestUrl.lastIndexOf('/'))
   const url = `${prefix}/${queryInterfaceName}`
-  return {interfaceName:queryInterfaceName,url}
+  return { interfaceName: queryInterfaceName, url }
 }
 
 function getFormatRequestList(pageInfo) {
@@ -144,10 +144,10 @@ function getFormatRequestList(pageInfo) {
     elementList?.forEach(item => {
       const selectUrl = item.selectUrl
       if (selectUrl) {
-        const {url} = parseUrlGetParam(selectUrl)
-        if(url){
+        const { url } = parseUrlGetParam(selectUrl)
+        if (url) {
           res.push(getServiceParam(element, url))
-        }else{
+        } else {
           res.push(getServiceParam(element, selectUrl))
         }
       }
@@ -158,11 +158,11 @@ function getFormatRequestList(pageInfo) {
     if (operateUrl) {
       res.push(getServiceParam(element, operateUrl, prikeyInfo))
     }
-    if (label == LABEL_ENUM.UPDATE && operateUrl) {
-      const { interfaceName,url } =getUpdateQueryUrl(operateUrl)
+    if (label == CRUD_LABEL_ENUM.UPDATE && operateUrl) {
+      const { interfaceName, url } = getUpdateQueryUrl(operateUrl)
       const param = {
         ...getServiceParam(element, url, prikeyInfo),
-        label: LABEL_ENUM.QUERY,
+        label: CRUD_LABEL_ENUM.QUERY,
         name: '查询',
         code: interfaceName,
         interfaceName: interfaceName,
@@ -172,14 +172,14 @@ function getFormatRequestList(pageInfo) {
     }
     return res
   }, []).reduce((result, service) => {
-      const { serviceType } = service
-      if(serviceType){
-        if (!result[serviceType]) {
-          result[serviceType] = [service]
-        } else {
-          result[serviceType].push(service)
-        }
+    const { serviceType } = service
+    if (serviceType) {
+      if (!result[serviceType]) {
+        result[serviceType] = [service]
+      } else {
+        result[serviceType].push(service)
       }
+    }
     return result
   }, {})
   return serviceList

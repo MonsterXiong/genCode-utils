@@ -1,9 +1,9 @@
-const { handleImportList, addDeleteOrDeleteBatch, addCreateOrUpdateDialog } = require("../commonMethod/genScriptUtils")
-const { getFileInfo, initScript, getEjsFileTemplateData, addExtFuncStruct } = require("../../common")
-const { VUE_DATA_SCRIPT_ENUM, COMPONENT_CRUD_ENUM, LABEL_ENUM } = require("../../enum")
-const { TEMPLATE_PATH } = require("../../config/templateMap")
-const { addCommonQueryConditionBuilder, initMultipleSelection, addImportService, addComponent } = require("../commonMethod")
-const { getInterfaceData } = require("../commonMethod/util")
+const { handleImportList, addDeleteOrDeleteBatch, addCreateOrUpdateDialog } = require("../../commonMethod/genScriptUtils")
+const { getFileInfo, initScript, getEjsFileTemplateData, addExtFuncStruct } = require("../../../common")
+const { VUE_DATA_SCRIPT_ENUM, COMPONENT_CRUD_ENUM, CRUD_LABEL_ENUM } = require("../../../enum")
+const { TEMPLATE_PATH } = require("../../../config/templateMap")
+const { addCommonQueryConditionBuilder, initMultipleSelection, addImportService, addComponent } = require("../../commonMethod")
+const { getInterfaceData } = require("../../commonMethod/util")
 function initDataList(script) {
   script[VUE_DATA_SCRIPT_ENUM.DATA_LIST]=[{ name: 'tableData', type: 'array', initValue: '[]', }]
   script[VUE_DATA_SCRIPT_ENUM.DATA_LIST].push({ name: 'total', type: 'number', initValue: 0, })
@@ -79,14 +79,14 @@ function handleScript(script, templateParam) {
   operateBtnList.length && addExtFuncStruct(script, operateBtnList, 'row')
 
   if (hasUpdate) {
-    addCreateOrUpdateDialog(script,pageName,updateInfo,LABEL_ENUM.UPDATE)
+    addCreateOrUpdateDialog(script,pageName,updateInfo,CRUD_LABEL_ENUM.UPDATE)
   }
   if (hasAdd) {
-    addCreateOrUpdateDialog(script,pageName,addInfo,LABEL_ENUM.INSERT)
+    addCreateOrUpdateDialog(script,pageName,addInfo,CRUD_LABEL_ENUM.INSERT)
   }
   if (hasDeleteBatch) {
     initMultipleSelection(script)
-    addDeleteOrDeleteBatch(script, deleteBatchInfo,LABEL_ENUM.DELETE_BATCH)
+    addDeleteOrDeleteBatch(script, deleteBatchInfo,CRUD_LABEL_ENUM.DELETE_BATCH)
   }
   if (hasDelete) {
     addDeleteOrDeleteBatch(script, deleteInfo)

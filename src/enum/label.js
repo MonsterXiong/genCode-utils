@@ -1,4 +1,4 @@
-const LABEL_ENUM = {
+const CRUD_LABEL_ENUM = {
     QUERY:'query',
     QUERY_LIST:'queryList',
     UPDATE:'update',
@@ -16,6 +16,14 @@ const LABEL_ENUM = {
     EXT_OBJ:'extObj'
 }
 
+const MATRIX_LABEL_ENUM ={
+    QUERY_ROW:'queryRow',
+    QUERY_COL:'queryCol',
+    QUERY_REL:'queryRel',
+    SAVE_REL:'saveRel'
+}
+
 module.exports = {
-    LABEL_ENUM
+    CRUD_LABEL_ENUM,
+    MATRIX_LABEL_ENUM
 }

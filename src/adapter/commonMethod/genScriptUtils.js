@@ -1,5 +1,5 @@
 const { addImportService, addCommonTools, addComponent } = require(".")
-const { VUE_DATA_SCRIPT_ENUM, LABEL_ENUM } = require("../../enum")
+const { VUE_DATA_SCRIPT_ENUM, CRUD_LABEL_ENUM } = require("../../enum")
 const { uniqueArray } = require("../../utils/array")
 const { getInterfaceData,getPrikeyInfoByList } = require("./util")
 function uniqueImport(script) {
@@ -20,19 +20,19 @@ function handleImportList(script) {
     handleImportService(script, serviceList)
 }
 
-function addDeleteOrDeleteBatch(script, deleteInfo, type = LABEL_ENUM.DELETE) {
+function addDeleteOrDeleteBatch(script, deleteInfo, type = CRUD_LABEL_ENUM.DELETE) {
     const { ServiceName, InterfaceName } = getInterfaceData(deleteInfo)
     const { elementList, code } = deleteInfo
     const pri = getPrikeyInfoByList(elementList)?.code || ''
-    const isDelete = type === LABEL_ENUM.DELETE
+    const isDelete = type === CRUD_LABEL_ENUM.DELETE
     const methodType = isDelete ? 'tableDeleteMethod' : 'tableDeleteBatchMethod'
     script[VUE_DATA_SCRIPT_ENUM.METHOD_LIST].push({ type: methodType, name: code, ServiceName, InterfaceName, pri, param: isDelete ? 'row' : '' })
     addCommonTools(script)
 }
 
 
-function addCreateOrUpdateDialog(script,pageName,dialogInfo,type=LABEL_ENUM.INSERT){
-    const isAdd = type === LABEL_ENUM.INSERT
+function addCreateOrUpdateDialog(script,pageName,dialogInfo,type=CRUD_LABEL_ENUM.INSERT){
+    const isAdd = type === CRUD_LABEL_ENUM.INSERT
     const componentName = `${pageName}${isAdd?'AddDialog':'UpdateDialog'}`
     const dialogRef = isAdd?'addDialogRef':'updateDialogRef'
     addComponent(script,componentName)

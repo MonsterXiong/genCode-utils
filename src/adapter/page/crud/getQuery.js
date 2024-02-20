@@ -5,12 +5,12 @@ const {
   initScript,
   handleFormFieldList,
   getEjsFileTemplateData,
-} = require("../../common")
+} = require("../../../common")
 const { nanoid } = require("nanoid")
-const { LABEL_ENUM,VUE_DATA_SCRIPT_ENUM,  COMPONENT_CRUD_ENUM } = require("../../enum")
-const { TEMPLATE_PATH } = require("../../config/templateMap")
-const { handleImportList } = require("../commonMethod/genScriptUtils")
-const { getInterfaceData } = require("../commonMethod/util")
+const { CRUD_LABEL_ENUM,VUE_DATA_SCRIPT_ENUM,  COMPONENT_CRUD_ENUM } = require("../../../enum")
+const { TEMPLATE_PATH } = require("../../../config/templateMap")
+const { handleImportList } = require("../../commonMethod/genScriptUtils")
+const { getInterfaceData } = require("../../commonMethod/util")
 // 初始化查询和重置功能
 function initQueryAndReset(script) {
   script[VUE_DATA_SCRIPT_ENUM.METHOD_LIST].push(addEmitMethodNoParam('onQuery'))
@@ -46,9 +46,9 @@ function handleTemplate(fieldList,funcList){
 
   const toolbarBtnList = []
 
-  funcList.filter(item=>item.label !==LABEL_ENUM.QUERY_LIST).forEach(func=>{
+  funcList.filter(item=>item.label !==CRUD_LABEL_ENUM.QUERY_LIST).forEach(func=>{
     const {name,code,label} = func
-    if(label == LABEL_ENUM.INSERT){
+    if(label == CRUD_LABEL_ENUM.INSERT){
       toolbarBtnList.push({
         type:'success',
         icon:"el-icon-circle-plus-outline",
@@ -57,7 +57,7 @@ function handleTemplate(fieldList,funcList){
         param:""
       })
     }
-    else if(label == LABEL_ENUM.EXT_GLOBAL){
+    else if(label == CRUD_LABEL_ENUM.EXT_GLOBAL){
       toolbarBtnList.push({
         type:'',
         icon:'',

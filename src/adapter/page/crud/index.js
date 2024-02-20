@@ -1,11 +1,11 @@
-const { nanoid } = require('nanoid')
 const { getDialog } = require("./getDialog");
 const { getEntry } = require("./getEntry");
 const { getQuery } = require("./getQuery");
 const { getTable } = require("./getTable");
-const { getFormatRequestList, getInfoByLabel, getPrikeyInfoByList } = require('../../common');
-const { camelCase, pascalCase } = require('../../utils/commonUtil');
-const { PAGE_TYPE_ENUM, LABEL_ENUM } = require('../../enum');
+const { getFormatRequestList, getInfoByLabel, getPrikeyInfoByList } = require('../../../common');
+const { camelCase, pascalCase } = require('../../../utils/commonUtil');
+const { PAGE_TYPE_ENUM, CRUD_LABEL_ENUM } = require('../../../enum');
+const { getInitParam,outputPageInfo } = require('../../../utils/genUtil');
 // 根据label拿到功能信息并将对应的元素信息挂在elementList下
 function formatInfoByLabel(functionModel , label) {
   const info = getInfoByLabel(functionModel, label)
@@ -19,9 +19,9 @@ function formatInfoByLabel(functionModel , label) {
 function getToolbarBtnAndObjBtn(functionList) {
   return functionList.reduce((res, item) => {
     const { label } = item
-    if (label == LABEL_ENUM.EXT_GLOBAL) {
+    if (label == CRUD_LABEL_ENUM.EXT_GLOBAL) {
       res['toolbarBtnList'].push(item)
-    } else if (label == LABEL_ENUM.EXT_OBJ) {
+    } else if (label == CRUD_LABEL_ENUM.EXT_OBJ) {
       res['operateBtnList'].push(item)
     }
     return res
@@ -40,14 +40,14 @@ function getParam(menuInfo) {
   const { function:functionModel } = pageInfo
   const pageName = pascalCase(code)
 
-  const updateInfo = formatInfoByLabel(functionModel, LABEL_ENUM.UPDATE)
-  const addInfo = formatInfoByLabel(functionModel, LABEL_ENUM.INSERT)
-  const tableInfo = formatInfoByLabel(functionModel, LABEL_ENUM.QUERY_LIST)
-  const deleteInfo = formatInfoByLabel(functionModel, LABEL_ENUM.DELETE)
-  const deleteBatchInfo = formatInfoByLabel(functionModel, LABEL_ENUM.DELETE_BATCH)
-  const exportTemplateInfo = formatInfoByLabel(functionModel, LABEL_ENUM.EXPORT_TEMPLATE)
-  const exportInfo = formatInfoByLabel(functionModel, LABEL_ENUM.EXPORT)
-  const importInfo = formatInfoByLabel(functionModel, LABEL_ENUM.IMPORT)
+  const updateInfo = formatInfoByLabel(functionModel, CRUD_LABEL_ENUM.UPDATE)
+  const addInfo = formatInfoByLabel(functionModel, CRUD_LABEL_ENUM.INSERT)
+  const tableInfo = formatInfoByLabel(functionModel, CRUD_LABEL_ENUM.QUERY_LIST)
+  const deleteInfo = formatInfoByLabel(functionModel, CRUD_LABEL_ENUM.DELETE)
+  const deleteBatchInfo = formatInfoByLabel(functionModel, CRUD_LABEL_ENUM.DELETE_BATCH)
+  const exportTemplateInfo = formatInfoByLabel(functionModel, CRUD_LABEL_ENUM.EXPORT_TEMPLATE)
+  const exportInfo = formatInfoByLabel(functionModel, CRUD_LABEL_ENUM.EXPORT)
+  const importInfo = formatInfoByLabel(functionModel, CRUD_LABEL_ENUM.IMPORT)
   // 操作栏按钮和工具栏按钮
   const { toolbarBtnList, operateBtnList } = getToolbarBtnAndObjBtn(functionModel)
 
@@ -142,12 +142,7 @@ function translateChinese(flag){
   return flag?'有':'没有'
 }
 
-function testPage(menuInfo,param){
-  const {name,menuType,pageInfo} = menuInfo
-  const {type,name:componentInstance} = pageInfo
-  console.log('当前页面为：',name);
-  console.log('页面的组件类型为：',type);
-  console.log('组件实例名称是：',componentInstance);
+function testPage(param){
   console.log(`${translateChinese(param.hasToolbar)}工具栏`);
   console.log(`${translateChinese(param.hasUpdate)}更新功能`);
   console.log(`${translateChinese(param.hasAdd)}新增功能`);
@@ -158,15 +153,13 @@ function testPage(menuInfo,param){
   // pageName,
 }
 
-async function getCrudAdapterData(menuInfo) {
-  const { code: menuCode,pageInfo } = menuInfo
-  const dirpath = menuCode ? menuCode : nanoid()
-  const template = menuInfo?.pageInfo?.type || PAGE_TYPE_ENUM.CRUD
-  const fileParam = { dirpath: camelCase(dirpath), template }
 
+async function getCrudAdapterData(menuInfo) {
+  const { fileParam } = getInitParam(menuInfo,PAGE_TYPE_ENUM.CRUD)
   const param = getParam(menuInfo)
   // 输出提示语
-  testPage(menuInfo,param)
+  outputPageInfo(menuInfo)
+  testPage(param)
 
   const { hasToolbar, hasAdd, hasUpdate } = param
 
@@ -186,8 +179,11 @@ async function getCrudAdapterData(menuInfo) {
   if (hasUpdate) {
     pages.push(await getDialog({ ...fileParam, name: 'updateDialog' }, param))
   }
+  console.log('services:',getFormatRequestList(menuInfo.pageInfo));
+  console.log('pages:',pages);
+  console.log('pages:',pages[0].params.script);
   return {
-    services: getFormatRequestList(pageInfo),
+    services: getFormatRequestList(menuInfo.pageInfo),
     pages: pages.filter(item => !!item)
   }
 }

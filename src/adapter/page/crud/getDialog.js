@@ -1,10 +1,10 @@
-const { getFileInfo, initScript, handleMethodListHasOption, handleFormFieldList, getEjsFileTemplateData, getUpdateQueryUrl } = require("../../common")
-const { VUE_DATA_SCRIPT_ENUM, COMPONENT_CRUD_ENUM } = require("../../enum")
-const { camelCase, pascalCase } = require("../../utils/commonUtil")
-const { TEMPLATE_PATH } = require("../../config/templateMap")
-const { addImportService, addCommonTools } = require("../commonMethod")
-const { handleImportList } = require("../commonMethod/genScriptUtils")
-const { parseUrl, getInterfaceData, getPrikeyInfoByList } = require("../commonMethod/util")
+const { getFileInfo, initScript, handleMethodListHasOption, handleFormFieldList, getEjsFileTemplateData, getUpdateQueryUrl } = require("../../../common")
+const { VUE_DATA_SCRIPT_ENUM, COMPONENT_CRUD_ENUM } = require("../../../enum")
+const { camelCase, pascalCase } = require("../../../utils/commonUtil")
+const { TEMPLATE_PATH } = require("../../../config/templateMap")
+const { addImportService, addCommonTools } = require("../../commonMethod")
+const { handleImportList } = require("../../commonMethod/genScriptUtils")
+const { parseUrl, getInterfaceData, getPrikeyInfoByList } = require("../../commonMethod/util")
 function initDataList(script) {
   script[VUE_DATA_SCRIPT_ENUM.DATA_LIST] = [{
     name: 'dialogWidth',
