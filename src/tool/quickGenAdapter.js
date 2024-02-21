@@ -134,14 +134,19 @@ function getAdapterRegisterContent(name) {
 function register(filepath, contentObj,option={isTab:true}) {
     const sourceContent = fs.readFileSync(filepath, 'utf8')
     const { content, requireContent,exportContent } = contentObj
-    let updateStr = updateData(sourceContent, content,CONTENT_PLACE_HOLDER_STR,option)
+    let updateStr = ''
     if (requireContent) {
         updateStr = updateData(updateStr, requireContent, REQUIRE_PLACE_HOLDER_STR,option)
     }
     if (exportContent) {
         updateStr = updateData(updateStr, exportContent, EXPORT_PLACE_HOLDER_STR,{...option,isTab:true})
     }
-    fs.writeFileSync(filepath, updateStr)
+    if(content){
+        updateStr = updateData(sourceContent, content,CONTENT_PLACE_HOLDER_STR,option)
+    }
+    if(updateStr){
+        fs.writeFileSync(filepath, updateStr)
+    }
 }
 function registerPageAdapter(name) {
     const filepath = path.resolve(__dirname, '../adapter/page/pageAdapterMap.js')
