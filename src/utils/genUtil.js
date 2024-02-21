@@ -17,6 +17,7 @@ function getInitParam(menuInfo, defaultTemplate) {
 function outputPageInfo(menuInfo){
     const {name,pageInfo} = menuInfo
     const {label,name:componentInstance} = pageInfo
+    console.log('------------------------------');
     console.log('当前页面为：',name);
     console.log('页面的组件类型为：',label);
     console.log('组件实例名称是：',componentInstance);

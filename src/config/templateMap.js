@@ -1,7 +1,5 @@
-const { COMPONENT_CRUD_ENUM } = require("../enum/componentType");
-const { PAGE_TYPE_ENUM } = require("../enum/pageType");
-const path = require('path')
-
+const path = require('path');
+const { PAGE_TEMPLATE_PATH_MAP } = require("./pageTemplatePathMap");
 const ELEMENT_ENUM = {
     SERVICE:'service',
     MENU:'menuData',
@@ -23,12 +21,7 @@ function getPath(filepath){
 }
 
 const TEMPLATE_PATH={
-    [PAGE_TYPE_ENUM.CRUD]:{
-        [COMPONENT_CRUD_ENUM.QUERY]:getPath('public/template/v3/crud/query.ejs'),
-        [COMPONENT_CRUD_ENUM.TABLE]:getPath('public/template/v3/crud/table.ejs'),
-        [COMPONENT_CRUD_ENUM.DIALOG]:getPath('public/template/v3/crud/dialog.ejs'),
-        [COMPONENT_CRUD_ENUM.ENTRY]:getPath('public/template/v3/crud/entry.ejs'),
-    },
+    ...PAGE_TEMPLATE_PATH_MAP,
     [ELEMENT_ENUM.MENU]:getPath('public/template/v3/menu/menu.ejs'),
     [ELEMENT_ENUM.ROUTE]:getPath('public/template/v3/route/route.ejs'),
     [ELEMENT_ENUM.ROUTE_CONSTANT]:getPath('public/template/v3/routeConstant/routeConstant.ejs'),

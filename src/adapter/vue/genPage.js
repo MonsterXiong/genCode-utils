@@ -28,7 +28,9 @@ function getScript(script){
 function getPage(scriptData){
   const {template,script} = scriptData
   let code = genTemplate(template) || ''
-  code += getScript(script)
+  if(script){
+    code += getScript(script)
+  }
   return code
 }
 function genImport(list=[]){

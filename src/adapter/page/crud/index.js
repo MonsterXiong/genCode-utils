@@ -179,9 +179,6 @@ async function getCrudAdapterData(menuInfo) {
   if (hasUpdate) {
     pages.push(await getDialog({ ...fileParam, name: 'updateDialog' }, param))
   }
-  console.log('services:',getFormatRequestList(menuInfo.pageInfo));
-  console.log('pages:',pages);
-  console.log('pages:',pages[0].params.script);
   return {
     services: getFormatRequestList(menuInfo.pageInfo),
     pages: pages.filter(item => !!item)
