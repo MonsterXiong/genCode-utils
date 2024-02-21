@@ -84,6 +84,10 @@ function getLabelEnumContent(name,element){
     const { constantCaseName } = transformName(name)
     const labelEnum = getLabelEnumName(name)
     // TODO:element进行遍历
+    let elementContent = ''
+    element.forEach(item => {
+        elementContent+=`\t${item.elementNameEnumItem}:'${item.field}'`
+    })
     const content = `const ${labelEnum} = {}`
     return {
         [CONTENT_TYPE.CONTENT]: content,
@@ -98,7 +102,19 @@ function getLabelEnumName(name){
 function getComponentEnum(name){
     return constantCase(`COMPONENT_${name}_ENUM`)
 }
-
+function createTemplateFile(filename,templateName){
+    const templatefilepath = path.resolve(__dirname, `../../../../public/template/v3/${filename}/${templateName}`)
+    fse.ensureFileSync(templatefilepath)
+}
+async function createComponentEntryFile(name,filename){
+    const componentEnum = getComponentEnum(name)
+    const entryfilepath = path.resolve(__dirname, `../adapter/${filename}/getEntry.js`)
+    fse.ensureFileSync(entryfilepath)
+    const entryContent = await getEjsFileTemplateData(path.resolve(__dirname,'./getEntry.ejs'),{
+        componentEnum,
+    })
+    fs.writeFileSync(entryfilepath, entryContent)
+}
 async function createAdapter(param, isPage) {
     const {name} = param
     const { camelCaseName, pascalCaseName } = transformName(name)
@@ -113,7 +129,6 @@ async function createAdapter(param, isPage) {
         templateName = 'entry.ejs'
         const pageTypeEnumName = constantCase(name)
         const labelEnum = getLabelEnumName(name)
-        const componentEnum = getComponentEnum(name)
         // 页面的特殊处理
         fileContent = await getEjsFileTemplateData(path.resolve(__dirname,'./adapterIndex.ejs'),{
             adapterMethodName,
@@ -121,24 +136,18 @@ async function createAdapter(param, isPage) {
             element:param.element,
             pageTypeEnumName,
         })
-        // 增加组件类型
+        // 注册页面组件
         registerPageType(param)
-        // 增加label枚举
+        // 注册要素label枚举
         registerLabelEnum(param)
-        // 增加组件类型入口
+        // 注册页面中的组件类型
         registerComponentType(param)
         // 更新templatePath
         registerPageTemplatePathMap(param)
         // 创建模板文件 
-        const templatefilepath = path.resolve(__dirname, `../../../../public/template/v3/${filename}/${templateName}`)
-        fse.ensureFileSync(templatefilepath)
-        // 生成入口文件
-        const entryfilepath = path.resolve(__dirname, `../adapter/${filename}/getEntry.js`)
-        fse.ensureFileSync(entryfilepath)
-        const entryContent = await getEjsFileTemplateData(path.resolve(__dirname,'./getEntry.ejs'),{
-            componentEnum,
-        })
-        fs.writeFileSync(entryfilepath, entryContent)
+        createTemplateFile(filename,templateName)
+        // 创建生成组件入口文件
+        await createComponentEntryFile(name,filename)
     } else {
         // 非页面的特殊处理
     }
@@ -212,9 +221,13 @@ module.exports = {
 }
 
 quickGenAdapter({
+    // 适配器类型
     type: 'page', 
+    // 适配器名称
     name: 'graph',
+    // 对应组件枚举
     componentName:'graph_general',
+    // 组件要素
     element: [{
         field: 'rowInfo',
         elementName: 'queryRow',
