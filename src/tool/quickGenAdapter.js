@@ -22,7 +22,7 @@ function isPageAdapter(type) {
 // 2. crud/index.js中的内容需要考虑 crud/getEntry需要定制
 // 3. 其中crud/index.js中只有getParam需要自定义以及checkMustInfo需要自定义，根据label对数据进行分类
 // 4. getEntry.js需要注册COMPONENT_XXX_ENUM.ENTRY，同时需要在public下注册ejs模板文件，以及在templatePath中注册模板路径
-// 
+//    
 
 function createAdapter(name,isPage) {
     const { camelCaseName, pascalCaseName } = transformName(name)
