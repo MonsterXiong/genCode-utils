@@ -22,8 +22,10 @@ const MATRIX_LABEL_ENUM ={
     QUERY_REL:'queryRel',
     SAVE_REL:'saveRel'
 }
+/* Software Gen Code Placeholder */
 
 module.exports = {
     CRUD_LABEL_ENUM,
-    MATRIX_LABEL_ENUM
+    MATRIX_LABEL_ENUM,
+	/* Software Gen Code Export Placeholder */
 }

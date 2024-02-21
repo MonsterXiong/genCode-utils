@@ -4,12 +4,13 @@ const fse = require('fs-extra')
 const path = require('path')
 const { constantCase, pascalCase, camelCase } = require('../utils/commonUtil')
 const { updateData } = require('./common')
-const { REQUIRE_PLACE_HOLDER_STR } = require('./placeholderConstant')
+const { REQUIRE_PLACE_HOLDER_STR, EXPORT_PLACE_HOLDER_STR, CONTENT_PLACE_HOLDER_STR } = require('./placeholderConstant')
+const { getEjsFileTemplateData } = require('../common')
 function quickGenAdapter(param) {
     const { type, name } = param
     const isPage = isPageAdapter(type)
-    
-    createAdapter(name,isPage)
+
+    createAdapter(param, isPage)
     isPage ? registerPageAdapter(name) : registerAdapter(name)
 }
 
@@ -24,22 +25,78 @@ function isPageAdapter(type) {
 // 4. getEntry.js需要注册COMPONENT_XXX_ENUM.ENTRY，同时需要在public下注册ejs模板文件，以及在templatePath中注册模板路径
 //    
 
-function createAdapter(name,isPage) {
+const CONTENT_TYPE = {
+    CONTENT:'content',
+    REQUIRE_CONTENT:'requireContent',
+    EXPORT_CONTENT:'exportContent'
+}
+
+function updatePageType(param) {
+    const {name,componentName} = param
+    const filepath = path.resolve(__dirname, '../enum/pageType.js')
+    register(filepath, getPageTypeContent(name,componentName))
+}
+
+function getPageTypeContent(name,componentName) {
+    const { constantCaseName } = transformName(name)
+    return {
+       [CONTENT_TYPE.CONTENT]: `${constantCaseName}: '${componentName}',`
+    }
+}
+
+function updateLabelEnum(param){
+    const {name,element} = param
+    const filepath = path.resolve(__dirname, '../enum/label.js')
+    register(filepath, getLabelEnumContent(name,element),{isTab:false})
+}
+
+function getLabelEnumContent(name,element){
+    const { constantCaseName } = transformName(name)
+    const labelEnum = constantCase(`${name}_LABEL_NEUM,`)
+    const content = `const ${labelEnum} = {}`
+    return {
+        [CONTENT_TYPE.CONTENT]: content,
+        [CONTENT_TYPE.EXPORT_CONTENT]:labelEnum
+    }
+}
+
+
+async function createAdapter(param, isPage) {
+    const {name} = param
     const { camelCaseName, pascalCaseName } = transformName(name)
     const adapterMethodName = getAdapterMethodName(pascalCaseName)
 
     let filename = camelCaseName
+
+    let fileContent = `function ${adapterMethodName}(){\n\n}\n\nmodule.exports = {\n\t${adapterMethodName}\n}`
+
     if (isPage) {
         filename = `page/${filename}`
+        const pageTypeEnumName = constantCase(name)
+        const labelEnum = constantCase(`${name}_LABEL_NEUM`)
+        // 页面的特殊处理
+        fileContent = await getEjsFileTemplateData(path.resolve(__dirname,'./adapterIndex.ejs'),{
+            adapterMethodName,
+            labelEnum,
+            element:param.element,
+            pageTypeEnumName,
+        })
+        // 增加组件类型
+        updatePageType(param)
+        // 增加label枚举
+        updateLabelEnum(param)
+        // 生成入口文件
+        const entryfilepath = path.resolve(__dirname, `../adapter/${filename}/getEntry.js`)
+        fse.ensureFileSync(entryfilepath)
+        const entryContent = ``
+        fs.writeFileSync(entryfilepath, entryContent)
+    } else {
+        // 非页面的特殊处理
     }
+    // 公共处理
     const filepath = path.resolve(__dirname, `../adapter/${filename}/index.js`)
-    const entryfilepath = path.resolve(__dirname, `../adapter/${filename}/getEntry.js`)
     fse.ensureFileSync(filepath)
-    fse.ensureFileSync(entryfilepath)
-    const fileContent = `function ${adapterMethodName}(){\n\n}\n\nmodule.exports = {\n\t${adapterMethodName}\n}`
-    const entryContent = ``
     fs.writeFileSync(filepath, fileContent)
-    fs.writeFileSync(entryfilepath, entryContent)
 
     // 在public/template/v3/page/dirname/entry.ejs
     // public/template/v3/dirname/dirname.ejs || 自定义命名
@@ -60,8 +117,8 @@ function getPageAdapterRegisterContent(name) {
     const { camelCaseName, constantCaseName, pascalCaseName } = transformName(name)
     const adapterMethodName = getAdapterMethodName(pascalCaseName)
     return {
-        content: `[PAGE_TYPE_ENUM.${constantCaseName}]: ${adapterMethodName},`,
-        requireContent: `const { ${adapterMethodName} } = require('./${camelCaseName}/index')`,
+        [CONTENT_TYPE.CONTENT]: `[PAGE_TYPE_ENUM.${constantCaseName}]: ${adapterMethodName},`,
+        [CONTENT_TYPE.REQUIRE_CONTENT]: `const { ${adapterMethodName} } = require('./${camelCaseName}/index')`,
     }
 }
 
@@ -69,17 +126,20 @@ function getAdapterRegisterContent(name) {
     const { camelCaseName, pascalCaseName } = transformName(name)
     const adapterMethodName = getAdapterMethodName(pascalCaseName)
     return {
-        content: `${adapterMethodName},`,
-        requireContent: `const { ${adapterMethodName} } = require('./${camelCaseName}')`,
+        [CONTENT_TYPE.CONTENT]: `${adapterMethodName},`,
+        [CONTENT_TYPE.REQUIRE_CONTENT]: `const { ${adapterMethodName} } = require('./${camelCaseName}')`,
     }
 }
 
-function register(filepath, contentObj,isRequire=true) {
+function register(filepath, contentObj,option={isTab:true}) {
     const sourceContent = fs.readFileSync(filepath, 'utf8')
-    const { content, requireContent } = contentObj
-    let updateStr = updateData(sourceContent, content)
-    if(isRequire){
-        updateStr = updateData(updateStr, requireContent, REQUIRE_PLACE_HOLDER_STR)
+    const { content, requireContent,exportContent } = contentObj
+    let updateStr = updateData(sourceContent, content,CONTENT_PLACE_HOLDER_STR,option)
+    if (requireContent) {
+        updateStr = updateData(updateStr, requireContent, REQUIRE_PLACE_HOLDER_STR,option)
+    }
+    if (exportContent) {
+        updateStr = updateData(updateStr, exportContent, EXPORT_PLACE_HOLDER_STR,{...option,isTab:true})
     }
     fs.writeFileSync(filepath, updateStr)
 }
@@ -96,4 +156,29 @@ module.exports = {
     quickGenAdapter
 }
 
-quickGenAdapter({ type: 'xxx', name: 'graph' })
+quickGenAdapter({
+    type: 'page', 
+    name: 'graph',
+    componentName:'graph_general',
+    element: [{
+        field: 'rowInfo',
+        elementName: 'queryRow',
+        elementNameEnumItem:'QUERY_ROW',
+        message: '矩阵行信息'
+    }, {
+        field: 'colInfo',
+        elementName: 'queryCol',
+        elementNameEnumItem:'QUERY_ROW',
+        message: '矩阵列信息'
+    }, {
+        field: 'relInfo',
+        elementName: 'queryRel',
+        elementNameEnumItem:'QUERY_REL',
+        message: '矩阵关联信息'
+    }, {
+        field: 'saveInfo',
+        elementName: 'saveRel',
+        elementNameEnumItem:'SAVE_REL',
+        message: '矩阵保存信息'
+    }]
+})
