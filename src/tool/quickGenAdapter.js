@@ -31,9 +31,37 @@ const CONTENT_TYPE = {
     EXPORT_CONTENT:'exportContent'
 }
 
-function updateComponentType(){}
+function registerComponentType(param){
+    const { name } = param
+    const filepath = path.resolve(__dirname, '../enum/componentType.js')
+    register(filepath, getComponentTypeContent(name),{isTab:false})
+}
 
-function updatePageType(param) {
+function getComponentTypeContent(name){
+    const componentTypeEnum = constantCase(`COMPONENT_${name}_ENUM`)
+    const content = `const ${componentTypeEnum} = {\n\tENTRY: COMPONENT_ENUM.ENTRY,\n}`
+    return {
+        [CONTENT_TYPE.CONTENT]: content,
+        [CONTENT_TYPE.EXPORT_CONTENT]:`${componentTypeEnum},`
+    }
+}
+
+function registerPageTemplatePathMap(param){
+    const { name } = param
+    const filepath = path.resolve(__dirname, '../config/pageTemplatePathMap.js')
+    register(filepath, getPageTemplatePathMapContent(name))
+}
+function getPageTemplatePathMapContent(name){
+    const { constantCaseName,camelCaseName } = transformName(name)
+    const componentTypeEnum = getComponentEnum(name)
+    const content = `[PAGE_TYPE_ENUM.${constantCaseName}]: {\n\t\t[${componentTypeEnum}.ENTRY]: getPath('public/template/v3/page/${camelCaseName}/entry.ejs'),\n\t}`
+    return {
+        [CONTENT_TYPE.CONTENT]: content,
+        [CONTENT_TYPE.REQUIRE_CONTENT]:`${componentTypeEnum},`
+    }
+}
+
+function registerPageType(param) {
     const {name,componentName} = param
     const filepath = path.resolve(__dirname, '../enum/pageType.js')
     register(filepath, getPageTypeContent(name,componentName))
@@ -46,7 +74,7 @@ function getPageTypeContent(name,componentName) {
     }
 }
 
-function updateLabelEnum(param){
+function registerLabelEnum(param){
     const {name,element} = param
     const filepath = path.resolve(__dirname, '../enum/label.js')
     register(filepath, getLabelEnumContent(name,element),{isTab:false})
@@ -54,14 +82,22 @@ function updateLabelEnum(param){
 
 function getLabelEnumContent(name,element){
     const { constantCaseName } = transformName(name)
-    const labelEnum = constantCase(`${name}_LABEL_NEUM`)
+    const labelEnum = getLabelEnumName(name)
+    // TODO:element进行遍历
     const content = `const ${labelEnum} = {}`
     return {
         [CONTENT_TYPE.CONTENT]: content,
-        [CONTENT_TYPE.EXPORT_CONTENT]:labelEnum
+        [CONTENT_TYPE.EXPORT_CONTENT]:`${labelEnum},`
     }
 }
 
+
+function getLabelEnumName(name){
+    return constantCase(`${name}_LABEL_ENUM`)
+}
+function getComponentEnum(name){
+    return constantCase(`COMPONENT_${name}_ENUM`)
+}
 
 async function createAdapter(param, isPage) {
     const {name} = param
@@ -69,13 +105,15 @@ async function createAdapter(param, isPage) {
     const adapterMethodName = getAdapterMethodName(pascalCaseName)
 
     let filename = camelCaseName
-
+    let templateName = `${camelCaseName}.ejs`
     let fileContent = `function ${adapterMethodName}(){\n\n}\n\nmodule.exports = {\n\t${adapterMethodName}\n}`
 
     if (isPage) {
         filename = `page/${filename}`
+        templateName = 'entry.ejs'
         const pageTypeEnumName = constantCase(name)
-        const labelEnum = constantCase(`${name}_LABEL_NEUM`)
+        const labelEnum = getLabelEnumName(name)
+        const componentEnum = getComponentEnum(name)
         // 页面的特殊处理
         fileContent = await getEjsFileTemplateData(path.resolve(__dirname,'./adapterIndex.ejs'),{
             adapterMethodName,
@@ -84,13 +122,22 @@ async function createAdapter(param, isPage) {
             pageTypeEnumName,
         })
         // 增加组件类型
-        updatePageType(param)
+        registerPageType(param)
         // 增加label枚举
-        updateLabelEnum(param)
+        registerLabelEnum(param)
+        // 增加组件类型入口
+        registerComponentType(param)
+        // 更新templatePath
+        registerPageTemplatePathMap(param)
+        // 创建模板文件 
+        const templatefilepath = path.resolve(__dirname, `../../../../public/template/v3/${filename}/${templateName}`)
+        fse.ensureFileSync(templatefilepath)
         // 生成入口文件
         const entryfilepath = path.resolve(__dirname, `../adapter/${filename}/getEntry.js`)
         fse.ensureFileSync(entryfilepath)
-        const entryContent = ``
+        const entryContent = await getEjsFileTemplateData(path.resolve(__dirname,'./getEntry.ejs'),{
+            componentEnum,
+        })
         fs.writeFileSync(entryfilepath, entryContent)
     } else {
         // 非页面的特殊处理
@@ -99,9 +146,8 @@ async function createAdapter(param, isPage) {
     const filepath = path.resolve(__dirname, `../adapter/${filename}/index.js`)
     fse.ensureFileSync(filepath)
     fs.writeFileSync(filepath, fileContent)
-
-    // 在public/template/v3/page/dirname/entry.ejs
-    // public/template/v3/dirname/dirname.ejs || 自定义命名
+    console.log('需要写模板内容');
+    console.log('需要写适配器相关内容-如入口文件内容');
 }
 
 function transformName(name) {
