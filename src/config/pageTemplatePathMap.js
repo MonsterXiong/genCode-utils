@@ -1,4 +1,5 @@
 const {
+    COMPONENT_EMPTY_ENUM,
     COMPONENT_CRUD_ENUM,
     COMPONENT_MATRIX_ENUM,
     /* Software Gen Code Require Placeholder */
@@ -10,6 +11,9 @@ function getPath(filepath) {
 }
 
 const PAGE_TEMPLATE_PATH_MAP = {
+    [PAGE_TYPE_ENUM.EMPTY]: {
+        [COMPONENT_EMPTY_ENUM.ENTRY]: getPath('public/template/v3/page/empty/entry.ejs'),
+    },
     [PAGE_TYPE_ENUM.CRUD]: {
         [COMPONENT_CRUD_ENUM.QUERY]: getPath('public/template/v3/page/crud/query.ejs'),
         [COMPONENT_CRUD_ENUM.TABLE]: getPath('public/template/v3/page/crud/table.ejs'),

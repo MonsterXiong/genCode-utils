@@ -3,7 +3,7 @@ const {DISPLAY_TYPE_ENUM} =require('./displayType')
 const {FUNCTION_TYPE_ENUM} =require('./functionType')
 const {VUE_DATA_SCRIPT_ENUM} =require('./vueDataScript')
 const {PAGE_TYPE_ENUM} =require('./pageType')
-const { COMPONENT_CRUD_ENUM,COMPONENT_MATRIX_ENUM } = require('./componentType')
+const { COMPONENT_CRUD_ENUM,COMPONENT_MATRIX_ENUM,COMPONENT_EMPTY_ENUM } = require('./componentType')
 const { MENU_TYPE_ENUM } = require('./menuType')
 
 module.exports = {
@@ -14,6 +14,7 @@ module.exports = {
     PAGE_TYPE_ENUM,
     MENU_TYPE_ENUM,
 
+    COMPONENT_EMPTY_ENUM,
     COMPONENT_CRUD_ENUM,
     COMPONENT_MATRIX_ENUM
 }

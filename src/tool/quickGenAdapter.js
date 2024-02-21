@@ -19,11 +19,7 @@ function isPageAdapter(type) {
 }
 
 // 创建页面适配器需要
-// 1. 适配器文件和模板文件 crud/index.js crud/getEntry.js 同时需要注册适配器
-// 2. crud/index.js中的内容需要考虑 crud/getEntry需要定制
-// 3. 其中crud/index.js中只有getParam需要自定义以及checkMustInfo需要自定义，根据label对数据进行分类
-// 4. getEntry.js需要注册COMPONENT_XXX_ENUM.ENTRY，同时需要在public下注册ejs模板文件，以及在templatePath中注册模板路径
-//    
+// todo:enum/index并未注册COMPONENT_XXX_ENUM
 
 const CONTENT_TYPE = {
     CONTENT:'content',
@@ -81,17 +77,32 @@ function registerLabelEnum(param){
 }
 
 function getLabelEnumContent(name,element){
-    const { constantCaseName } = transformName(name)
     const labelEnum = getLabelEnumName(name)
-    // TODO:element进行遍历
     let elementContent = ''
-    element.forEach(item => {
-        elementContent+=`\t${item.elementNameEnumItem}:'${item.field}'`
+    element.forEach((item,index) => {
+        elementContent += `\n\t${item.elementNameEnumItem}:'${item.field}',`
+        if (index == element.length - 1) {
+            elementContent+='\n'
+        }
     })
-    const content = `const ${labelEnum} = {}`
+    const content = `const ${labelEnum} = {${elementContent}}`
     return {
         [CONTENT_TYPE.CONTENT]: content,
         [CONTENT_TYPE.EXPORT_CONTENT]:`${labelEnum},`
+    }
+}
+function registerEntrySuffixEnum(param){
+    const {name,entrySuffixName} = param
+    const filepath = path.resolve(__dirname, '../enum/entrySuffix.js')
+    register(filepath, getEntrySuffixEnumContent(name,entrySuffixName))
+}
+
+function getEntrySuffixEnumContent(name, entrySuffixName) {
+    const { constantCaseName } = transformName(name)
+    const entrySuffix = pascalCase(entrySuffixName)
+    const content = `[PAGE_TYPE_ENUM.${constantCaseName}]:'${entrySuffix}',`
+    return {
+        [CONTENT_TYPE.CONTENT]: content,
     }
 }
 
@@ -144,10 +155,12 @@ async function createAdapter(param, isPage) {
         registerComponentType(param)
         // 更新templatePath
         registerPageTemplatePathMap(param)
-        // 创建模板文件 
+        // 创建模板文件
         createTemplateFile(filename,templateName)
         // 创建生成组件入口文件
         await createComponentEntryFile(name,filename)
+        // 入口文件的后缀名
+        registerEntrySuffixEnum(param)
     } else {
         // 非页面的特殊处理
     }
@@ -222,11 +235,13 @@ module.exports = {
 
 quickGenAdapter({
     // 适配器类型
-    type: 'page', 
+    type: 'page',
     // 适配器名称
     name: 'graph',
     // 对应组件枚举
-    componentName:'graph_general',
+    componentName: 'graph_general',
+    // 入口后缀
+    entrySuffixName:'Empty',
     // 组件要素
     element: [{
         field: 'rowInfo',

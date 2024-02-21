@@ -38,9 +38,9 @@ function checkMustInfo(param){
     if(!relInfo){
         throw new Error('缺少矩阵关联信息')
     }
-    if(!saveInfo){
-        throw new Error('缺少矩阵保存信息')
-    }
+    // if(!saveInfo){
+    //     throw new Error('缺少矩阵保存信息')
+    // }
     return true
 }
 async function getMatrixAdapterData(menuInfo){
@@ -55,7 +55,7 @@ async function getMatrixAdapterData(menuInfo){
     }
     return {
         services: getFormatRequestList(menuInfo.pageInfo),
-        pages: pages.filter(item => !!item)   
+        pages: pages.filter(item => !!item)
     }
 }
 

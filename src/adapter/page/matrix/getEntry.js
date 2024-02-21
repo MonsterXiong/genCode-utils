@@ -4,13 +4,15 @@ const { COMPONENT_MATRIX_ENUM } = require("../../../enum")
 const { getInterfaceData } = require("../../commonMethod/util")
 
 function parseTemplateParam(param){
-    const { colInfo,rowInfo,relInfo,saveInfo } = param
+    const { colInfo,rowInfo,relInfo,saveInfo,pageName } = param
     return {
+        pageName:pageName+'MatrixTable',
         ServiceName:getInterfaceData(colInfo).ServiceName,
         colInfo:getInterfaceData(colInfo),
         rowInfo:getInterfaceData(rowInfo),
-        relInfo:getInterfaceData(relInfo),
-        saveInfo:getInterfaceData(saveInfo),
+        relInfo: getInterfaceData(relInfo),
+        saveInfo
+        // saveInfo:getInterfaceData(saveInfo),
     }
 }
 
@@ -21,7 +23,6 @@ async function getEntry(fileParam, sourceData){
     //  --------------------
     const script = initScript(fileInfo.filename)
     const templatePath = TEMPLATE_PATH[template][type]
-    console.log(templatePath,'templatePath',fileInfo,script);
     const templateParam = parseTemplateParam(sourceData)
     const templateData = await getEjsFileTemplateData(templatePath, templateParam)
     return {
