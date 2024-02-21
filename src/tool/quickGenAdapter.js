@@ -31,6 +31,8 @@ const CONTENT_TYPE = {
     EXPORT_CONTENT:'exportContent'
 }
 
+function updateComponentType(){}
+
 function updatePageType(param) {
     const {name,componentName} = param
     const filepath = path.resolve(__dirname, '../enum/pageType.js')
@@ -52,7 +54,7 @@ function updateLabelEnum(param){
 
 function getLabelEnumContent(name,element){
     const { constantCaseName } = transformName(name)
-    const labelEnum = constantCase(`${name}_LABEL_NEUM,`)
+    const labelEnum = constantCase(`${name}_LABEL_NEUM`)
     const content = `const ${labelEnum} = {}`
     return {
         [CONTENT_TYPE.CONTENT]: content,
@@ -134,15 +136,17 @@ function getAdapterRegisterContent(name) {
 function register(filepath, contentObj,option={isTab:true}) {
     const sourceContent = fs.readFileSync(filepath, 'utf8')
     const { content, requireContent,exportContent } = contentObj
-    let updateStr = ''
+    let updateStr = sourceContent
     if (requireContent) {
         updateStr = updateData(updateStr, requireContent, REQUIRE_PLACE_HOLDER_STR,option)
     }
     if (exportContent) {
+        console.log(exportContent,exportContent);
+
         updateStr = updateData(updateStr, exportContent, EXPORT_PLACE_HOLDER_STR,{...option,isTab:true})
     }
     if(content){
-        updateStr = updateData(sourceContent, content,CONTENT_PLACE_HOLDER_STR,option)
+        updateStr = updateData(updateStr, content,CONTENT_PLACE_HOLDER_STR,option)
     }
     if(updateStr){
         fs.writeFileSync(filepath, updateStr)
