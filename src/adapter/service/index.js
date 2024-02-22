@@ -2,8 +2,9 @@ const path = require('path')
 const { getEjsTemplate } = require("../../common")
 const { uniqueArray } = require("../../utils/array")
 const { camelCase, pascalCase } = require('../../utils/commonUtil')
-const { TEMPLATE_PATH, ELEMENT_ENUM } = require('../../config/templateMap')
+const { TEMPLATE_PATH } = require('../../config/templateMap')
 const { FRAMEWORK_CONFIG } = require('../../config/frameworkConfig')
+const { TEMPLATE_ELEMENT_ENUM } = require('../../enum/templateElement')
 
 // 根据label进行去重
 function formatService(serviceData) {
@@ -47,7 +48,7 @@ function getServiceResult(serviceList, serviceTemp) {
 }
 function getServiceAdapterData(serviceData) {
     const serviceList = formatService(serviceData)
-    const serviceTemp = getEjsTemplate(TEMPLATE_PATH[ELEMENT_ENUM.SERVICE]);
+    const serviceTemp = getEjsTemplate(TEMPLATE_PATH[TEMPLATE_ELEMENT_ENUM.SERVICE]);
     const serviceResult = getServiceResult(serviceList, serviceTemp)
     return serviceResult
 }
