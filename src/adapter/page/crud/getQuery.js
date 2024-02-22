@@ -7,7 +7,9 @@ const {
   getEjsFileTemplateData,
 } = require("../../../common")
 const { nanoid } = require("nanoid")
-const { CRUD_LABEL_ENUM,VUE_DATA_SCRIPT_ENUM,  COMPONENT_CRUD_ENUM } = require("../../../enum")
+const { VUE_DATA_SCRIPT_ENUM } = require("../../../enum/vueDataScript")
+const { CRUD_LABEL_ENUM } = require("../../../enum/label")
+const { COMPONENT_CRUD_ENUM } = require("../../../enum/componentType")
 const { TEMPLATE_PATH } = require("../../../config/templateMap")
 const { handleImportList } = require("../../commonMethod/genScriptUtils")
 const { getInterfaceData } = require("../../commonMethod/util")

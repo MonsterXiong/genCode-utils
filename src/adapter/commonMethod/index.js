@@ -1,4 +1,4 @@
-const { VUE_DATA_SCRIPT_ENUM } = require("../../enum")
+const { VUE_DATA_SCRIPT_ENUM } = require("../../enum/vueDataScript")
 
 function checkAndInitScriptProp(script,prop){
     if(!script[prop]?.length){

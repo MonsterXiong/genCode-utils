@@ -1,5 +1,6 @@
 const { getFileInfo, initScript, handleMethodListHasOption, handleFormFieldList, getEjsFileTemplateData, getUpdateQueryUrl } = require("../../../common")
-const { VUE_DATA_SCRIPT_ENUM, COMPONENT_CRUD_ENUM } = require("../../../enum")
+const { VUE_DATA_SCRIPT_ENUM } = require("../../../enum/vueDataScript")
+const { COMPONENT_CRUD_ENUM } = require("../../../enum/componentType")
 const { camelCase, pascalCase } = require("../../../utils/commonUtil")
 const { TEMPLATE_PATH } = require("../../../config/templateMap")
 const { addImportService, addCommonTools } = require("../../commonMethod")

@@ -1,4 +1,4 @@
-const { PAGE_TYPE_ENUM } = require('../../enum')
+const { PAGE_TYPE_ENUM } = require('../../enum/pageType')
 const { getEmptyAdapterData } = require('./empty/index')
 const { getCrudAdapterData } = require('./crud/index')
 const { getMatrixAdapterData } = require('./matrix/index')

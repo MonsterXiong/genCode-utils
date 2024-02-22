@@ -1,5 +1,5 @@
 const {  pascalCase } = require('../../../utils/commonUtil');
-const { PAGE_TYPE_ENUM } = require('../../../enum');
+const { PAGE_TYPE_ENUM } = require('../../../enum/pageType');
 const { getInitParam,outputPageInfo } = require('../../../utils/genUtil');
 const { getEntry } = require('./getEntry');
 

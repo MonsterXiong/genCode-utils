@@ -1,6 +1,6 @@
 const { TEMPLATE_PATH } = require("../../../config/templateMap")
 const { getFileInfo, initScript, getEjsFileTemplateData } = require("../../../common")
-const { COMPONENT_MATRIX_ENUM } = require("../../../enum")
+const { COMPONENT_MATRIX_ENUM } = require("../../../enum/componentType")
 const { getInterfaceData } = require("../../commonMethod/util")
 
 function parseTemplateParam(param){

@@ -4,7 +4,8 @@ const { getQuery } = require("./getQuery");
 const { getTable } = require("./getTable");
 const { getFormatRequestList, getInfoByLabel, getPrikeyInfoByList } = require('../../../common');
 const { camelCase, pascalCase } = require('../../../utils/commonUtil');
-const { PAGE_TYPE_ENUM, CRUD_LABEL_ENUM } = require('../../../enum');
+const { PAGE_TYPE_ENUM } = require('../../../enum/pageType');
+const { CRUD_LABEL_ENUM } = require('../../../enum/label');
 const { getInitParam,outputPageInfo } = require('../../../utils/genUtil');
 // 根据label拿到功能信息并将对应的元素信息挂在elementList下
 function formatInfoByLabel(functionModel , label) {

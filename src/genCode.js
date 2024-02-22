@@ -6,7 +6,6 @@ const { constantCase, camelCase, pascalCase } = require('./utils/commonUtil.js')
 const fse = require('fs-extra')
 const path = require('path')
 const { PAGE_TYPE_ENUM } = require('./enum/pageType.js')
-const { MENU_TYPE_ENUM } = require('./enum/menuType.js')
 const { FRAMEWORK_CONFIG } = require('./config/frameworkConfig.js')
 const { ENTRY_SUFFIX_ENUM } = require('./enum/entrySuffix.js')
 

@@ -14,17 +14,13 @@ function quickGenAdapter(param) {
     isPage ? registerPageAdapter(name) : registerAdapter(name)
 }
 
-function isPageAdapter(type) {
-    return type == 'page'
-}
-
-// 创建页面适配器需要
-// todo:enum/index并未注册COMPONENT_XXX_ENUM
-
 const CONTENT_TYPE = {
     CONTENT:'content',
     REQUIRE_CONTENT:'requireContent',
     EXPORT_CONTENT:'exportContent'
+}
+function isPageAdapter(type) {
+    return type == 'page'
 }
 
 function registerComponentType(param){

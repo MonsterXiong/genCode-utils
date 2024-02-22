@@ -1,6 +1,6 @@
 const { TEMPLATE_PATH } = require("../../../config/templateMap")
 const { getFileInfo, getEjsFileTemplateData } = require("../../../common")
-const { COMPONENT_EMPTY_ENUM } = require("../../../enum")
+const { COMPONENT_EMPTY_ENUM } = require("../../../enum/componentType")
 
 async function getEntry(fileParam, sourceData){
     const { template } = fileParam

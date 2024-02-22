@@ -1,5 +1,6 @@
 const { addImportService, addCommonTools, addComponent } = require(".")
-const { VUE_DATA_SCRIPT_ENUM, CRUD_LABEL_ENUM } = require("../../enum")
+const {  CRUD_LABEL_ENUM } = require("../../enum/label")
+const { VUE_DATA_SCRIPT_ENUM } = require("../../enum/vueDataScript")
 const { uniqueArray } = require("../../utils/array")
 const { getInterfaceData,getPrikeyInfoByList } = require("./util")
 function uniqueImport(script) {
