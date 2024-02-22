@@ -4,6 +4,7 @@ const TEMPLATE_ELEMENT_ENUM = {
     MENU:'menuData',
     ROUTE:'route',
     ROUTE_CONSTANT:'routeConstant',
+    TOOL:'tool'
     /* Software Gen Code Placeholder */
 }
 

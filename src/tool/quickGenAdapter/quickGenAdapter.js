@@ -6,6 +6,8 @@ const { constantCase, pascalCase, camelCase } = require('../../utils/commonUtil'
 const { updateData } = require('../common')
 const { REQUIRE_PLACE_HOLDER_STR, EXPORT_PLACE_HOLDER_STR, CONTENT_PLACE_HOLDER_STR } = require('../placeholderConstant')
 const { getEjsFileTemplateData } = require('../../common')
+const { TEMPLATE_PATH, TOOL_CONFIG_ENUM } = require('../../config/templateMap')
+const { TEMPLATE_ELEMENT_ENUM } = require('../../enum/templateElement')
 
 const CONTENT_TYPE = {
     CONTENT: 'content',
@@ -186,7 +188,7 @@ async function createComponentEntryFile(name, filename) {
     const componentEnum = getComponentEnumName(name)
     const entryfilepath = formatPath(`../../adapter/${filename}/getEntry.js`)
     fse.ensureFileSync(entryfilepath)
-    const entryContent = await getEjsFileTemplateData(formatPath('./getEntry.ejs'), {
+    const entryContent = await getEjsFileTemplateData(TEMPLATE_PATH[TEMPLATE_ELEMENT_ENUM.TOOL][TOOL_CONFIG_ENUM.GET_ENTRY]), {
         componentEnum,
     })
     fs.writeFileSync(entryfilepath, entryContent)
@@ -202,7 +204,7 @@ async function getPageAdapterFileContent(adapterMethodName, param) {
     })
     const pageTypeEnumName = constantCase(name)
     const labelEnum = getLabelEnumName(name)
-    return await getEjsFileTemplateData(formatPath('./adapterIndex.ejs'), {
+    return await getEjsFileTemplateData(TEMPLATE_PATH[TEMPLATE_ELEMENT_ENUM.TOOL][TOOL_CONFIG_ENUM.ADAPTER_INDEX], {
         adapterMethodName,
         labelEnum,
         element:elementInfo,

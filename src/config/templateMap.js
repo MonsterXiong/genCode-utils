@@ -9,6 +9,11 @@ const PROJETC_CONFIG_ENUM = {
     PACKAGE_JSON:'packageJson',
 }
 
+const TOOL_CONFIG_ENUM ={
+    ADAPTER_INDEX:'adapterIndex',
+    GET_ENTRY:'getEntry'
+}
+
 function getPath(filepath){
     return path.join(process.cwd(),filepath)
 }
@@ -21,6 +26,10 @@ const TEMPLATE_PATH={
         [PROJETC_CONFIG_ENUM.ENV_PROD]:getPath('public/template/v3/project/env.prod.ejs'),
         [PROJETC_CONFIG_ENUM.PACKAGE_JSON]:getPath('public/template/v3/project/packageJson.ejs'),
     },
+    [TEMPLATE_ELEMENT_ENUM.TOOL]:{
+        [TOOL_CONFIG_ENUM.ADAPTER_INDEX]:getPath('public/template/v3/tool/adapterIndex.ejs'),
+        [TOOL_CONFIG_ENUM.GET_ENTRY]:getPath('public/template/v3/tool/getEntry.ejs'),
+    },
     [TEMPLATE_ELEMENT_ENUM.MENU]:getPath('public/template/v3/menu/menu.ejs'),
     [TEMPLATE_ELEMENT_ENUM.ROUTE]:getPath('public/template/v3/route/route.ejs'),
     [TEMPLATE_ELEMENT_ENUM.ROUTE_CONSTANT]:getPath('public/template/v3/routeConstant/routeConstant.ejs'),
@@ -31,5 +40,6 @@ const TEMPLATE_PATH={
 
 module.exports ={
     TEMPLATE_PATH,
-    PROJETC_CONFIG_ENUM
+    PROJETC_CONFIG_ENUM,
+    TOOL_CONFIG_ENUM
 }
