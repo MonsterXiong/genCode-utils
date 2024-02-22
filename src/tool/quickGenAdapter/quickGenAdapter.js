@@ -138,7 +138,7 @@ function getLabelContent(param) {
     const labelEnum = getLabelEnumName(name)
     let elementContent = ''
     element.forEach((item, index) => {
-        elementContent += `\n\t${item.elementNameEnumItem}:'${camelCase(item.elementNameEnumItem)}',`
+        elementContent += `\n\t${item.elementNameEnumItem}:'${item.elementName}',`
         if (index == element.length - 1) {
             elementContent += '\n'
         }
