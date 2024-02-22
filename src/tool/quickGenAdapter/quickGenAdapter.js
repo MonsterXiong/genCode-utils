@@ -28,45 +28,45 @@ const REGISTER_TYPE = {
 
 const REGISTER_MAP={
     [REGISTER_TYPE.TEMPLATE_MAP]:{
-        filePath:formatPath('../../config/templateMap.js'),
+        filePath:formatPath('config/templateMap.js'),
         getContent:getTemplateMapContent,
     },
     [REGISTER_TYPE.PAGE_TEMPLATE_PATH_MAP]:{
-        filePath:formatPath('../../config/pageTemplatePathMap.js'),
+        filePath:formatPath('config/pageTemplatePathMap.js'),
         getContent:getPageTemplatePathMapContent,
     },
     [REGISTER_TYPE.TEMPLATE_ELEMENT]:{
-        filePath:formatPath('../../enum/templateElement.js'),
+        filePath:formatPath('enum/templateElement.js'),
         getContent:getTemplateElementContent,
     },
     [REGISTER_TYPE.COMPONENT_TYPE]:{
-        filePath:formatPath('../../enum/componentType.js'),
+        filePath:formatPath('enum/componentType.js'),
         getContent:getComponentTypeContent,
     },
     [REGISTER_TYPE.PAGE_TYPE]:{
-        filePath:formatPath('../../enum/pageType.js'),
+        filePath:formatPath('enum/pageType.js'),
         getContent:getPageTypeContent,
     },
     [REGISTER_TYPE.LABEL]:{
-        filePath:formatPath('../../enum/label.js'),
+        filePath:formatPath('enum/label.js'),
         getContent:getLabelContent,
     },
     [REGISTER_TYPE.ENTRY_SUFFIX]:{
-        filePath:formatPath('../../enum/entrySuffix.js'),
+        filePath:formatPath('enum/entrySuffix.js'),
         getContent:getEntrySuffixContent,
     },
     [REGISTER_TYPE.PAGE_ADAPTER]:{
-        filePath:formatPath('../../adapter/page/pageAdapterMap.js'),
+        filePath:formatPath('adapter/page/pageAdapterMap.js'),
         getContent:getPageAdapterContent,
     },
     [REGISTER_TYPE.ADAPTER]:{
-        filePath:formatPath('../../adapter/index.js'),
+        filePath:formatPath('adapter/index.js'),
         getContent:getAdapterContent,
     },
 }
 
 function formatPath(filepath) {
-    return path.resolve(__dirname, filepath)
+    return path.resolve(process.cwd(),'submodule/genCode-utils/src',filepath)
 }
 function execRegister(type,param,option){
     const {filePath,getContent} = REGISTER_MAP[type]
@@ -179,14 +179,13 @@ function getAdapterContent(param) {
     }
 }
 
-
 function createTemplateFile(filename, templateName) {
-    const templatefilepath = formatPath( `../../../../../public/template/v3/${filename}/${templateName}`)
+    const templatefilepath = formatPath( `../../../public/template/v3/${filename}/${templateName}`)
     fse.ensureFileSync(templatefilepath)
 }
 async function createComponentEntryFile(name, filename) {
     const componentEnum = getComponentEnumName(name)
-    const entryfilepath = formatPath(`../../adapter/${filename}/getEntry.js`)
+    const entryfilepath = formatPath(`adapter/${filename}/getEntry.js`)
     fse.ensureFileSync(entryfilepath)
     const entryContent = await getEjsFileTemplateData(TEMPLATE_PATH[TEMPLATE_ELEMENT_ENUM.TOOL][TOOL_CONFIG_ENUM.GET_ENTRY], {
         componentEnum,
@@ -212,7 +211,7 @@ async function getPageAdapterFileContent(adapterMethodName, param) {
     })
 }
 function createAdapterFile(filename, fileContent) {
-    const filepath = formatPath(`../../adapter/${filename}/index.js`)
+    const filepath = formatPath(`adapter/${filename}/index.js`)
     fse.ensureFileSync(filepath)
     fs.writeFileSync(filepath, fileContent)
 }
