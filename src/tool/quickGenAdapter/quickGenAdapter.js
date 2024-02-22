@@ -2,10 +2,10 @@
 const fs = require('fs')
 const fse = require('fs-extra')
 const path = require('path')
-const { constantCase, pascalCase, camelCase } = require('../utils/commonUtil')
-const { updateData } = require('./common')
-const { REQUIRE_PLACE_HOLDER_STR, EXPORT_PLACE_HOLDER_STR, CONTENT_PLACE_HOLDER_STR } = require('./placeholderConstant')
-const { getEjsFileTemplateData } = require('../common')
+const { constantCase, pascalCase, camelCase } = require('../../utils/commonUtil')
+const { updateData } = require('../common')
+const { REQUIRE_PLACE_HOLDER_STR, EXPORT_PLACE_HOLDER_STR, CONTENT_PLACE_HOLDER_STR } = require('../placeholderConstant')
+const { getEjsFileTemplateData } = require('../../common')
 function quickGenAdapter(param) {
     const { type, name } = param
     const isPage = isPageAdapter(type)
@@ -29,7 +29,7 @@ const CONTENT_TYPE = {
 
 function registerComponentType(param){
     const { name } = param
-    const filepath = path.resolve(__dirname, '../enum/componentType.js')
+    const filepath = path.resolve(__dirname, '../../enum/componentType.js')
     register(filepath, getComponentTypeContent(name),{isTab:false})
 }
 
@@ -44,7 +44,7 @@ function getComponentTypeContent(name){
 
 function registerPageTemplatePathMap(param){
     const { name } = param
-    const filepath = path.resolve(__dirname, '../config/pageTemplatePathMap.js')
+    const filepath = path.resolve(__dirname, '../../config/pageTemplatePathMap.js')
     register(filepath, getPageTemplatePathMapContent(name))
 }
 function getPageTemplatePathMapContent(name){
@@ -59,7 +59,7 @@ function getPageTemplatePathMapContent(name){
 
 function registerPageType(param) {
     const {name,componentName} = param
-    const filepath = path.resolve(__dirname, '../enum/pageType.js')
+    const filepath = path.resolve(__dirname, '../../enum/pageType.js')
     register(filepath, getPageTypeContent(name,componentName))
 }
 
@@ -72,7 +72,7 @@ function getPageTypeContent(name,componentName) {
 
 function registerLabelEnum(param){
     const {name,element} = param
-    const filepath = path.resolve(__dirname, '../enum/label.js')
+    const filepath = path.resolve(__dirname, '../../enum/label.js')
     register(filepath, getLabelEnumContent(name,element),{isTab:false})
 }
 
@@ -93,7 +93,7 @@ function getLabelEnumContent(name,element){
 }
 function registerEntrySuffixEnum(param){
     const {name,entrySuffixName} = param
-    const filepath = path.resolve(__dirname, '../enum/entrySuffix.js')
+    const filepath = path.resolve(__dirname, '../../enum/entrySuffix.js')
     register(filepath, getEntrySuffixEnumContent(name,entrySuffixName))
 }
 
@@ -114,12 +114,12 @@ function getComponentEnum(name){
     return constantCase(`COMPONENT_${name}_ENUM`)
 }
 function createTemplateFile(filename,templateName){
-    const templatefilepath = path.resolve(__dirname, `../../../../public/template/v3/${filename}/${templateName}`)
+    const templatefilepath = path.resolve(__dirname, `../../../../../public/template/v3/${filename}/${templateName}`)
     fse.ensureFileSync(templatefilepath)
 }
 async function createComponentEntryFile(name,filename){
     const componentEnum = getComponentEnum(name)
-    const entryfilepath = path.resolve(__dirname, `../adapter/${filename}/getEntry.js`)
+    const entryfilepath = path.resolve(__dirname, `../../adapter/${filename}/getEntry.js`)
     fse.ensureFileSync(entryfilepath)
     const entryContent = await getEjsFileTemplateData(path.resolve(__dirname,'./getEntry.ejs'),{
         componentEnum,
@@ -165,7 +165,7 @@ async function createAdapter(param, isPage) {
         // 非页面的特殊处理
     }
     // 公共处理
-    const filepath = path.resolve(__dirname, `../adapter/${filename}/index.js`)
+    const filepath = path.resolve(__dirname, `../../adapter/${filename}/index.js`)
     fse.ensureFileSync(filepath)
     fs.writeFileSync(filepath, fileContent)
     console.log('需要写模板内容');
@@ -221,11 +221,11 @@ function register(filepath, contentObj,option={isTab:true}) {
     }
 }
 function registerPageAdapter(name) {
-    const filepath = path.resolve(__dirname, '../adapter/page/pageAdapterMap.js')
+    const filepath = path.resolve(__dirname, '../../adapter/page/pageAdapterMap.js')
     register(filepath, getPageAdapterRegisterContent(name))
 }
 function registerAdapter(name) {
-    const filepath = path.resolve(__dirname, '../adapter/index.js')
+    const filepath = path.resolve(__dirname, '../../adapter/index.js')
     register(filepath, getAdapterRegisterContent(name))
 }
 
