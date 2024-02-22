@@ -1,6 +1,7 @@
 const path = require('path');
 const { PAGE_TEMPLATE_PATH_MAP } = require("./pageTemplatePathMap");
 const { TEMPLATE_ELEMENT_ENUM } = require('../enum/templateElement');
+const { getPath } = require('../common');
 
 const PROJETC_CONFIG_ENUM = {
     ENV:'env',
@@ -12,10 +13,6 @@ const PROJETC_CONFIG_ENUM = {
 const TOOL_CONFIG_ENUM ={
     ADAPTER_INDEX:'adapterIndex',
     GET_ENTRY:'getEntry'
-}
-
-function getPath(filepath){
-    return path.join(process.cwd(),filepath)
 }
 
 const TEMPLATE_PATH={

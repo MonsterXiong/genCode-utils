@@ -1,6 +1,7 @@
 const fse = require('fs-extra')
 const fs = require('fs')
 const ejs = require('ejs')
+const path = require('path')
 const { pascalCase, camelCase } = require('./utils/commonUtil')
 const {  CRUD_LABEL_ENUM } = require('./enum/label')
 const {  VUE_DATA_SCRIPT_ENUM } = require('./enum/vueDataScript')
@@ -9,6 +10,10 @@ const { COMPONENT_ENUM } = require('./enum/componentType')
 const { ENTRY_SUFFIX_ENUM } = require('./enum/entrySuffix')
 const { addCommonTools, addCommonQueryConditionBuilder, addImportService } = require('./adapter/commonMethod')
 const { parseUrl, parseUrlGetParam, getInterfaceData, getTab, getPrikeyInfoByList } = require('./adapter/commonMethod/util')
+
+function getPath(filepath){
+  return path.join(process.cwd(),filepath)
+}
 function getFileInfo({ name, type, dirpath, template }) {
   const componentName = pascalCase(`${dirpath}_${name ? name : type}`)
   const filetype = type !== COMPONENT_ENUM.ENTRY ? COMPONENT_ENUM.COMPONENT : COMPONENT_ENUM.ENTRY
@@ -196,6 +201,7 @@ async function getEjsFileTemplateData(templatePath, templateParam) {
 module.exports = {
   genCode,
   getTab,
+  getPath,
   getFileInfo,
   addEmitMethodNoParam,
   addEmitMethodRow,

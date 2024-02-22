@@ -5,7 +5,7 @@ const path = require('path')
 const { constantCase, pascalCase, camelCase } = require('../../utils/commonUtil')
 const { updateData } = require('../common')
 const { REQUIRE_PLACE_HOLDER_STR, EXPORT_PLACE_HOLDER_STR, CONTENT_PLACE_HOLDER_STR } = require('../placeholderConstant')
-const { getEjsFileTemplateData } = require('../../common')
+const { getEjsFileTemplateData, getPath } = require('../../common')
 const { TEMPLATE_PATH, TOOL_CONFIG_ENUM } = require('../../config/templateMap')
 const { TEMPLATE_ELEMENT_ENUM } = require('../../enum/templateElement')
 
@@ -66,7 +66,7 @@ const REGISTER_MAP={
 }
 
 function formatPath(filepath) {
-    return path.resolve(process.cwd(),'submodule/genCode-utils/src',filepath)
+    return getPath(path.join('submodule/genCode-utils/src',filepath))
 }
 function execRegister(type,param,option){
     const {filePath,getContent} = REGISTER_MAP[type]
