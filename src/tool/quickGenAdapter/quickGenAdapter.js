@@ -188,7 +188,7 @@ async function createComponentEntryFile(name, filename) {
     const componentEnum = getComponentEnumName(name)
     const entryfilepath = formatPath(`../../adapter/${filename}/getEntry.js`)
     fse.ensureFileSync(entryfilepath)
-    const entryContent = await getEjsFileTemplateData(TEMPLATE_PATH[TEMPLATE_ELEMENT_ENUM.TOOL][TOOL_CONFIG_ENUM.GET_ENTRY]), {
+    const entryContent = await getEjsFileTemplateData(TEMPLATE_PATH[TEMPLATE_ELEMENT_ENUM.TOOL][TOOL_CONFIG_ENUM.GET_ENTRY], {
         componentEnum,
     })
     fs.writeFileSync(entryfilepath, entryContent)
