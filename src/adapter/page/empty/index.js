@@ -17,7 +17,6 @@ function getParam(menuInfo){
 
 async function getEmptyAdapterData(menuInfo){
     const { fileParam } = getInitParam(menuInfo,PAGE_TYPE_ENUM.EMPTY)
-    console.log(fileParam);
     const param = getParam(menuInfo)
     // 输出提示语
     outputPageInfo(menuInfo)
