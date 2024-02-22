@@ -182,6 +182,8 @@ function getAdapterContent(param) {
 function createTemplateFile(filename, templateName) {
     const templatefilepath = formatPath( `../../../public/template/v3/${filename}/${templateName}`)
     fse.ensureFileSync(templatefilepath)
+    const templateFileContent = `<template>\n    <div>${filename}</div>\n</template>`
+    fs.writeFileSync(templatefilepath, templateFileContent)
 }
 async function createComponentEntryFile(name, filename) {
     const componentEnum = getComponentEnumName(name)
@@ -279,9 +281,9 @@ async function quickGenAdapter(param) {
 
     // 公共处理
 
-    // 创建模板文件
+    // 创建模板文件以及生成基础内容
     createTemplateFile(filename, templateName)
-    // 创建写入适配器文件
+    // 创建以及实现适配器入口文件
     createAdapterFile(filename, fileContent)
     console.log('需要写模板内容');
     console.log('需要写适配器相关内容-如入口文件内容');
