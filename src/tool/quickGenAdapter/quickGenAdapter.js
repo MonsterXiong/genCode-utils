@@ -138,7 +138,7 @@ function getLabelContent(param) {
     const labelEnum = getLabelEnumName(name)
     let elementContent = ''
     element.forEach((item, index) => {
-        elementContent += `\n\t${item.elementNameEnumItem}:'${item.elementName}',`
+        elementContent += `\n\t${constantCase(item.elementName)}:'${item.elementName}',`
         if (index == element.length - 1) {
             elementContent += '\n'
         }
@@ -194,12 +194,18 @@ async function createComponentEntryFile(name, filename) {
 
 async function getPageAdapterFileContent(adapterMethodName, param) {
     const { name, element } = param
+    const elementInfo = element.map(item=>{
+        return {
+            ...item,
+            elementNameEnum: constantCase(item.elementName)
+        }
+    })
     const pageTypeEnumName = constantCase(name)
     const labelEnum = getLabelEnumName(name)
     return await getEjsFileTemplateData(formatPath('./adapterIndex.ejs'), {
         adapterMethodName,
         labelEnum,
-        element,
+        element:elementInfo,
         pageTypeEnumName,
     })
 }
@@ -284,35 +290,31 @@ module.exports = {
     quickGenAdapter
 }
 
-quickGenAdapter({
-    // 适配器类型
-    type: 'page',
-    // 适配器名称
-    name: 'graph',
-    // 对应组件枚举
-    componentName: 'graph_general',
-    // 入口后缀
-    entrySuffixName: 'Empty',
-    // 组件要素
-    element: [{
-        field: 'rowInfo',
-        elementName: 'queryRow',
-        elementNameEnumItem: 'QUERY_ROW',
-        message: '矩阵行信息'
-    }, {
-        field: 'colInfo',
-        elementName: 'queryCol',
-        elementNameEnumItem: 'QUERY_ROW',
-        message: '矩阵列信息'
-    }, {
-        field: 'relInfo',
-        elementName: 'queryRel',
-        elementNameEnumItem: 'QUERY_REL',
-        message: '矩阵关联信息'
-    }, {
-        field: 'saveInfo',
-        elementName: 'saveRel',
-        elementNameEnumItem: 'SAVE_REL',
-        message: '矩阵保存信息'
-    }]
-})
+// quickGenAdapter({
+//     // 适配器类型
+//     type: 'page',
+//     // 适配器名称
+//     name: 'graph',
+//     // 对应组件枚举
+//     componentName: 'graph_general',
+//     // 入口后缀
+//     entrySuffixName: 'Empty',
+//     // 组件要素
+//     element: [{
+//         field: 'rowInfo',
+//         elementName: 'queryRow',
+//         message: '矩阵行信息'
+//     }, {
+//         field: 'colInfo',
+//         elementName: 'queryCol',
+//         message: '矩阵列信息'
+//     }, {
+//         field: 'relInfo',
+//         elementName: 'queryRel',
+//         message: '矩阵关联信息'
+//     }, {
+//         field: 'saveInfo',
+//         elementName: 'saveRel',
+//         message: '矩阵保存信息'
+//     }]
+// })
