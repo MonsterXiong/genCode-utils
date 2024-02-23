@@ -38,6 +38,7 @@ function getQueryList(tableFieldList) {
 
 function getParam(menuInfo) {
   const { code, pageInfo } = menuInfo
+  console.log('menuInfo',menuInfo);
   const { function:functionModel } = pageInfo
   const pageName = pascalCase(code)
 
@@ -67,7 +68,7 @@ function getParam(menuInfo) {
   let queryBtnList = []
   // table需要的数据  tableFieldList + tableBtnList
   let tableBtnList = []
-  // updateDiaLog需要的数据 
+  // updateDiaLog需要的数据
   let updateFieldList = []
   // addDiaLog需要的数据 addFieldList
   let addFieldList = []

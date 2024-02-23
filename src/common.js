@@ -145,7 +145,7 @@ function getUpdateQueryUrl(requestUrl) {
 function getFormatRequestList(pageInfo) {
   const { function: functionList } = pageInfo
   const serviceList = functionList.reduce((res, element) => {
-    const { queryUrl, operateUrl, label, code, elements } = element
+    const { queryUrl, url:operateUrl, label, code, elements } = element
     const elementList = elements[0]?.data || []
     const prikeyInfo = getPrikeyInfoByList(elementList)
     elementList?.forEach(item => {

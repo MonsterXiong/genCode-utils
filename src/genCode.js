@@ -40,7 +40,7 @@ function getAdapterData(menuInfo, pages) {
     const PASCAL_CASE_CODE = pascalCase(code)
     let pageInfo = pages.find(page => page.bindMenu == item.id)
     if (!pageInfo) {
-      pageInfo = {label:PAGE_TYPE_ENUM.EMPTY}
+      pageInfo = { label: PAGE_TYPE_ENUM.EMPTY }
     }
     const { label } = pageInfo
     const VUE_FILE_NAME = `${CAMEL_CASE_CODE}/${PASCAL_CASE_CODE}${ENTRY_SUFFIX_ENUM[label]}.vue`

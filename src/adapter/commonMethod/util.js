@@ -1,19 +1,19 @@
 
 const qs = require('qs')
 const { pascalCase, camelCase } = require('../../utils/commonUtil')
-function parseUrlGetParam(url){
-    const queryParam = url.split('?')
-    if(queryParam.length <=1){
-        return {
-          url
-        }
-    }else{
+function parseUrlGetParam(url) {
+  const queryParam = url.split('?')
+  if(queryParam.length <=1){
       return {
-        url:queryParam[0],
-        param:qs.parse(queryParam[1])
+        url
       }
+  }else{
+    return {
+      url:queryParam[0],
+      param:qs.parse(queryParam[1])
     }
   }
+}
 function parseUrl(url) {
     const {url:request} = parseUrlGetParam(url)
     const [, interfaceType, serviceType, _, interfaceName] = request.split('/')
@@ -24,7 +24,7 @@ function parseUrl(url) {
     }
   }
 
-function getInterfaceData(requestInfo, attr = 'operateUrl') {
+function getInterfaceData(requestInfo, attr = 'url') {
     if (!requestInfo) {
         throw new Error('没有对应的请求信息')
     }

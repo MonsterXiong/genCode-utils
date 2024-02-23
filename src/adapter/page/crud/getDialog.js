@@ -80,7 +80,7 @@ function handleTemplate(fieldList) {
 function updateScript(script, fieldList, updateInfo) {
   const prikeyInfo = getPrikeyInfoByList(fieldList)
   const pri = prikeyInfo?.code || ''
-  const operateUrl = updateInfo?.operateUrl
+  const operateUrl = updateInfo?.url
   if (operateUrl) {
     const { url } = getUpdateQueryUrl(operateUrl)
     const { serviceType, interfaceName } = parseUrl(url)
