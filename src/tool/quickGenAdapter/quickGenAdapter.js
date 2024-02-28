@@ -102,6 +102,7 @@ function getTemplateMapContent(param) {
     }
 }
 function getPageTemplatePathMapContent(param) {
+    // TODO:子组件
     const { name } = param
     const { constantCaseName, camelCaseName } = transformName(name)
     const componentTypeEnum = getComponentEnumName(name)
