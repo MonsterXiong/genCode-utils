@@ -14,7 +14,7 @@ function pascalCase(str){
 function camelCase(str){
     return changeCase.camelCase(str)
 }
-function constantCase(str){
+function constantCase(str) {
     return changeCase.constantCase(str)
 }
 

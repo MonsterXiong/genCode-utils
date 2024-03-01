@@ -1,21 +1,21 @@
 {
     "projectInfo": {
-        "project_name": "测试软件平台",
-        "project_code": "csrjpt123",
-        "project_version": "1.0.0",
-        "project_description": "",
-        "project_port": 8080,
-        "project_outputDir": "./temp",
-        "project_frameworkType": "gffx",
-        "db_type": "mysql",
-        "db_name": "sf_db",
-        "db_ip": "127.0.0.1",
-        "db_port": 3301,
-        "db_username": "root",
-        "db_password": "123",
-        "pom_groupId": "com.ltsj",
-        "pom_artifactId": "com.tixi.sf.boot",
-        "pom_packaging": "jar"
+        "projectName": "测试软件平台",
+        "projectCode": "csrjpt123",
+        "projectVersion": "1.0.0",
+        "projectDescription": "",
+        "projectPort": 8080,
+        "projectOutputDir": "./temp",
+        "projectFrameworkType": "gffx",
+        "dbType": "mysql",
+        "dbName": "sf_db",
+        "dbIp": "127.0.0.1",
+        "dbPort": 3301,
+        "dbUsername": "root",
+        "dbPassword": "123",
+        "pomGroupId": "com.ltsj",
+        "pomArtifactId": "com.tixi.sf.boot",
+        "pomPackaging": "jar"
     },
     "menuInfo": [
         {
@@ -167,11 +167,11 @@
                                     "bindAttr": "bind_abi",
                                     "name": "所属能力",
                                     "code": "bindAbi",
-                                    "selectUrl":"/base/design_abi/abiComponent/queryAbiList",
+                                    "selectUrl": "/base/design_abi/abiComponent/queryAbiList",
                                     "param": {
                                         "isMajorKey": false,
                                         "isHidden": false,
-                                        "displayType":"singleSelect",
+                                        "displayType": "singleSelect",
                                         "isSearch": true
                                     }
                                 }
@@ -197,7 +197,7 @@
                                     "code": "indexId",
                                     "param": {
                                         "isMajorKey": true,
-                                        "isHidden":true
+                                        "isHidden": true
                                     }
                                 },
                                 {
@@ -206,7 +206,7 @@
                                     "name": "指标名称",
                                     "code": "indexName",
                                     "param": {
-                                        "displayType":"text"
+                                        "displayType": "text"
                                     }
                                 },
                                 {
@@ -216,7 +216,7 @@
                                     "code": "bindAbi",
                                     "selectUrl": "/base/design_abi/abiComponent/querySimpleAbiList",
                                     "param": {
-                                        "displayType":"singleSelect"
+                                        "displayType": "singleSelect"
                                     }
                                 },
                                 {
@@ -312,7 +312,7 @@
                                     "code": "indexId",
                                     "param": {
                                         "isMajorKey": true,
-                                        "isHidden":true
+                                        "isHidden": true
                                     }
                                 }
                             ]
@@ -354,7 +354,7 @@
                                     "code": "bindAbi",
                                     "selectUrl": "/base/design_abi/abiComponent/querySimpleAbiList",
                                     "param": {
-                                        "displayType":"singleSelect"
+                                        "displayType": "singleSelect"
                                     }
                                 }
                             ]
