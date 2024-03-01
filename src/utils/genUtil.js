@@ -21,7 +21,7 @@ function outputPageInfo(menuInfo){
     console.log('当前页面为：',name);
     console.log('页面的组件类型为：',label);
     console.log('组件实例名称是：',componentInstance);
-  }
+}
 
 module.exports = {
     getInitParam,

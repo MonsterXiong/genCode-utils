@@ -3,8 +3,7 @@ const fs = require('fs')
 const fse = require('fs-extra')
 const path = require('path')
 const { constantCase, pascalCase, camelCase } = require('../../utils/commonUtil')
-const { updateData } = require('../common')
-const { REQUIRE_PLACE_HOLDER_STR, EXPORT_PLACE_HOLDER_STR, CONTENT_PLACE_HOLDER_STR } = require('../placeholderConstant')
+const { register } = require('../common')
 const { getEjsFileTemplateData, getPath } = require('../../common')
 const { TEMPLATE_PATH, TOOL_CONFIG_ENUM } = require('../../config/templateMap')
 const { TEMPLATE_ELEMENT_ENUM } = require('../../enum/templateElement')
@@ -25,7 +24,6 @@ const REGISTER_TYPE = {
     PAGE_ADAPTER:'pageAdapter',
     ADAPTER:'adapter',
 }
-
 const REGISTER_MAP={
     [REGISTER_TYPE.TEMPLATE_MAP]:{
         filePath:formatPath('config/templateMap.js'),
@@ -64,7 +62,6 @@ const REGISTER_MAP={
         getContent:getAdapterContent,
     },
 }
-
 function formatPath(filepath) {
     return getPath(path.join('submodule/genCode-utils/src',filepath))
 }
@@ -91,8 +88,6 @@ function getLabelEnumName(name) {
 function getComponentEnumName(name) {
     return constantCase(`COMPONENT_${name}_ENUM`)
 }
-
-
 function getTemplateMapContent(param) {
     const { name } = param
     const { constantCaseName, camelCaseName } = transformName(name)
@@ -179,7 +174,6 @@ function getAdapterContent(param) {
         [CONTENT_TYPE.REQUIRE_CONTENT]: `const { ${adapterMethodName} } = require('./${camelCaseName}')`,
     }
 }
-
 function createTemplateFile(filename, templateName) {
     const templatefilepath = formatPath( `../../../public/template/v3/${filename}/${templateName}`)
     fse.ensureFileSync(templatefilepath)
@@ -195,7 +189,6 @@ async function createComponentEntryFile(name, filename) {
     })
     fs.writeFileSync(entryfilepath, entryContent)
 }
-
 async function getPageAdapterFileContent(adapterMethodName, param) {
     const { name, element } = param
     const elementInfo = element.map(item=>{
@@ -217,25 +210,6 @@ function createAdapterFile(filename, fileContent) {
     const filepath = formatPath(`adapter/${filename}/index.js`)
     fse.ensureFileSync(filepath)
     fs.writeFileSync(filepath, fileContent)
-}
-
-
-function register(filepath, contentObj, option = { isTab: true }) {
-    const sourceContent = fs.readFileSync(filepath, 'utf8')
-    const { content, requireContent, exportContent } = contentObj
-    let updateStr = sourceContent
-    if (requireContent) {
-        updateStr = updateData(updateStr, requireContent, REQUIRE_PLACE_HOLDER_STR, option)
-    }
-    if (exportContent) {
-        updateStr = updateData(updateStr, exportContent, EXPORT_PLACE_HOLDER_STR, { ...option, isTab: true })
-    }
-    if (content) {
-        updateStr = updateData(updateStr, content, CONTENT_PLACE_HOLDER_STR, option)
-    }
-    if (updateStr) {
-        fs.writeFileSync(filepath, updateStr)
-    }
 }
 async function quickGenAdapter(param) {
     const { name,type } = param
@@ -293,32 +267,3 @@ async function quickGenAdapter(param) {
 module.exports = {
     quickGenAdapter
 }
-
-// quickGenAdapter({
-//     // 适配器类型
-//     type: 'page',
-//     // 适配器名称
-//     name: 'graph',
-//     // 对应组件枚举
-//     componentName: 'graph_general',
-//     // 入口后缀
-//     entrySuffixName: 'Empty',
-//     // 组件要素
-//     element: [{
-//         field: 'rowInfo',
-//         elementName: 'queryRow',
-//         message: '矩阵行信息'
-//     }, {
-//         field: 'colInfo',
-//         elementName: 'queryCol',
-//         message: '矩阵列信息'
-//     }, {
-//         field: 'relInfo',
-//         elementName: 'queryRel',
-//         message: '矩阵关联信息'
-//     }, {
-//         field: 'saveInfo',
-//         elementName: 'saveRel',
-//         message: '矩阵保存信息'
-//     }]
-// })

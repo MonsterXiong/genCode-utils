@@ -1,4 +1,5 @@
-const { CONTENT_PLACE_HOLDER_STR, EXPORT_PLACE_HOLDER_STR } = require("./placeholderConstant")
+const fs = require('fs')
+const { CONTENT_PLACE_HOLDER_STR, EXPORT_PLACE_HOLDER_STR, REQUIRE_PLACE_HOLDER_STR } = require("./placeholderConstant")
 function updateData(sourceContent, replaceContent, placeholderStr,{isTab}) {
     if(sourceContent.indexOf(replaceContent)>0){
         console.log('已经存在');
@@ -19,7 +20,25 @@ function updateData(sourceContent, replaceContent, placeholderStr,{isTab}) {
     }
 }
 
+function register(filepath, contentObj, option = { isTab: true }) {
+    const sourceContent = fs.readFileSync(filepath, 'utf8')
+    const { content, requireContent, exportContent } = contentObj
+    let updateStr = sourceContent
+    if (requireContent) {
+        updateStr = updateData(updateStr, requireContent, REQUIRE_PLACE_HOLDER_STR, option)
+    }
+    if (exportContent) {
+        updateStr = updateData(updateStr, exportContent, EXPORT_PLACE_HOLDER_STR, { ...option, isTab: true })
+    }
+    if (content) {
+        updateStr = updateData(updateStr, content, CONTENT_PLACE_HOLDER_STR, option)
+    }
+    if (updateStr) {
+        fs.writeFileSync(filepath, updateStr)
+    }
+}
 
 module.exports = {
-    updateData
+    updateData,
+    register
 }
