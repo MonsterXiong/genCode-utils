@@ -22,7 +22,6 @@ async function getGenCode(softwareData) {
   const menuResult = getMenuAdapterData({ list: menuList })
   const routeResult = getRouteAdapterData({ list: routeList })
   const routesConstantResult = getRouteConstantAdapterData({ list: routesConstantList })
-
   // // 获取页面内容 and 收集service数据
   const { pageResult, serviceData } =  getPageResultAnddCollectServiceData(await getPageAdapterData(pageList))
 
@@ -48,18 +47,19 @@ function getAdapterData(menuInfo, pages) {
       ...item,
       menuParams: CONST_CODE,
     })
-    res['routesConstantList'].push({
-      const: CONST_CODE,
-      path: CAMEL_CASE_CODE,
-      name: PASCAL_CASE_CODE,
-    })
-
-    res['routeList'].push({
-      ...item,
-      const: CONST_CODE,
-      path: `${FRAMEWORK_CONFIG.ROUTE_COMPONENT_PREFIX}/${VUE_FILE_NAME}`,
-    })
-    res['pageList'].push({ ...item, pageInfo});
+    if (item.menuType == 'page') {
+      res['routesConstantList'].push({
+        const: CONST_CODE,
+        path: CAMEL_CASE_CODE,
+        name: PASCAL_CASE_CODE,
+      })
+      res['routeList'].push({
+        ...item,
+        const: CONST_CODE,
+        path: `${FRAMEWORK_CONFIG.ROUTE_COMPONENT_PREFIX}/${VUE_FILE_NAME}`,
+      })
+      res['pageList'].push({ ...item, pageInfo});
+    }
     return res
   }, {
     menuList: [],
