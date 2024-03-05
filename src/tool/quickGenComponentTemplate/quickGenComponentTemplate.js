@@ -54,7 +54,7 @@ function getPageCategoryTypeContent(param){
   const { code } = param
   const {constantCaseCode,camelCaseCode} = transformCode(code)
   return {
-    [CONTENT_TYPE.CONTENT]: `${constantCaseCode}: '${camelCaseCode}'`
+    [CONTENT_TYPE.CONTENT]: `${constantCaseCode}: '${camelCaseCode}',`
   }
 }
 function getPageCategoryListContent(param){
@@ -68,7 +68,7 @@ function getPageTypeContent(param){
   const { code } = param
   const {constantCaseCode,camelCaseCode} = transformCode(code)
   return {
-    [CONTENT_TYPE.CONTENT]: `${constantCaseCode}: '${camelCaseCode}'`
+    [CONTENT_TYPE.CONTENT]: `${constantCaseCode}: '${camelCaseCode}',`
   }
 }
 function getPageListContent(param){
