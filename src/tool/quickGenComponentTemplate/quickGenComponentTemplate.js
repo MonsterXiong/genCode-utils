@@ -22,23 +22,23 @@ const REGISTER_TYPE = {
 
 const REGISTER_MAP = {
   [REGISTER_TYPE.PAGE_TYPE]: {
-    filePath: formatPath('pages/tool/genCode/constant/pageType.js'),
+    filePath: formatPath('pages/genSoftware/constant/pageType.js'),
     getContent: getPageTypeContent,
   },
   [REGISTER_TYPE.PAGE_LIST]: {
-    filePath: formatPath('pages/tool/genCode/constant/pageList.js'),
+    filePath: formatPath('pages/genSoftware/constant/pageList.js'),
     getContent: getPageListContent,
   },
   [REGISTER_TYPE.TEMPLATE_MAP]: {
-    filePath: formatPath('pages/tool/genCode/pageDesign/template/index.js'),
+    filePath: formatPath('pages/genSoftware/pageDesign/template/index.js'),
     getContent: getTemplateMapContent,
   },
   [REGISTER_TYPE.PAGE_CATEGORY_TYPE]: {
-    filePath: formatPath('pages/tool/genCode/constant/pageCategoryType.js'),
+    filePath: formatPath('pages/genSoftware/constant/pageCategoryType.js'),
     getContent: getPageCategoryTypeContent,
   },
   [REGISTER_TYPE.PAGE_CATEGORY_LIST]: {
-    filePath: formatPath('pages/tool/genCode/constant/pageCategoryList.js'),
+    filePath: formatPath('pages/genSoftware/constant/pageCategoryList.js'),
     getContent: getPageCategoryListContent,
   },
 }
@@ -89,7 +89,7 @@ function getTemplateMapContent(param){
 }
 
 function createComponentTemplateFile(filename, fileContent) {
-  const filepath = formatPath(`pages/tool/genCode/pageDesign/template/${filename}.vue`)
+  const filepath = formatPath(`pages/genSoftware/pageDesign/template/${filename}.vue`)
   fse.ensureFileSync(filepath)
   fs.writeFileSync(filepath, fileContent)
 }
