@@ -1,3 +1,4 @@
+const { PAGE_TYPE_ENUM } = require("../../enum/pageType")
 const { isObject } = require("../../utils/commonUtil")
 const { PAGE_ADAPTER_MAP } = require("./pageAdapterMap")
 function initPageData(pageData) {
@@ -12,7 +13,11 @@ function initPageData(pageData) {
 
 async function getPagesCode(page) {
     const { pageInfo: { label } } = page
-    const pagesCode = await PAGE_ADAPTER_MAP[label](page)
+    let labelType = label
+    if (!PAGE_ADAPTER_MAP[label]) {
+        labelType = PAGE_TYPE_ENUM.EMPTY
+    }
+    const pagesCode = await PAGE_ADAPTER_MAP[labelType](page)
     return pagesCode
 }
 
