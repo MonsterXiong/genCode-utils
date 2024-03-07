@@ -89,9 +89,14 @@ function getTemplateMapContent(param){
 }
 
 function createComponentTemplateFile(filename, fileContent) {
-  const filepath = formatPath(`pages/genSoftware/pageDesign/template/${filename}.vue`)
+  const filepath = formatPath(`pages/genSoftware/pageDesign/template/${filename}/${pascalCase(filename)}.vue`)
   fse.ensureFileSync(filepath)
   fs.writeFileSync(filepath, fileContent)
+}
+function createComponentTemplateEjsFile(dirPath,filename) {
+  const filepath = getPath(`public/template/v4/page/${dirPath}/${filename}/${filename}.ejs`)
+  fse.ensureFileSync(filepath)
+  fs.writeFileSync(filepath, `<template>\n  <div><%=name%>-${filename}</div>\n</template>\n<script>\nexport default {\n  name: '<%= pageName%>'\n}\n</script>`)
 }
 
 function execRegister(type,param,option){
@@ -101,21 +106,20 @@ function execRegister(type,param,option){
 
 
 async function quickGenComponentTemplate(param) {
-  const { code,name } = param
-  const {pascalCaseCode,camelCaseCode} = transformCode(code)
-  const filename = `${camelCaseCode}/${pascalCaseCode}`
+  const { code,name,categoryType } = param
+  const {camelCaseCode} = transformCode(code)
   const templateFileContent = `<template>\n    <div>${code}-${name}</div>\n</template>`
-  createComponentTemplateFile(filename,templateFileContent)
+  createComponentTemplateFile(camelCaseCode,templateFileContent)
   execRegister(REGISTER_TYPE.PAGE_TYPE,param)
   execRegister(REGISTER_TYPE.PAGE_LIST,param)
-  execRegister(REGISTER_TYPE.TEMPLATE_MAP,param)
-  // 创建文件夹以及文件
+  execRegister(REGISTER_TYPE.TEMPLATE_MAP, param)
+  createComponentTemplateEjsFile(camelCase(categoryType),camelCaseCode)
 }
 
 
 async function quickGenCategoryType(param) {
   execRegister(REGISTER_TYPE.PAGE_CATEGORY_TYPE,param)
-  execRegister(REGISTER_TYPE.PAGE_CATEGORY_LIST,param)
+  execRegister(REGISTER_TYPE.PAGE_CATEGORY_LIST, param)
 }
 
 module.exports = {
