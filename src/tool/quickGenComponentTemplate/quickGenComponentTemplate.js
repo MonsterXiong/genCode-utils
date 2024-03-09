@@ -139,7 +139,7 @@ function createComponentTemplateEjsFile(dirPath,filename) {
 function createAdapterImplementFile(dirPath,filename) {
   const filepath = getPath(`src/modules/extends/gen/adapter/${dirPath}/${getAdapterFileName(filename)}.ts`)
   fse.ensureFileSync(filepath)
-  fs.writeFileSync(filepath, `export function ${getAdapterFileName(filename)}(param){ \n}`)
+  fs.writeFileSync(filepath, `export function ${getAdapterFileName(filename)}(param){ \n  return param \n}`)
 }
 function createAdapterMapFile(dirPath) {
   const filepath = getPath(`src/modules/extends/gen/adapter/${dirPath}/index.ts`)
@@ -170,14 +170,12 @@ async function quickGenComponentTemplateAdapter(param){
   const { code,name,categoryType } = param
   const {camelCaseCode} = transformCode(code)
     // 注册适配器常量
-    // execRegister(REGISTER_TYPE.ADAPTER_PAGE_TYPE,param)
-    // // 创建适配器文件
-    // createAdapterImplementFile(camelCase(categoryType),camelCaseCode)
-    // // filePath是动态的
-    // execRegister(REGISTER_TYPE.ADAPTER_PAGE_CATEGORY_MAP,param)
+    execRegister(REGISTER_TYPE.ADAPTER_PAGE_TYPE,param)
+    // 创建适配器文件
+    createAdapterImplementFile(camelCase(categoryType),camelCaseCode)
+    // filePath是动态的
     const filePath = getPath(`src/modules/extends/gen/adapter/${categoryType}/index.ts`)
     const getContent = getAdapterCategoryMapContent
-    console.log(filePath,getContent(param));
     register(filePath, getContent(param))
 }
 
