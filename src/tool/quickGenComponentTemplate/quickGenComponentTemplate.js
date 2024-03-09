@@ -163,7 +163,8 @@ async function quickGenComponentTemplate(param) {
   execRegister(REGISTER_TYPE.TEMPLATE_MAP, param)
   createComponentTemplateEjsFile(camelCase(categoryType),camelCaseCode)
 
-
+  // 适配器注册
+  quickGenComponentTemplateAdapter(param)
 }
 
 async function quickGenComponentTemplateAdapter(param){
@@ -192,6 +193,9 @@ async function quickGenCategoryTypeAdapter(param) {
 async function quickGenCategoryType(param) {
   execRegister(REGISTER_TYPE.PAGE_CATEGORY_TYPE,param)
   execRegister(REGISTER_TYPE.PAGE_CATEGORY_LIST, param)
+
+  // 适配器注册
+  quickGenCategoryTypeAdapter(param)
 }
 
 module.exports = {
