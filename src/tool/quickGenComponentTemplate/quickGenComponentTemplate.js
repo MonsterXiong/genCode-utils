@@ -18,9 +18,20 @@ const REGISTER_TYPE = {
   TEMPLATE_MAP: 'templateMap',
   PAGE_CATEGORY_TYPE: 'pageCategoryType',
   PAGE_CATEGORY_LIST: 'pageCategoryList',
+  ADAPTER_PAGE_TYPE: 'adapterPageCategoryType',
+  ADAPTER_PAGE_CATEGORY_TYPE: 'adapterPageCategoryList',
+  ADAPTER_ENTRY: 'adapterEntry',
 }
 
 const REGISTER_MAP = {
+  [REGISTER_TYPE.ADAPTER_PAGE_TYPE]: {
+    filePath: getPath('src/modules/extends/gen/common/pageType.ts'),
+    getContent: getPageTypeContent,
+  },
+  [REGISTER_TYPE.ADAPTER_PAGE_CATEGORY_TYPE]: {
+    filePath: getPath('src/modules/extends/gen/common/pageCategoryType.ts'),
+    getContent: getPageCategoryTypeContent,
+  },
   [REGISTER_TYPE.PAGE_TYPE]: {
     filePath: formatPath('pages/genSoftware/constant/pageType.js'),
     getContent: getPageTypeContent,
@@ -41,6 +52,10 @@ const REGISTER_MAP = {
     filePath: formatPath('pages/genSoftware/constant/pageCategoryList.js'),
     getContent: getPageCategoryListContent,
   },
+  [REGISTER_TYPE.ADAPTER_ENTRY]: {
+    filePath: getPath('src/modules/extends/gen/adapter/index.ts'),
+    getContent: getAdapterEntryContent,
+  },
 }
 function transformCode(code) {
   return {
@@ -48,6 +63,10 @@ function transformCode(code) {
       constantCaseCode: constantCase(code),
       pascalCaseCode: pascalCase(code),
   }
+}
+
+function getAdapterFileName(code){
+  return `${camelCase(code)}Adapter`
 }
 
 function getPageCategoryTypeContent(param){
@@ -87,6 +106,25 @@ function getTemplateMapContent(param){
     [CONTENT_TYPE.CONTENT]: `[PAGE_TYPE.${constantCaseCode}]: ${pascalCaseCode},`
   }
 }
+function getAdapterEntryContent(param){
+  const { code } = param
+  const { constantCaseCode,pascalCaseCode,camelCaseCode } = transformCode(code)
+  const adapterMapName = `${constantCaseCode}_ADAPTER_MAP`
+  return  {
+    [CONTENT_TYPE.REQUIRE_CONTENT]: `import { ${adapterMapName} } from './${camelCaseCode}/index'`,
+    [CONTENT_TYPE.CONTENT]: `[CATEGORY_TYPE.${constantCaseCode}]: ${adapterMapName},`
+  }
+}
+
+function getAdapterCategoryMapContent(param){
+  const { code } = param
+  const { constantCaseCode } = transformCode(code)
+  const adapterName = getAdapterFileName(code)
+  return  {
+    [CONTENT_TYPE.REQUIRE_CONTENT]: `import { ${adapterName} } from './${adapterName}'`,
+    [CONTENT_TYPE.CONTENT]: `[PAGE_TYPE.${constantCaseCode}]:${adapterName},`
+  }
+}
 
 function createComponentTemplateFile(filename, fileContent) {
   const filepath = formatPath(`pages/genSoftware/pageDesign/template/${filename}/${pascalCase(filename)}.vue`)
@@ -97,6 +135,16 @@ function createComponentTemplateEjsFile(dirPath,filename) {
   const filepath = getPath(`public/template/v4/page/${dirPath}/${filename}/${filename}.ejs`)
   fse.ensureFileSync(filepath)
   fs.writeFileSync(filepath, `<template>\n  <div><%=name%>-${filename}</div>\n</template>\n<script>\nexport default {\n  name: '<%= pageName%>'\n}\n</script>`)
+}
+function createAdapterImplementFile(dirPath,filename) {
+  const filepath = getPath(`src/modules/extends/gen/adapter/${dirPath}/${getAdapterFileName(filename)}.ts`)
+  fse.ensureFileSync(filepath)
+  fs.writeFileSync(filepath, `export function ${getAdapterFileName(filename)}(param){ \n}`)
+}
+function createAdapterMapFile(dirPath) {
+  const filepath = getPath(`src/modules/extends/gen/adapter/${dirPath}/index.ts`)
+  fse.ensureFileSync(filepath)
+  fs.writeFileSync(filepath, `import {PAGE_TYPE} from '../../common/pageType'\n/* Software Gen Code Require Placeholder */\n\nexport const ${constantCase(dirPath)}_ADAPTER_MAP = {\n  /* Software Gen Code Placeholder */\n}`)
 }
 
 function execRegister(type,param,option){
@@ -114,6 +162,32 @@ async function quickGenComponentTemplate(param) {
   execRegister(REGISTER_TYPE.PAGE_LIST,param)
   execRegister(REGISTER_TYPE.TEMPLATE_MAP, param)
   createComponentTemplateEjsFile(camelCase(categoryType),camelCaseCode)
+
+
+}
+
+async function quickGenComponentTemplateAdapter(param){
+  const { code,name,categoryType } = param
+  const {camelCaseCode} = transformCode(code)
+    // 注册适配器常量
+    // execRegister(REGISTER_TYPE.ADAPTER_PAGE_TYPE,param)
+    // // 创建适配器文件
+    // createAdapterImplementFile(camelCase(categoryType),camelCaseCode)
+    // // filePath是动态的
+    // execRegister(REGISTER_TYPE.ADAPTER_PAGE_CATEGORY_MAP,param)
+    const filePath = getPath(`src/modules/extends/gen/adapter/${categoryType}/index.ts`)
+    const getContent = getAdapterCategoryMapContent
+    console.log(filePath,getContent(param));
+    // register(filePath, getContent(param),option)
+}
+
+async function quickGenCategoryTypeAdapter(param) {
+  const { code } = param
+  execRegister(REGISTER_TYPE.ADAPTER_PAGE_CATEGORY_TYPE,param)
+  // 创建适配器文件入口文件
+  createAdapterMapFile(camelCase(code))
+  // 在最外层适配器入口进行注册
+  execRegister(REGISTER_TYPE.ADAPTER_ENTRY,param)
 }
 
 
@@ -124,5 +198,7 @@ async function quickGenCategoryType(param) {
 
 module.exports = {
   quickGenComponentTemplate,
-  quickGenCategoryType
+  quickGenCategoryType,
+  quickGenComponentTemplateAdapter,
+  quickGenCategoryTypeAdapter
 }
