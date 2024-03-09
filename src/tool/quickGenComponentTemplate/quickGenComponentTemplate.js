@@ -178,7 +178,7 @@ async function quickGenComponentTemplateAdapter(param){
     const filePath = getPath(`src/modules/extends/gen/adapter/${categoryType}/index.ts`)
     const getContent = getAdapterCategoryMapContent
     console.log(filePath,getContent(param));
-    // register(filePath, getContent(param),option)
+    register(filePath, getContent(param))
 }
 
 async function quickGenCategoryTypeAdapter(param) {
