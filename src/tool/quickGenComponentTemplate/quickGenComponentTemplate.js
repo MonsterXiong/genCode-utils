@@ -156,7 +156,7 @@ function execRegister(type,param,option){
 async function quickGenComponentTemplate(param) {
   const { code,name,categoryType } = param
   const {camelCaseCode} = transformCode(code)
-  const templateFileContent = `<template>\n    <div>${code}-${name}</div>\n</template>`
+  const templateFileContent = `<template>\n    <div class="common-page">${code}-${name}</div>\n</template>`
   createComponentTemplateFile(camelCaseCode,templateFileContent)
   execRegister(REGISTER_TYPE.PAGE_TYPE,param)
   execRegister(REGISTER_TYPE.PAGE_LIST,param)
