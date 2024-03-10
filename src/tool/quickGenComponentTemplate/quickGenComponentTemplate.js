@@ -139,7 +139,7 @@ function createComponentTemplateEjsFile(dirPath,filename) {
 function createAdapterImplementFile(dirPath,filename) {
   const filepath = getPath(`src/modules/extends/gen/adapter/${dirPath}/${getAdapterFileName(filename)}.ts`)
   fse.ensureFileSync(filepath)
-  fs.writeFileSync(filepath, `export function ${getAdapterFileName(filename)}(param){ \n  return param \n}`)
+  fs.writeFileSync(filepath, `export function ${getAdapterFileName(filename)}(param){ \n  const { name,pageName, detailParam } = param\n  const  { templateParam } = detailParam\n  // if(!templateParam || !Object.keys(templateParam)?.length){\n  //   return null\n  // }\n  return param \n}`)
 }
 function createAdapterMapFile(dirPath) {
   const filepath = getPath(`src/modules/extends/gen/adapter/${dirPath}/index.ts`)
